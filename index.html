@@ -586,6 +586,16 @@
       margin:18px 16px 28px;
     }
 
+  
+    body.checklist-open #showSelectedButton,
+    body.checklist-open #resetButton,
+    body.checklist-open [data-action="show-selected"],
+    body.checklist-open [data-action="reset"],
+    body.checklist-open .show-selected-button,
+    body.checklist-open .reset-button{
+      display:none !important;
+    }
+
   </style>
 </head>
 <body>
@@ -1633,6 +1643,7 @@ document.addEventListener("selectstart", event => {
     const showChecklist = page === "checklist";
     homePage.classList.toggle("active", !showChecklist);
     checklistPage.classList.toggle("active", showChecklist);
+    document.body.classList.toggle("checklist-open", showChecklist);
 
     if(updateHash){
       history.replaceState(null, "", showChecklist ? "#checklist" : "#home");
