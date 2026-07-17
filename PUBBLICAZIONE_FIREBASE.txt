@@ -21,3 +21,18 @@ Copia tutto il contenuto del file firestore.rules e premi Pubblica.
 Permessi eliminazione:
 - Mohammad può eliminare qualsiasi riga.
 - Mahnoush può eliminare soltanto le righe con createdBy = "mahnoush".
+
+INSTALLAZIONE SU IPHONE
+
+1. Pubblica questa cartella su Firebase Hosting.
+2. Apri il link con Safari.
+3. Tocca Condividi.
+4. Tocca Aggiungi a schermata Home.
+5. Apri l'app dalla nuova icona.
+
+La versione include:
+- icona Apple 180x180;
+- modalità standalone;
+- supporto safe-area per notch e Dynamic Island;
+- splash screen per iPhone recenti;
+- compatibilità Android PWA mantenuta.

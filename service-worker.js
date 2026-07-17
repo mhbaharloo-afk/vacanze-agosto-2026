@@ -1,4 +1,4 @@
-const CACHE = "vacanze-2026-v34";
+const CACHE = "vacanze-2026-v36";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -8,8 +8,11 @@ const APP_SHELL = [
   "./traveler-user.jpg",
   "./traveler-wife.jpg",
   "./traveler-milo.jpg",
-  "./viaggio.json"
-];
+  "./viaggio.json",
+  "./apple-touch-icon.png",
+  "./apple-splash-1170x2532.png",
+  "./apple-splash-1284x2778.png",
+  "./apple-splash-1290x2796.png",];
 
 self.addEventListener("install", event => {
   event.waitUntil(

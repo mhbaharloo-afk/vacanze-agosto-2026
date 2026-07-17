@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" class="auth-pending">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -639,9 +639,117 @@
       display:block;
     }
 
+  
+    html{
+      background:#f7faf8;
+      -webkit-text-size-adjust:100%;
+    }
+
+    body{
+      padding-top:env(safe-area-inset-top);
+      padding-right:env(safe-area-inset-right);
+      padding-bottom:env(safe-area-inset-bottom);
+      padding-left:env(safe-area-inset-left);
+      overscroll-behavior-y:none;
+      -webkit-tap-highlight-color:transparent;
+      touch-action:manipulation;
+    }
+
+    button,
+    input,
+    textarea,
+    select{
+      font:inherit;
+    }
+
+    button{
+      -webkit-touch-callout:none;
+      user-select:none;
+    }
+
+    input,
+    textarea{
+      font-size:16px;
+    }
+
+    @media (display-mode: standalone){
+      body{
+        min-height:100vh;
+        min-height:100dvh;
+      }
+
+      .subpage-header{
+        top:env(safe-area-inset-top);
+      }
+    }
+
+  
+    /* Percorso sempre su una sola riga */
+    .hero-subtitle,
+    .hero-route,
+    .trip-route,
+    [data-role="trip-route"]{
+      white-space:nowrap !important;
+      overflow:hidden;
+      text-overflow:clip;
+      font-size:clamp(.78rem, 3.55vw, 1.15rem) !important;
+      letter-spacing:-.02em;
+    }
+
+    /* Evita il flash della pagina login mentre Firebase ripristina la sessione */
+    html.auth-pending #authOverlay,
+    html.auth-pending #homePage,
+    html.auth-pending #checklistPage{
+      visibility:hidden !important;
+    }
+
+    #authBootstrapLoader{
+      position:fixed;
+      inset:0;
+      z-index:100000;
+      display:none;
+      place-items:center;
+      background:#f7faf8;
+      color:#17372d;
+    }
+
+    html.auth-pending #authBootstrapLoader{
+      display:grid;
+    }
+
+    .auth-bootstrap-card{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:14px;
+      font-size:.82rem;
+      font-weight:800;
+    }
+
+    .auth-bootstrap-spinner{
+      width:34px;
+      height:34px;
+      border:3px solid rgba(23,55,45,.16);
+      border-top-color:#356b5a;
+      border-radius:50%;
+      animation:authBootstrapSpin .8s linear infinite;
+    }
+
+    @keyframes authBootstrapSpin{
+      to{ transform:rotate(360deg); }
+    }
+
   </style>
 </head>
 <body>
+
+  <div id="authBootstrapLoader" aria-live="polite" aria-label="Caricamento applicazione">
+    <div class="auth-bootstrap-card">
+      <div class="auth-bootstrap-spinner" aria-hidden="true"></div>
+      <span>Caricamento…</span>
+    </div>
+  </div>
+
 
 <div id="authOverlay" class="auth-overlay" role="dialog" aria-modal="true" aria-labelledby="authTitle">
   <form id="authForm" class="auth-card">
@@ -668,7 +776,7 @@
   <div class="topbar">
     <div>
       <div class="app-title">Vacanze Agosto 2026</div>
-      <div class="app-subtitle">Slovenia → Croazia → Bosnia-Erzegovina</div>
+      <div class="app-subtitle"><span class="trip-route">Slovenia → Croazia → Bosnia-Erzegovina</span></div>
     </div>
     <div class="top-actions">
       <div id="roleBadge" class="role-badge" aria-live="polite"></div>
@@ -822,6 +930,23 @@
 </section>
 </div>
 
+
+
+<script>
+(function(){
+  const standalone =
+    window.matchMedia("(display-mode: standalone)").matches ||
+    window.navigator.standalone === true;
+
+  document.documentElement.classList.toggle("standalone-mode", standalone);
+
+  if (standalone) {
+    document.addEventListener("touchmove", function(event){
+      if (event.scale && event.scale !== 1) event.preventDefault();
+    }, { passive:false });
+  }
+})();
+</script>
 
 <script>
 let trip = [];
@@ -1706,6 +1831,13 @@ document.addEventListener("selectstart", event => {
 })();
 </script>
 
+
+<script>
+  window.setTimeout(function(){
+    document.documentElement.classList.remove("auth-pending");
+  }, 8000);
+</script>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
 import {
@@ -1965,6 +2097,8 @@ logoutButton.addEventListener("click", async () => {
 });
 
 onAuthStateChanged(auth, user => {
+  document.documentElement.classList.remove("auth-pending");
+
   if (unsubscribeChecklist) {
     unsubscribeChecklist();
     unsubscribeChecklist = null;
