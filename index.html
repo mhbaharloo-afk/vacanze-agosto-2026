@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="app-version" content="46">
   <meta name="theme-color" content="#1f6f5f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -1915,7 +1916,46 @@ Object.keys(state).forEach(k=>{
   if(k.startsWith("open::")) delete state[k];
 });
 
-const save = () => localStorage.setItem(key, JSON.stringify(state));
+const save = () => {
+  localStorage.setItem(key, JSON.stringify(state));
+  if (typeof window.saveSharedTripState === "function") {
+    window.saveSharedTripState();
+  }
+};
+
+function isSharedTripKey(value){
+  return value === "app::locked" ||
+         value.startsWith("stay::") ||
+         (value.includes("::") && !value.startsWith("ui::") && !value.startsWith("open::"));
+}
+
+function getSharedTripState(){
+  const shared = {};
+  Object.entries(state).forEach(([stateKey, value]) => {
+    if(isSharedTripKey(stateKey)) shared[stateKey] = value;
+  });
+  return shared;
+}
+
+window.getSharedTripState = getSharedTripState;
+
+window.applySharedTripState = function(remoteState){
+  if(!remoteState || typeof remoteState !== "object") return;
+
+  Object.keys(state).forEach(stateKey => {
+    if(isSharedTripKey(stateKey)) delete state[stateKey];
+  });
+
+  Object.entries(remoteState).forEach(([stateKey, value]) => {
+    if(isSharedTripKey(stateKey)) state[stateKey] = value;
+  });
+
+  localStorage.setItem(key, JSON.stringify(state));
+  isLocked = Boolean(state["app::locked"]);
+
+  if(typeof render === "function" && trip.length) render();
+  if(typeof applyLockState === "function") applyLockState();
+};
 save();
 
 let isLocked = Boolean(state["app::locked"]);
@@ -2321,7 +2361,7 @@ function render(){
       </label>
       <div class="nights-box">
         <span><strong class="nights-value">${nights}</strong> ${nights===1?"notte":"notti"} di permanenza</span>
-        <span class="autosave">Salvataggio automatico</span>
+        <span class="autosave">Sincronizzazione condivisa</span>
       </div>`;
 
     const body = document.createElement("div");
@@ -2741,6 +2781,8 @@ import {
   collection,
   addDoc,
   updateDoc,
+  setDoc,
+  getDoc,
   deleteDoc,
   doc,
   onSnapshot,
@@ -2784,6 +2826,19 @@ const checklistCollection = collection(
   "agosto-2026",
   "checklist"
 );
+
+const sharedItineraryDoc = doc(
+  db,
+  "trips",
+  "agosto-2026",
+  "shared",
+  "itinerary"
+);
+
+let unsubscribeItinerary = null;
+let itinerarySaveTimer = null;
+let applyingRemoteItinerary = false;
+let itinerarySnapshotReady = false;
 
 const overlay = document.getElementById("authOverlay");
 const form = document.getElementById("authForm");
@@ -2974,6 +3029,138 @@ function renderChecklist() {
   }).join("");
 }
 
+
+function currentUsername() {
+  return localStorage.getItem(AUTH_STORAGE_KEY) || "";
+}
+
+function setSharedTripSyncStatus(text, state = "syncing") {
+  if (state === "online") {
+    setTopSyncStatus("online", currentShortTime());
+  } else if (state === "offline") {
+    setTopSyncStatus("offline");
+  } else {
+    setTopSyncStatus("syncing");
+  }
+
+  const autosaves = document.querySelectorAll(".autosave");
+  autosaves.forEach(element => {
+    element.textContent = text;
+  });
+}
+
+window.saveSharedTripState = function() {
+  if (applyingRemoteItinerary) return;
+  if (!auth.currentUser) return;
+  if (currentUsername() !== "mohammad") return;
+  if (!itinerarySnapshotReady) return;
+
+  clearTimeout(itinerarySaveTimer);
+  setSharedTripSyncStatus(
+    navigator.onLine ? "Salvataggio condiviso…" : "Salvato offline",
+    navigator.onLine ? "syncing" : "offline"
+  );
+
+  itinerarySaveTimer = window.setTimeout(async () => {
+    try {
+      const sharedState =
+        typeof window.getSharedTripState === "function"
+          ? window.getSharedTripState()
+          : {};
+
+      await setDoc(sharedItineraryDoc, {
+        state: sharedState,
+        updatedBy: currentUsername(),
+        updatedAt: serverTimestamp(),
+        updatedAtClient: Date.now(),
+        schemaVersion: 1
+      });
+
+      setSharedTripSyncStatus(
+        navigator.onLine ? "Sincronizzato tra i due telefoni" : "Salvato offline",
+        navigator.onLine ? "online" : "offline"
+      );
+    } catch (error) {
+      console.error("Errore salvataggio itinerario:", error);
+      setSharedTripSyncStatus(
+        "Errore sincronizzazione itinerario",
+        navigator.onLine ? "syncing" : "offline"
+      );
+    }
+  }, 350);
+};
+
+async function startItinerarySync() {
+  if (unsubscribeItinerary) unsubscribeItinerary();
+  itinerarySnapshotReady = false;
+
+  setSharedTripSyncStatus(
+    navigator.onLine ? "Caricamento dati condivisi…" : "Caricamento offline…",
+    navigator.onLine ? "syncing" : "offline"
+  );
+
+  unsubscribeItinerary = onSnapshot(
+    sharedItineraryDoc,
+    { includeMetadataChanges: true },
+    async snapshot => {
+      const username = currentUsername();
+
+      if (!snapshot.exists()) {
+        itinerarySnapshotReady = true;
+
+        // The first admin login seeds Firestore using the itinerary already
+        // available locally. A read-only user never creates or overwrites it.
+        if (username === "mohammad") {
+          try {
+            const sharedState =
+              typeof window.getSharedTripState === "function"
+                ? window.getSharedTripState()
+                : {};
+
+            await setDoc(sharedItineraryDoc, {
+              state: sharedState,
+              updatedBy: username,
+              updatedAt: serverTimestamp(),
+              updatedAtClient: Date.now(),
+              schemaVersion: 1
+            });
+          } catch (error) {
+            console.error("Errore inizializzazione itinerario:", error);
+          }
+        }
+        return;
+      }
+
+      const data = snapshot.data() || {};
+      applyingRemoteItinerary = true;
+      try {
+        if (typeof window.applySharedTripState === "function") {
+          window.applySharedTripState(data.state || {});
+        }
+      } finally {
+        applyingRemoteItinerary = false;
+        itinerarySnapshotReady = true;
+      }
+
+      if (snapshot.metadata.hasPendingWrites) {
+        setSharedTripSyncStatus("Salvataggio condiviso…", "syncing");
+      } else if (snapshot.metadata.fromCache && !navigator.onLine) {
+        setSharedTripSyncStatus("Dati disponibili offline", "offline");
+      } else {
+        setSharedTripSyncStatus("Sincronizzato tra i due telefoni", "online");
+      }
+    },
+    error => {
+      console.error("Errore sincronizzazione itinerario:", error);
+      itinerarySnapshotReady = true;
+      setSharedTripSyncStatus(
+        "Errore sincronizzazione itinerario",
+        navigator.onLine ? "syncing" : "offline"
+      );
+    }
+  );
+}
+
 function startChecklistSync() {
   if (unsubscribeChecklist) unsubscribeChecklist();
 
@@ -3056,6 +3243,13 @@ onAuthStateChanged(auth, user => {
     unsubscribeChecklist = null;
   }
 
+  if (unsubscribeItinerary) {
+    unsubscribeItinerary();
+    unsubscribeItinerary = null;
+  }
+  itinerarySnapshotReady = false;
+  clearTimeout(itinerarySaveTimer);
+
   if (user) {
     const username = usernameFromEmail(user.email);
     if (!username) {
@@ -3067,6 +3261,7 @@ onAuthStateChanged(auth, user => {
     errorBox.textContent = "";
     showApp();
     startChecklistSync();
+    startItinerarySync();
   } else {
     localStorage.removeItem(AUTH_STORAGE_KEY);
     checklistItems = [];
@@ -3080,6 +3275,19 @@ onAuthStateChanged(auth, user => {
     }
     history.replaceState({ page: "home" }, "", "#home");
     showLogin();
+  }
+});
+
+
+window.addEventListener("online", () => {
+  if (auth.currentUser) {
+    setSharedTripSyncStatus("Riconnessione e sincronizzazione…", "syncing");
+  }
+});
+
+window.addEventListener("offline", () => {
+  if (auth.currentUser) {
+    setSharedTripSyncStatus("Offline: le modifiche saranno sincronizzate", "offline");
   }
 });
 
