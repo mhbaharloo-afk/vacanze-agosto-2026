@@ -1407,6 +1407,78 @@
       }
     }
 
+  
+    .welcome-message{
+      margin-top:8px !important;
+    }
+
+  
+    #lockToggle{
+      transition:background .18s ease, color .18s ease, transform .18s ease;
+    }
+
+    #lockToggle.is-locked{
+      background:#fff1e8 !important;
+      color:#9a4d19 !important;
+      border-color:rgba(154,77,25,.14) !important;
+    }
+
+    #lockToggle:not(.is-locked){
+      background:#eef8f4 !important;
+      color:#17614b !important;
+      border-color:rgba(23,97,75,.12) !important;
+    }
+
+  
+    #lockToggle{
+      position:relative;
+      display:grid !important;
+      place-items:center;
+      overflow:hidden;
+    }
+
+    #lockToggle .lock-icon{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      font-size:1.15rem;
+      line-height:1;
+      transition:opacity .16s ease, transform .16s ease;
+    }
+
+    #lockToggle .lock-icon-open{
+      opacity:1;
+      transform:scale(1);
+    }
+
+    #lockToggle .lock-icon-closed{
+      opacity:0;
+      transform:scale(.72);
+    }
+
+    #lockToggle.is-locked .lock-icon-open{
+      opacity:0;
+      transform:scale(.72);
+    }
+
+    #lockToggle.is-locked .lock-icon-closed{
+      opacity:1;
+      transform:scale(1);
+    }
+
+    #lockToggle:not(.is-locked){
+      background:#e9f7f1 !important;
+      color:#17614b !important;
+      border-color:rgba(23,97,75,.16) !important;
+    }
+
+    #lockToggle.is-locked{
+      background:#fff0e6 !important;
+      color:#9a4d19 !important;
+      border-color:rgba(154,77,25,.18) !important;
+    }
+
   </style>
 </head>
 <body>
@@ -1445,10 +1517,10 @@
     <div class="topbar-main">
       <div class="topbar-copy">
         <div class="app-title">Vacanze Agosto 2026</div>
-        <div id="welcomeMessage" class="welcome-message" aria-live="polite"></div>
         <div class="app-subtitle">
           <span class="trip-route">Slovenia → Croazia → Bosnia-Erzegovina</span>
         </div>
+        <div id="welcomeMessage" class="welcome-message" aria-live="polite"></div>
         <div class="sync-status-row" aria-live="polite">
           <span id="topSyncDot" class="sync-status-dot"></span>
           <span id="topSyncStatus">Connessione…</span>
@@ -1463,7 +1535,10 @@
     <div class="topbar-controls">
       <div id="roleBadge" class="role-badge" aria-live="polite"></div>
       <div class="top-actions">
-        <button id="lockToggle" class="header-icon-button lock-button" type="button" aria-label="Blocca modifiche" title="Blocca modifiche">🔓</button>
+        <button id="lockToggle" class="header-icon-button lock-button" type="button" aria-label="Blocca modifiche" title="Blocca modifiche">
+      <span class="lock-icon lock-icon-open" aria-hidden="true">🔓</span>
+      <span class="lock-icon lock-icon-closed" aria-hidden="true">🔒</span>
+    </button>
         <button id="logoutButton" class="logout-btn" type="button" aria-label="Uscire" title="Uscire">Uscire</button>
       </div>
     </div>
@@ -3153,6 +3228,73 @@ window.addEventListener("offline", () => {
     window.__appReloading = true;
     window.location.reload();
   });
+})();
+</script>
+
+
+
+
+
+<script>
+(function(){
+  const button = document.getElementById("lockToggle");
+  if (!button) return;
+
+  const STORAGE_KEY = "vacanze-agosto-2026-locked";
+
+  function getStoredLockState(){
+    return localStorage.getItem(STORAGE_KEY) === "true";
+  }
+
+  function setLockVisual(locked){
+    button.classList.toggle("is-locked", locked);
+    button.setAttribute("aria-label", locked ? "Sblocca modifiche" : "Blocca modifiche");
+    button.setAttribute("title", locked ? "Sblocca modifiche" : "Blocca modifiche");
+    button.dataset.locked = locked ? "true" : "false";
+  }
+
+  function detectCurrentState(){
+    if (button.dataset.locked === "true") return true;
+    if (button.dataset.locked === "false") return false;
+
+    const aria = (button.getAttribute("aria-label") || "").toLowerCase();
+    if (aria.includes("sblocca")) return true;
+    if (aria.includes("blocca")) return false;
+
+    return getStoredLockState();
+  }
+
+  // Capture the click so the visual state always follows the actual toggle.
+  button.addEventListener("click", function(){
+    window.setTimeout(function(){
+      let locked = detectCurrentState();
+
+      // If the original app logic did not expose the new state,
+      // use the persisted state and invert it.
+      const stored = getStoredLockState();
+      if (locked === stored) {
+        locked = !stored;
+        localStorage.setItem(STORAGE_KEY, String(locked));
+      }
+
+      setLockVisual(locked);
+    }, 0);
+  });
+
+  // Keep compatibility with the original applyLockState function.
+  const originalApplyLockState = window.applyLockState;
+  window.applyLockState = function(){
+    if (typeof originalApplyLockState === "function") {
+      originalApplyLockState.apply(this, arguments);
+    }
+
+    window.setTimeout(function(){
+      const locked = getStoredLockState();
+      setLockVisual(locked);
+    }, 0);
+  };
+
+  setLockVisual(getStoredLockState());
 })();
 </script>
 
