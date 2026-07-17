@@ -1479,6 +1479,79 @@
       border-color:rgba(154,77,25,.18) !important;
     }
 
+  
+    .topbar{
+      transition:
+        background .22s ease,
+        border-color .22s ease,
+        box-shadow .22s ease;
+    }
+
+    .topbar.state-unlocked{
+      background:linear-gradient(180deg,#f0fbf6 0%,#e7f7ef 100%) !important;
+      border-bottom-color:rgba(30,122,88,.20) !important;
+      box-shadow:0 7px 24px rgba(30,122,88,.09) !important;
+    }
+
+    .topbar.state-locked{
+      background:linear-gradient(180deg,#fff8ef 0%,#ffefdc 100%) !important;
+      border-bottom-color:rgba(196,116,35,.22) !important;
+      box-shadow:0 7px 24px rgba(196,116,35,.10) !important;
+    }
+
+    .topbar.state-unlocked .role-badge{
+      background:#dff4e9 !important;
+      color:#17614b !important;
+      border:1px solid rgba(23,97,75,.12);
+    }
+
+    .topbar.state-locked .role-badge{
+      background:#ffe5c7 !important;
+      color:#8f4c16 !important;
+      border:1px solid rgba(143,76,22,.12);
+    }
+
+    .topbar.state-unlocked .welcome-message,
+    .topbar.state-unlocked .trip-route,
+    .topbar.state-unlocked .sync-status-row{
+      color:#315e50 !important;
+    }
+
+    .topbar.state-locked .welcome-message,
+    .topbar.state-locked .trip-route,
+    .topbar.state-locked .sync-status-row{
+      color:#865126 !important;
+    }
+
+  
+    .lock-mode-label{
+      display:inline-flex;
+      align-items:center;
+      min-height:34px;
+      padding:0 11px;
+      border-radius:999px;
+      font-size:.67rem;
+      font-weight:850;
+      white-space:nowrap;
+      transition:background .2s ease,color .2s ease;
+    }
+
+    .topbar.state-unlocked .lock-mode-label{
+      background:#d8f0e5;
+      color:#17614b;
+    }
+
+    .topbar.state-locked .lock-mode-label{
+      background:#ffe2bf;
+      color:#8f4c16;
+    }
+
+    @media (max-width:420px){
+      .lock-mode-label{
+        display:none;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1535,6 +1608,7 @@
     <div class="topbar-controls">
       <div id="roleBadge" class="role-badge" aria-live="polite"></div>
       <div class="top-actions">
+        <span id="lockModeLabel" class="lock-mode-label">Modalità modifica</span>
         <button id="lockToggle" class="header-icon-button lock-button" type="button" aria-label="Blocca modifiche" title="Blocca modifiche">
       <span class="lock-icon lock-icon-open" aria-hidden="true">🔓</span>
       <span class="lock-icon lock-icon-closed" aria-hidden="true">🔒</span>
@@ -3295,6 +3369,49 @@ window.addEventListener("offline", () => {
   };
 
   setLockVisual(getStoredLockState());
+})();
+</script>
+
+
+<script>
+(function(){
+  const button = document.getElementById("lockToggle");
+  const topbar = document.querySelector(".topbar");
+  const modeLabel = document.getElementById("lockModeLabel");
+
+  if (!button || !topbar) return;
+
+  function isLocked(){
+    return button.classList.contains("is-locked") ||
+           button.dataset.locked === "true" ||
+           (button.getAttribute("aria-label") || "").toLowerCase().includes("sblocca");
+  }
+
+  function applyTopbarState(){
+    const locked = isLocked();
+
+    topbar.classList.toggle("state-locked", locked);
+    topbar.classList.toggle("state-unlocked", !locked);
+
+    if (modeLabel) {
+      modeLabel.textContent = locked ? "Sola lettura" : "Modalità modifica";
+    }
+  }
+
+  const observer = new MutationObserver(applyTopbarState);
+  observer.observe(button, {
+    attributes:true,
+    childList:true,
+    subtree:true,
+    attributeFilter:["class","data-locked","aria-label"]
+  });
+
+  button.addEventListener("click", function(){
+    window.setTimeout(applyTopbarState, 0);
+  });
+
+  document.addEventListener("DOMContentLoaded", applyTopbarState);
+  window.setTimeout(applyTopbarState, 0);
 })();
 </script>
 
