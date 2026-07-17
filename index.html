@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="app-version" content="48">
+  <meta name="app-version" content="50">
   <meta name="theme-color" content="#1f6f5f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -1694,6 +1694,269 @@
       }
     }
 
+
+    .shared-place-toolbar.always-visible{
+      display:flex !important;
+      margin:0 14px 12px;
+      padding:11px;
+      border:1px solid rgba(34,109,82,.16);
+      border-radius:15px;
+      background:#f0f8f4;
+    }
+
+    .destination .shared-place-toolbar.always-visible.hidden{
+      display:flex !important;
+    }
+
+    .destination:not(.expanded) .shared-place-toolbar.always-visible{
+      display:flex !important;
+    }
+
+    .shared-place-toolbar.always-visible .add-shared-place{
+      position:relative;
+      z-index:4;
+    }
+
+
+.dynamic-itinerary-section{
+  margin:18px 0 22px;
+  padding:16px;
+  border:1px solid var(--outline);
+  border-radius:26px;
+  background:linear-gradient(180deg,#fbfdfc,#f2f8f5);
+  box-shadow:var(--shadow);
+}
+.dynamic-itinerary-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:14px;
+}
+.dynamic-itinerary-header h2{
+  margin:3px 0 5px;
+  font-size:1.12rem;
+}
+.dynamic-itinerary-header p{
+  margin:0;
+  color:var(--muted);
+  font-size:.76rem;
+  line-height:1.4;
+}
+.dynamic-primary-button,
+.dynamic-secondary-button,
+.dynamic-tertiary-button{
+  border:0;
+  border-radius:13px;
+  min-height:40px;
+  padding:0 13px;
+  font-weight:850;
+  cursor:pointer;
+}
+.dynamic-primary-button{
+  background:var(--primary);
+  color:#fff;
+  flex:0 0 auto;
+}
+.dynamic-secondary-button{
+  background:#dff2e9;
+  color:#1f634d;
+}
+.dynamic-tertiary-button{
+  background:#eef1ff;
+  color:#4053a4;
+}
+.dynamic-countries-list{
+  display:grid;
+  gap:13px;
+}
+.dynamic-country{
+  border:1px solid rgba(34,109,82,.15);
+  border-radius:20px;
+  background:#fff;
+  overflow:hidden;
+}
+.dynamic-country-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:14px;
+  background:#edf7f2;
+}
+.dynamic-country-title{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-width:0;
+}
+.dynamic-country-flag{
+  font-size:1.4rem;
+}
+.dynamic-country-name{
+  font-weight:900;
+  font-size:.98rem;
+}
+.dynamic-country-actions{
+  display:flex;
+  gap:7px;
+  align-items:center;
+}
+.dynamic-stays{
+  display:grid;
+  gap:10px;
+  padding:12px;
+}
+.dynamic-stay{
+  border:1px solid var(--outline);
+  border-radius:17px;
+  background:#fbfcfb;
+  overflow:hidden;
+}
+.dynamic-stay-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  padding:12px;
+}
+.dynamic-stay-name{
+  font-weight:900;
+}
+.dynamic-stay-meta{
+  margin-top:4px;
+  font-size:.7rem;
+  color:var(--muted);
+  line-height:1.35;
+}
+.dynamic-attractions{
+  display:grid;
+  gap:8px;
+  padding:0 12px 12px;
+}
+.dynamic-attraction{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  padding:11px;
+  border-radius:14px;
+  background:#fff;
+  border:1px solid var(--outline);
+}
+.dynamic-attraction-name{
+  font-weight:850;
+  font-size:.84rem;
+}
+.dynamic-attraction-desc{
+  margin-top:3px;
+  font-size:.7rem;
+  color:var(--muted);
+  line-height:1.4;
+}
+.dynamic-attraction a{
+  font-size:.7rem;
+  font-weight:800;
+}
+.dynamic-empty{
+  padding:18px;
+  text-align:center;
+  color:var(--muted);
+  font-size:.78rem;
+  border:1px dashed var(--outline);
+  border-radius:16px;
+}
+.dynamic-delete-button{
+  width:35px;
+  height:35px;
+  border:0;
+  border-radius:11px;
+  background:#fff0ed;
+  color:#a13e32;
+}
+.dynamic-record-dialog{
+  width:min(92vw,480px);
+  border:0;
+  border-radius:22px;
+  padding:0;
+  box-shadow:0 24px 80px rgba(15,34,28,.32);
+}
+.dynamic-record-dialog::backdrop{
+  background:rgba(15,30,25,.52);
+  backdrop-filter:blur(3px);
+}
+.dynamic-record-form{
+  display:grid;
+  gap:14px;
+  padding:20px;
+}
+.dynamic-record-form h2{
+  margin:0;
+  font-size:1.1rem;
+}
+.dynamic-record-form label{
+  display:grid;
+  gap:6px;
+  font-size:.75rem;
+  font-weight:850;
+  color:var(--muted);
+}
+.dynamic-record-form input,
+.dynamic-record-form textarea{
+  box-sizing:border-box;
+  width:100%;
+  border:1px solid var(--outline);
+  border-radius:13px;
+  padding:11px 12px;
+  background:#fff;
+  color:var(--text);
+  font:inherit;
+}
+.dynamic-record-form textarea{
+  min-height:88px;
+  resize:vertical;
+}
+.dynamic-record-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:9px;
+}
+.dynamic-record-actions button{
+  min-height:40px;
+  border:0;
+  border-radius:13px;
+  padding:0 15px;
+  font-weight:850;
+}
+.dynamic-cancel-button{
+  background:#edf1ef;
+  color:var(--text);
+}
+.dynamic-save-button{
+  background:var(--primary);
+  color:#fff;
+}
+@media(max-width:560px){
+  .dynamic-itinerary-header{
+    flex-direction:column;
+  }
+  .dynamic-primary-button{
+    width:100%;
+    min-height:45px;
+  }
+  .dynamic-country-header,
+  .dynamic-stay-header{
+    align-items:stretch;
+    flex-direction:column;
+  }
+  .dynamic-country-actions{
+    width:100%;
+  }
+  .dynamic-secondary-button,
+  .dynamic-tertiary-button{
+    flex:1;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1868,7 +2131,24 @@
   </div>
   <div class="helper">Tocca una destinazione per aprire i suoi luoghi. Le destinazioni iniziali vengono lette da viaggio.json. I nuovi posti aggiunti nell’app sono condivisi in tempo reale.</div>
 
-  <main id="destinations"></main>
+  
+<section id="dynamicItinerarySection" class="dynamic-itinerary-section">
+  <div class="dynamic-itinerary-header">
+    <div>
+      <div class="eyebrow">ITINERARIO CONDIVISO</div>
+      <h2>Paesi, pernottamenti e attrazioni</h2>
+      <p>Ogni nuovo elemento viene sincronizzato automaticamente tra i due cellulari.</p>
+    </div>
+    <button id="addCountryButton" class="dynamic-primary-button" type="button">
+      ＋ Nuovo paese
+    </button>
+  </div>
+  <div id="dynamicCountriesList" class="dynamic-countries-list">
+    <div class="dynamic-empty">Caricamento itinerario condiviso…</div>
+  </div>
+</section>
+
+<main id="destinations"></main>
 </div>
 
 <div class="bottom">
@@ -2544,19 +2824,35 @@ function render(){
     const body = document.createElement("div");
     body.className="dest-body";
 
-    if(localStorage.getItem("vacanze-agosto-2026-auth-user") === "mohammad"){
-      const toolbar = document.createElement("div");
-      toolbar.className = "shared-place-toolbar";
-      toolbar.innerHTML = `
-        <span class="shared-place-hint">I nuovi posti saranno visibili subito su entrambi i cellulari.</span>
-        <button class="add-shared-place" type="button">＋ Aggiungi posto</button>`;
-      toolbar.querySelector(".add-shared-place").addEventListener("click", event=>{
-        event.stopPropagation();
-        if(typeof window.openSharedPlaceDialog === "function"){
-          window.openSharedPlaceDialog(dest.city);
-        }
-      });
-      body.appendChild(toolbar);
+    let sharedPlaceToolbar = null;
+    const loggedAdmin =
+      String(localStorage.getItem("vacanze-agosto-2026-auth-user") || "")
+        .trim()
+        .toLowerCase() === "mohammad";
+
+    if(loggedAdmin){
+      sharedPlaceToolbar = document.createElement("div");
+      sharedPlaceToolbar.className = "shared-place-toolbar always-visible";
+      sharedPlaceToolbar.innerHTML = `
+        <span class="shared-place-hint">
+          Aggiungi un nuovo posto a ${escapeHtml(dest.city)}. Sarà visibile subito su entrambi i cellulari.
+        </span>
+        <button class="add-shared-place" type="button" aria-label="Aggiungi un nuovo posto a ${escapeHtml(dest.city)}">
+          ＋ Aggiungi posto
+        </button>`;
+
+      sharedPlaceToolbar
+        .querySelector(".add-shared-place")
+        .addEventListener("click", event=>{
+          event.preventDefault();
+          event.stopPropagation();
+
+          if(typeof window.openSharedPlaceDialog === "function"){
+            window.openSharedPlaceDialog(dest.city);
+          }else{
+            alert("Il modulo di aggiunta non è ancora pronto. Riapri l'app tra qualche secondo.");
+          }
+        });
     }
 
     matchingPlaces.forEach((p,i)=>{
@@ -2638,6 +2934,9 @@ function render(){
 
     section.appendChild(head);
     section.appendChild(editor);
+    if(sharedPlaceToolbar){
+      section.appendChild(sharedPlaceToolbar);
+    }
     section.appendChild(body);
     root.appendChild(section);
   });
@@ -3049,11 +3348,29 @@ const sharedPlacesCollection = collection(
   "places"
 );
 
+const dynamicCountriesCollection = collection(
+  db, "trips", "agosto-2026", "countries"
+);
+const dynamicStaysCollection = collection(
+  db, "trips", "agosto-2026", "stays"
+);
+const dynamicAttractionsCollection = collection(
+  db, "trips", "agosto-2026", "attractions"
+);
+
 let unsubscribeItinerary = null;
 let itinerarySaveTimer = null;
 let applyingRemoteItinerary = false;
 let itinerarySnapshotReady = false;
 let unsubscribeSharedPlaces = null;
+let unsubscribeDynamicCountries = null;
+let unsubscribeDynamicStays = null;
+let unsubscribeDynamicAttractions = null;
+let dynamicCountries = [];
+let dynamicStays = [];
+let dynamicAttractions = [];
+let dynamicDialogMode = "";
+let dynamicDialogParentId = "";
 
 const overlay = document.getElementById("authOverlay");
 const form = document.getElementById("authForm");
@@ -3104,6 +3421,7 @@ function showApp() {
   if (typeof render === "function" && trip.length) {
     render();
   }
+  if (typeof renderDynamicItinerary === "function") renderDynamicItinerary();
 
   if (typeof applyLockState === "function") applyLockState();
 
@@ -3488,6 +3806,292 @@ function startSharedPlacesSync(){
   );
 }
 
+
+const dynamicCountriesList = document.getElementById("dynamicCountriesList");
+const addCountryButton = document.getElementById("addCountryButton");
+const dynamicRecordDialog = document.getElementById("dynamicRecordDialog");
+const dynamicRecordForm = document.getElementById("dynamicRecordForm");
+const dynamicRecordTitle = document.getElementById("dynamicRecordTitle");
+const dynamicRecordFields = document.getElementById("dynamicRecordFields");
+const dynamicRecordCancel = document.getElementById("dynamicRecordCancel");
+
+function isDynamicAdmin(){
+  return String(currentUsername()).trim().toLowerCase() === "mohammad";
+}
+
+function dynamicDateLabel(value){
+  if(!value) return "";
+  try{
+    return new Intl.DateTimeFormat("it-IT", {
+      day:"2-digit", month:"2-digit", year:"numeric"
+    }).format(new Date(value + "T12:00:00"));
+  }catch{
+    return value;
+  }
+}
+
+function renderDynamicItinerary(){
+  if(!dynamicCountriesList) return;
+
+  if(addCountryButton){
+    addCountryButton.style.display = isDynamicAdmin() ? "inline-flex" : "none";
+  }
+
+  if(!dynamicCountries.length){
+    dynamicCountriesList.innerHTML = `
+      <div class="dynamic-empty">
+        Nessun paese aggiunto dall’app.
+        ${isDynamicAdmin() ? "Premi “Nuovo paese” per iniziare." : ""}
+      </div>`;
+    return;
+  }
+
+  dynamicCountriesList.innerHTML = dynamicCountries.map(country => {
+    const stays = dynamicStays
+      .filter(stay => stay.countryId === country.id)
+      .sort((a,b) => Number(a.createdAtClient||0)-Number(b.createdAtClient||0));
+
+    return `
+      <article class="dynamic-country" data-country-id="${escapeHtml(country.id)}">
+        <div class="dynamic-country-header">
+          <div class="dynamic-country-title">
+            <span class="dynamic-country-flag">${escapeHtml(country.flag || "🌍")}</span>
+            <span class="dynamic-country-name">${escapeHtml(country.name || "")}</span>
+          </div>
+          ${isDynamicAdmin() ? `
+            <div class="dynamic-country-actions">
+              <button class="dynamic-secondary-button add-dynamic-stay" type="button">
+                ＋ Pernottamento
+              </button>
+              <button class="dynamic-delete-button delete-dynamic-country" type="button" aria-label="Elimina paese">🗑</button>
+            </div>` : ""}
+        </div>
+        <div class="dynamic-stays">
+          ${stays.length ? stays.map(stay => {
+            const attractions = dynamicAttractions
+              .filter(attraction => attraction.stayId === stay.id)
+              .sort((a,b) => Number(a.createdAtClient||0)-Number(b.createdAtClient||0));
+
+            const dates = [dynamicDateLabel(stay.arrival), dynamicDateLabel(stay.departure)]
+              .filter(Boolean).join(" → ");
+
+            return `
+              <section class="dynamic-stay" data-stay-id="${escapeHtml(stay.id)}">
+                <div class="dynamic-stay-header">
+                  <div>
+                    <div class="dynamic-stay-name">🏨 ${escapeHtml(stay.city || "")}</div>
+                    <div class="dynamic-stay-meta">
+                      ${dates ? escapeHtml(dates) : "Date non indicate"}
+                      ${stay.accommodation ? `<br>${escapeHtml(stay.accommodation)}` : ""}
+                    </div>
+                  </div>
+                  ${isDynamicAdmin() ? `
+                    <div class="dynamic-country-actions">
+                      <button class="dynamic-tertiary-button add-dynamic-attraction" type="button">
+                        ＋ Attrazione
+                      </button>
+                      <button class="dynamic-delete-button delete-dynamic-stay" type="button" aria-label="Elimina pernottamento">🗑</button>
+                    </div>` : ""}
+                </div>
+                <div class="dynamic-attractions">
+                  ${attractions.length ? attractions.map(attraction => `
+                    <div class="dynamic-attraction" data-attraction-id="${escapeHtml(attraction.id)}">
+                      <div>
+                        <div class="dynamic-attraction-name">${escapeHtml(attraction.name || "")}</div>
+                        ${attraction.description ? `<div class="dynamic-attraction-desc">${escapeHtml(attraction.description)}</div>` : ""}
+                        ${attraction.maps ? `<a href="${escapeHtml(attraction.maps)}" target="_blank" rel="noopener">Apri su Google Maps</a>` : ""}
+                      </div>
+                      ${isDynamicAdmin() ? `
+                        <button class="dynamic-delete-button delete-dynamic-attraction" type="button" aria-label="Elimina attrazione">🗑</button>
+                      ` : ""}
+                    </div>
+                  `).join("") : `<div class="dynamic-empty">Nessuna attrazione aggiunta.</div>`}
+                </div>
+              </section>
+            `;
+          }).join("") : `<div class="dynamic-empty">Nessun pernottamento aggiunto.</div>`}
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  dynamicCountriesList.querySelectorAll(".add-dynamic-stay").forEach(button => {
+    button.addEventListener("click", () => {
+      const countryId = button.closest(".dynamic-country").dataset.countryId;
+      openDynamicDialog("stay", countryId);
+    });
+  });
+
+  dynamicCountriesList.querySelectorAll(".add-dynamic-attraction").forEach(button => {
+    button.addEventListener("click", () => {
+      const stayId = button.closest(".dynamic-stay").dataset.stayId;
+      openDynamicDialog("attraction", stayId);
+    });
+  });
+
+  dynamicCountriesList.querySelectorAll(".delete-dynamic-country").forEach(button => {
+    button.addEventListener("click", async () => {
+      const countryId = button.closest(".dynamic-country").dataset.countryId;
+      if(!confirm("Eliminare questo paese e tutti i suoi pernottamenti e attrazioni?")) return;
+      const stays = dynamicStays.filter(item => item.countryId === countryId);
+      for(const stay of stays){
+        const attractions = dynamicAttractions.filter(item => item.stayId === stay.id);
+        for(const attraction of attractions){
+          await deleteDoc(doc(db,"trips","agosto-2026","attractions",attraction.id));
+        }
+        await deleteDoc(doc(db,"trips","agosto-2026","stays",stay.id));
+      }
+      await deleteDoc(doc(db,"trips","agosto-2026","countries",countryId));
+    });
+  });
+
+  dynamicCountriesList.querySelectorAll(".delete-dynamic-stay").forEach(button => {
+    button.addEventListener("click", async () => {
+      const stayId = button.closest(".dynamic-stay").dataset.stayId;
+      if(!confirm("Eliminare questo pernottamento e tutte le sue attrazioni?")) return;
+      const attractions = dynamicAttractions.filter(item => item.stayId === stayId);
+      for(const attraction of attractions){
+        await deleteDoc(doc(db,"trips","agosto-2026","attractions",attraction.id));
+      }
+      await deleteDoc(doc(db,"trips","agosto-2026","stays",stayId));
+    });
+  });
+
+  dynamicCountriesList.querySelectorAll(".delete-dynamic-attraction").forEach(button => {
+    button.addEventListener("click", async () => {
+      const attractionId = button.closest(".dynamic-attraction").dataset.attractionId;
+      if(!confirm("Eliminare questa attrazione?")) return;
+      await deleteDoc(doc(db,"trips","agosto-2026","attractions",attractionId));
+    });
+  });
+}
+
+function openDynamicDialog(mode, parentId=""){
+  if(!isDynamicAdmin()) return;
+  dynamicDialogMode = mode;
+  dynamicDialogParentId = parentId;
+  dynamicRecordForm.reset();
+
+  if(mode === "country"){
+    dynamicRecordTitle.textContent = "Nuovo paese";
+    dynamicRecordFields.innerHTML = `
+      <label>Nome del paese
+        <input name="name" maxlength="100" required placeholder="Es. Montenegro">
+      </label>
+      <label>Bandiera o simbolo
+        <input name="flag" maxlength="8" placeholder="Es. 🇲🇪">
+      </label>`;
+  }else if(mode === "stay"){
+    dynamicRecordTitle.textContent = "Nuovo pernottamento";
+    dynamicRecordFields.innerHTML = `
+      <label>Città o luogo
+        <input name="city" maxlength="120" required placeholder="Es. Kotor">
+      </label>
+      <label>Data di arrivo
+        <input name="arrival" type="date">
+      </label>
+      <label>Data di partenza
+        <input name="departure" type="date">
+      </label>
+      <label>Nome alloggio
+        <input name="accommodation" maxlength="160" placeholder="Hotel, appartamento o campeggio">
+      </label>`;
+  }else{
+    dynamicRecordTitle.textContent = "Nuova attrazione";
+    dynamicRecordFields.innerHTML = `
+      <label>Nome dell’attrazione
+        <input name="name" maxlength="140" required placeholder="Es. Baia di Kotor">
+      </label>
+      <label>Descrizione
+        <textarea name="description" maxlength="500" placeholder="Cosa vedere o fare"></textarea>
+      </label>
+      <label>Link Google Maps
+        <input name="maps" type="url" maxlength="500" placeholder="https://maps.google.com/...">
+      </label>`;
+  }
+
+  dynamicRecordDialog.showModal();
+  window.setTimeout(() => dynamicRecordFields.querySelector("input")?.focus(), 50);
+}
+
+addCountryButton?.addEventListener("click", () => openDynamicDialog("country"));
+dynamicRecordCancel?.addEventListener("click", () => dynamicRecordDialog.close());
+
+dynamicRecordForm?.addEventListener("submit", async event => {
+  event.preventDefault();
+  if(!isDynamicAdmin()) return;
+
+  const data = new FormData(dynamicRecordForm);
+  const saveButton = dynamicRecordForm.querySelector(".dynamic-save-button");
+  saveButton.disabled = true;
+  saveButton.textContent = "Salvataggio…";
+
+  try{
+    if(dynamicDialogMode === "country"){
+      await addDoc(dynamicCountriesCollection,{
+        name:String(data.get("name")||"").trim(),
+        flag:String(data.get("flag")||"").trim() || "🌍",
+        createdBy:currentUsername(),
+        createdAt:serverTimestamp(),
+        createdAtClient:Date.now()
+      });
+    }else if(dynamicDialogMode === "stay"){
+      await addDoc(dynamicStaysCollection,{
+        countryId:dynamicDialogParentId,
+        city:String(data.get("city")||"").trim(),
+        arrival:String(data.get("arrival")||""),
+        departure:String(data.get("departure")||""),
+        accommodation:String(data.get("accommodation")||"").trim(),
+        createdBy:currentUsername(),
+        createdAt:serverTimestamp(),
+        createdAtClient:Date.now()
+      });
+    }else{
+      await addDoc(dynamicAttractionsCollection,{
+        stayId:dynamicDialogParentId,
+        name:String(data.get("name")||"").trim(),
+        description:String(data.get("description")||"").trim(),
+        maps:String(data.get("maps")||"").trim(),
+        createdBy:currentUsername(),
+        createdAt:serverTimestamp(),
+        createdAtClient:Date.now()
+      });
+    }
+    dynamicRecordDialog.close();
+  }catch(error){
+    console.error("Errore creazione record dinamico:", error);
+    alert("Salvataggio non riuscito. Controlla le regole Firebase.");
+  }finally{
+    saveButton.disabled = false;
+    saveButton.textContent = "Salva e condividi";
+  }
+});
+
+function startDynamicItinerarySync(){
+  if(unsubscribeDynamicCountries) unsubscribeDynamicCountries();
+  if(unsubscribeDynamicStays) unsubscribeDynamicStays();
+  if(unsubscribeDynamicAttractions) unsubscribeDynamicAttractions();
+
+  unsubscribeDynamicCountries = onSnapshot(dynamicCountriesCollection, snapshot => {
+    dynamicCountries = snapshot.docs.map(item => ({id:item.id,...item.data()}))
+      .sort((a,b)=>Number(a.createdAtClient||0)-Number(b.createdAtClient||0));
+    renderDynamicItinerary();
+  }, error => {
+    console.error("Errore countries:", error);
+    dynamicCountriesList.innerHTML = '<div class="dynamic-empty">Errore lettura paesi. Controlla le regole Firebase.</div>';
+  });
+
+  unsubscribeDynamicStays = onSnapshot(dynamicStaysCollection, snapshot => {
+    dynamicStays = snapshot.docs.map(item => ({id:item.id,...item.data()}));
+    renderDynamicItinerary();
+  }, error => console.error("Errore stays:", error));
+
+  unsubscribeDynamicAttractions = onSnapshot(dynamicAttractionsCollection, snapshot => {
+    dynamicAttractions = snapshot.docs.map(item => ({id:item.id,...item.data()}));
+    renderDynamicItinerary();
+  }, error => console.error("Errore attractions:", error));
+}
+
 function startChecklistSync() {
   if (unsubscribeChecklist) unsubscribeChecklist();
 
@@ -3579,6 +4183,19 @@ onAuthStateChanged(auth, user => {
     unsubscribeSharedPlaces();
     unsubscribeSharedPlaces = null;
   }
+
+  if (unsubscribeDynamicCountries) {
+    unsubscribeDynamicCountries();
+    unsubscribeDynamicCountries = null;
+  }
+  if (unsubscribeDynamicStays) {
+    unsubscribeDynamicStays();
+    unsubscribeDynamicStays = null;
+  }
+  if (unsubscribeDynamicAttractions) {
+    unsubscribeDynamicAttractions();
+    unsubscribeDynamicAttractions = null;
+  }
   itinerarySnapshotReady = false;
   clearTimeout(itinerarySaveTimer);
 
@@ -3595,6 +4212,7 @@ onAuthStateChanged(auth, user => {
     startChecklistSync();
     startItinerarySync();
     startSharedPlacesSync();
+    startDynamicItinerarySync();
   } else {
     localStorage.removeItem(AUTH_STORAGE_KEY);
     checklistItems = [];
@@ -3976,6 +4594,18 @@ window.addEventListener("offline", () => {
     <div class="shared-place-form-actions">
       <button class="shared-place-cancel" type="button" id="sharedPlaceCancel">Annulla</button>
       <button class="shared-place-save" type="submit">Salva e condividi</button>
+    </div>
+  </form>
+</dialog>
+
+
+<dialog id="dynamicRecordDialog" class="dynamic-record-dialog">
+  <form id="dynamicRecordForm" class="dynamic-record-form">
+    <h2 id="dynamicRecordTitle">Nuovo elemento</h2>
+    <div id="dynamicRecordFields"></div>
+    <div class="dynamic-record-actions">
+      <button id="dynamicRecordCancel" type="button" class="dynamic-cancel-button">Annulla</button>
+      <button type="submit" class="dynamic-save-button">Salva e condividi</button>
     </div>
   </form>
 </dialog>
