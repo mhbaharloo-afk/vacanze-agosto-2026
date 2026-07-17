@@ -268,9 +268,72 @@
       .currency-field{padding:10px}.currency-field input{font-size:1.05rem}
     }
 
+  
+    .auth-overlay{
+      position:fixed;inset:0;z-index:10000;display:flex;align-items:center;
+      justify-content:center;padding:22px;
+      background:radial-gradient(circle at top left,rgba(42,139,108,.28),transparent 38%),
+                 linear-gradient(160deg,#0f3f33,#1d6955 62%,#dcefe8);
+    }
+    .auth-overlay.hidden{display:none}
+    .auth-card{
+      width:min(100%,420px);padding:24px;border-radius:30px;
+      background:rgba(255,255,255,.97);
+      box-shadow:0 24px 70px rgba(7,45,35,.28);
+      border:1px solid rgba(255,255,255,.68);
+    }
+    .auth-logo{
+      width:62px;height:62px;margin:0 auto 14px;border-radius:21px;
+      display:flex;align-items:center;justify-content:center;font-size:1.85rem;
+      background:linear-gradient(145deg,#e7f6ef,#fff);
+      box-shadow:0 8px 22px rgba(23,103,81,.16);
+    }
+    .auth-title{margin:0;text-align:center;font-size:1.45rem;font-weight:950;color:#153f33}
+    .auth-subtitle{margin:7px 0 20px;text-align:center;font-size:.84rem;color:#6a7b75;line-height:1.45}
+    .auth-field{margin-bottom:13px}
+    .auth-field label{display:block;margin:0 0 7px;font-size:.78rem;font-weight:850;color:#4f625c}
+    .auth-field input{
+      width:100%;box-sizing:border-box;border:1px solid #d5e2dd;border-radius:16px;
+      padding:13px 14px;background:#f9fcfb;color:#18352c;font-size:1rem;outline:none;
+    }
+    .auth-field input:focus{border-color:#2b8f70;box-shadow:0 0 0 3px rgba(43,143,112,.13)}
+    .auth-button{
+      width:100%;margin-top:5px;border:0;border-radius:17px;padding:14px 16px;
+      background:#176f59;color:#fff;font-size:.96rem;font-weight:900;
+      box-shadow:0 8px 20px rgba(23,111,89,.24)
+    }
+    .auth-button:active{transform:scale(.985)}
+    .auth-error{min-height:20px;margin-top:12px;text-align:center;color:#b23636;font-size:.78rem;font-weight:800}
+    .logout-btn{
+      width:42px;height:42px;border:0;border-radius:14px;background:#eef3f1;
+      color:#315a4d;font-size:1.05rem;font-weight:900;display:grid;place-items:center;
+    }
+
   </style>
 </head>
 <body>
+
+<div id="authOverlay" class="auth-overlay" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+  <form id="authForm" class="auth-card">
+    <div class="auth-logo" aria-hidden="true">🔐</div>
+    <h1 id="authTitle" class="auth-title">Accesso al viaggio</h1>
+    <p class="auth-subtitle">Inserisci username e password per entrare nell’app.</p>
+
+    <div class="auth-field">
+      <label for="authUsername">Username</label>
+      <input id="authUsername" autocomplete="username" autocapitalize="none" required>
+    </div>
+
+    <div class="auth-field">
+      <label for="authPassword">Password</label>
+      <input id="authPassword" type="password" autocomplete="current-password" required>
+    </div>
+
+    <button class="auth-button" type="submit">Entra</button>
+    <div id="authError" class="auth-error" aria-live="polite"></div>
+  </form>
+</div>
+
 <div class="app">
   <div class="topbar">
     <div>
@@ -278,6 +341,7 @@
       <div class="app-subtitle">Slovenia → Croazia → Bosnia-Erzegovina</div>
     </div>
     <div class="top-actions">
+      <button id="logoutButton" class="logout-btn" type="button" aria-label="Esci" title="Esci">⇥</button>
       <button id="lockToggle" class="lock-button" type="button" aria-label="Blocca modifiche">🔓</button>
       <div class="top-icon" aria-hidden="true"><img src="icon-192.png" alt="" /></div>
     </div>
@@ -1116,6 +1180,67 @@ document.addEventListener("selectstart", event => {
   Object.entries(fields).forEach(([key, field]) => {
     field.addEventListener("input", () => updateFrom(key));
     field.addEventListener("focus", () => field.select());
+  });
+})();
+</script>
+
+
+<script>
+(function(){
+  const AUTH_STORAGE_KEY = "vacanze-agosto-2026-auth-user";
+  const accounts = {
+    mahnoush: "123456",
+    mohammad: "mohmah2024"
+  };
+
+  const overlay = document.getElementById("authOverlay");
+  const form = document.getElementById("authForm");
+  const usernameInput = document.getElementById("authUsername");
+  const passwordInput = document.getElementById("authPassword");
+  const errorBox = document.getElementById("authError");
+  const logoutButton = document.getElementById("logoutButton");
+
+  function showApp(){
+    overlay.classList.add("hidden");
+    document.documentElement.style.overflow = "";
+    document.body.style.overflow = "";
+  }
+
+  function showLogin(){
+    overlay.classList.remove("hidden");
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    setTimeout(() => usernameInput.focus(), 50);
+  }
+
+  if(localStorage.getItem(AUTH_STORAGE_KEY)){
+    showApp();
+  }else{
+    showLogin();
+  }
+
+  form.addEventListener("submit", function(event){
+    event.preventDefault();
+    const username = String(usernameInput.value || "").trim().toLowerCase();
+    const password = String(passwordInput.value || "");
+
+    if(accounts[username] && accounts[username] === password){
+      localStorage.setItem(AUTH_STORAGE_KEY, username);
+      errorBox.textContent = "";
+      passwordInput.value = "";
+      showApp();
+    }else{
+      errorBox.textContent = "Username o password non corretti.";
+      passwordInput.select();
+    }
+  });
+
+  logoutButton.addEventListener("click", function(){
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    usernameInput.value = "";
+    passwordInput.value = "";
+    errorBox.textContent = "";
+    showLogin();
   });
 })();
 </script>
