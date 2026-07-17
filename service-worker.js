@@ -1,4 +1,4 @@
-const CACHE = "vacanze-2026-v42";
+const CACHE = "vacanze-2026-v43";
 const APP_SHELL = [
   "./",
   "./index.html",

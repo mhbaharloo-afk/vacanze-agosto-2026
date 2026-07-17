@@ -1303,6 +1303,43 @@
       }
     }
 
+  
+    #checklistPage .checklist-footer-label{
+      max-width:calc(100% - 28px);
+      justify-content:center;
+      padding:9px 14px;
+      gap:8px;
+      overflow:hidden;
+    }
+
+    #sharedChecklistFooterCount{
+      color:#174838;
+      font-weight:900;
+      white-space:nowrap;
+    }
+
+    .checklist-footer-separator{
+      color:#9aaba4;
+      flex:0 0 auto;
+    }
+
+    #sharedChecklistFooterStatus{
+      min-width:0;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      color:#667670;
+      font-weight:750;
+    }
+
+    @media (max-width:420px){
+      #checklistPage .checklist-footer-label{
+        font-size:.66rem;
+        padding-left:11px;
+        padding-right:11px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1495,7 +1532,7 @@
       <h2 id="sharedChecklistTitle" class="shared-checklist-title">Lista condivisa</h2>
       <div class="shared-checklist-subtitle">Mohammad e Mahnoush</div>
     </div>
-    <div id="sharedChecklistCount" class="shared-checklist-count">0/0</div>
+    
   </div>
 
   <form id="sharedChecklistForm" class="checklist-add">
@@ -1507,6 +1544,12 @@
   <div id="sharedChecklistList" class="checklist-list"></div>
   <div class="checklist-note"><span id="sharedChecklistStatus">Connessione al database…</span></div>
 </section>
+
+  <div class="checklist-footer-label" aria-live="polite">
+    <span id="sharedChecklistFooterCount">0/0 cose preparate</span>
+    <span class="checklist-footer-separator">•</span>
+    <span id="sharedChecklistFooterStatus">Checklist condivisa e sincronizzata</span>
+  </div>
 </div>
 
 
@@ -2531,6 +2574,8 @@ const checklistForm = document.getElementById("sharedChecklistForm");
 const checklistInput = document.getElementById("sharedChecklistInput");
 const checklistList = document.getElementById("sharedChecklistList");
 const checklistCount = document.getElementById("sharedChecklistCount");
+const checklistFooterCount = document.getElementById("sharedChecklistFooterCount");
+const checklistFooterStatus = document.getElementById("sharedChecklistFooterStatus");
 const checklistStatus = document.getElementById("sharedChecklistStatus");
 
 let checklistItems = [];
@@ -2544,9 +2589,14 @@ function usernameFromEmail(email) {
 }
 
 function setChecklistStatus(text, isError = false) {
-  if (!checklistStatus) return;
-  checklistStatus.textContent = text;
-  checklistStatus.style.color = isError ? "#a73e3e" : "";
+  if (checklistStatus) {
+    checklistStatus.textContent = text;
+    checklistStatus.style.color = isError ? "#a73e3e" : "";
+  }
+  if (checklistFooterStatus) {
+    checklistFooterStatus.textContent = text;
+    checklistFooterStatus.style.color = isError ? "#a73e3e" : "";
+  }
 }
 
 function showApp() {
@@ -2652,7 +2702,13 @@ function itemTime(item) {
 
 function renderChecklist() {
   const completed = checklistItems.filter(item => item.done).length;
-  checklistCount.textContent = `${completed}/${checklistItems.length}`;
+  if (checklistCount) {
+    checklistCount.textContent = `${completed}/${checklistItems.length}`;
+  }
+  if (checklistFooterCount) {
+    checklistFooterCount.textContent =
+      `${completed}/${checklistItems.length} cose preparate`;
+  }
 
   if (checklistItems.length === 0) {
     checklistList.innerHTML =
