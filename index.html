@@ -448,7 +448,7 @@ function renderTripSummary(){
       <div class="country-stops">
         ${group.stops.map(stop=>`
           <div class="summary-stop">
-            <button type="button" class="summary-city-link" onclick="scrollToDestination(${JSON.stringify(stop.city)})">${escapeHtml(stop.city)}</button>
+            <button type="button" class="summary-city-link" data-scroll-city="${escapeHtml(stop.city)}">${escapeHtml(stop.city)}</button>
             <span>${formatDate(stop.arrival)} → ${formatDate(stop.departure)} · ${stop.nights} ${stop.nights===1?"notte":"notti"}</span>
             ${stop.accommodation && stop.accommodation.trim().toLowerCase() !== stop.city.trim().toLowerCase()
               ? `<span>🏨 ${escapeHtml(stop.accommodation)}</span>`
@@ -457,19 +457,34 @@ function renderTripSummary(){
               <div class="summary-list">
                 <div class="summary-list-title">Da visitare</div>
                 ${stop.selectedPlaces.length
-                  ? `<div class="summary-items">${stop.selectedPlaces.map(name=>`<button type="button" class="summary-chip" onclick="scrollToPlace(${JSON.stringify(stop.city)}, ${JSON.stringify(name)})">${escapeHtml(name)}</button>`).join("")}</div>`
+                  ? `<div class="summary-items">${stop.selectedPlaces.map(name=>`<button type="button" class="summary-chip" data-scroll-city="${escapeHtml(stop.city)}" data-scroll-place="${escapeHtml(name)}">${escapeHtml(name)}</button>`).join("")}</div>`
                   : `<div class="summary-empty">Nessun luogo selezionato</div>`}
               </div>
               <div class="summary-list">
                 <div class="summary-list-title">Già visitati</div>
                 ${stop.visitedPlaces.length
-                  ? `<div class="summary-items">${stop.visitedPlaces.map(name=>`<button type="button" class="summary-chip visited" onclick="scrollToPlace(${JSON.stringify(stop.city)}, ${JSON.stringify(name)})">${escapeHtml(name)}</button>`).join("")}</div>`
+                  ? `<div class="summary-items">${stop.visitedPlaces.map(name=>`<button type="button" class="summary-chip visited" data-scroll-city="${escapeHtml(stop.city)}" data-scroll-place="${escapeHtml(name)}">${escapeHtml(name)}</button>`).join("")}</div>`
                   : `<div class="summary-empty">Nessun luogo visitato</div>`}
               </div>
             </div>
           </div>`).join("")}
       </div>
     </article>`).join("");
+
+  root.querySelectorAll(".summary-city-link").forEach(button => {
+    button.addEventListener("click", () => {
+      scrollToDestination(button.dataset.scrollCity || "");
+    });
+  });
+
+  root.querySelectorAll(".summary-chip[data-scroll-place]").forEach(button => {
+    button.addEventListener("click", () => {
+      scrollToPlace(
+        button.dataset.scrollCity || "",
+        button.dataset.scrollPlace || ""
+      );
+    });
+  });
 
   document.getElementById("heroRoute").textContent =
     `${trip.length} tappe principali · ${totalNights} ${totalNights===1?"notte":"notti"}`;
@@ -621,10 +636,14 @@ function performPendingScroll(){
       const topOffset = 14;
       const top = target.getBoundingClientRect().top + window.scrollY - topOffset;
 
-      window.scrollTo({
-        top,
-        behavior: "smooth"
-      });
+      window.scrollTo(0, top);
+
+      setTimeout(() => {
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: pending.type === "place" ? "center" : "start"
+        });
+      }, 20);
 
       const flashClass = pending.type === "place"
         ? "flash-target"
