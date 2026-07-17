@@ -1,0 +1,38 @@
+PUBBLICAZIONE SU FIREBASE HOSTING
+
+Questa versione è già collegata a:
+vacanze-agosto-2026-4815f
+
+Per pubblicarla servirà Firebase Hosting.
+I passaggi verranno eseguiti successivamente.
+
+Account nell'app:
+mohammad / mohmah2024
+mahnoush / 123456
+
+Checklist cloud:
+trips/agosto-2026/checklist
+
+REGOLE FIRESTORE OBBLIGATORIE
+
+Apri Firebase Console > Firestore Database > Regole.
+Copia tutto il contenuto del file firestore.rules e premi Pubblica.
+
+Permessi eliminazione:
+- Mohammad può eliminare qualsiasi riga.
+- Mahnoush può eliminare soltanto le righe con createdBy = "mahnoush".
+
+INSTALLAZIONE SU IPHONE
+
+1. Pubblica questa cartella su Firebase Hosting.
+2. Apri il link con Safari.
+3. Tocca Condividi.
+4. Tocca Aggiungi a schermata Home.
+5. Apri l'app dalla nuova icona.
+
+La versione include:
+- icona Apple 180x180;
+- modalità standalone;
+- supporto safe-area per notch e Dynamic Island;
+- splash screen per iPhone recenti;
+- compatibilità Android PWA mantenuta.

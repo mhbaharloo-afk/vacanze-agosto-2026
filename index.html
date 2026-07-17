@@ -1,0 +1,3950 @@
+<!DOCTYPE html>
+<html lang="it" class="auth-pending">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="app-version" content="47">
+  <meta name="theme-color" content="#1f6f5f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Vacanze 2026" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <title>Vacanze Agosto 2026</title>
+  <style>
+    :root{
+      --bg:#f6f8f7;--surface:#ffffff;--surface-2:#eef7f3;--text:#17201d;
+      --muted:#65716d;--primary:#166b56;--primary-container:#d5f5e8;
+      --primary-text:#063c2e;--outline:#d9e2de;
+      --shadow:0 3px 10px rgba(24,43,36,.08),0 12px 28px rgba(24,43,36,.06);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Roboto,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text);-webkit-tap-highlight-color:transparent}
+    button,input,select{font:inherit} button{cursor:pointer}
+    .app{max-width:780px;margin:auto;padding:0 14px 104px}
+    .topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 -14px;padding:14px 18px;background:rgba(246,248,247,.94);backdrop-filter:blur(18px);border-bottom:1px solid rgba(217,226,222,.8)}
+    .app-title{font-size:1.2rem;font-weight:750}.app-subtitle{font-size:.82rem;color:var(--muted);margin-top:2px}
+    .top-actions{display:flex;align-items:center;gap:8px}
+    .top-icon{width:42px;height:42px;border:0;border-radius:14px;display:grid;place-items:center;background:var(--primary-container);overflow:hidden}.top-icon img{width:100%;height:100%;object-fit:cover}
+    .lock-button{width:42px;height:42px;border:0;border-radius:14px;display:grid;place-items:center;background:#edf1ef;color:var(--text);font-size:1.1rem}
+    .lock-button.locked{background:#ffe9c7;color:#7a4a00}
+    .locked-banner{display:none;margin-top:10px;padding:10px 12px;border-radius:16px;background:#fff0d8;color:#6f4600;font-size:.82rem;font-weight:700}
+    .locked-banner.show{display:block}
+    .hero{margin-top:16px;padding:18px;border-radius:28px;background:linear-gradient(145deg,var(--primary),#0e5745);color:white;box-shadow:var(--shadow)}
+    .hero-kicker{font-size:.8rem;opacity:.8;text-transform:uppercase;letter-spacing:.08em}.hero-title{font-size:1.35rem;font-weight:800;margin-top:2px;text-align:center}.hero-meta{font-size:.9rem;opacity:.9;margin-top:7px;text-align:center}
+    .travelers{display:flex;align-items:center;justify-content:center;gap:18px;margin:18px 0 20px}
+    .traveler{display:grid;justify-items:center;gap:5px}
+    .traveler img{
+      width:72px;height:72px;border-radius:50%;object-fit:cover;object-position:center;
+      border:3px solid rgba(255,255,255,.92);
+      box-shadow:0 5px 14px rgba(0,0,0,.2)
+    }
+
+    .hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:20px}
+    .hero-stat{padding:10px;border-radius:18px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.14)}
+    .hero-stat strong{display:block;font-size:1.15rem}.hero-stat span{font-size:.75rem;opacity:.82}
+    .bar{height:9px;background:rgba(255,255,255,.22);border-radius:999px;overflow:hidden;margin-top:14px}.bar>div{height:100%;width:0;background:white;border-radius:999px;transition:.25s}
+    .section-label{display:flex;justify-content:space-between;align-items:center;margin:22px 2px 10px}.section-label h2{font-size:1.05rem;margin:0}.section-label span{font-size:.8rem;color:var(--muted)}
+    .trip-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .country-card{min-width:0;background:var(--surface);border:1px solid var(--outline);border-radius:22px;padding:13px;box-shadow:0 2px 8px rgba(24,43,36,.04)}
+    .country-head{display:flex;align-items:center;gap:8px}.country-flag{font-size:1.5rem}.country-name{font-weight:780;font-size:.92rem}.country-nights{font-size:.78rem;color:var(--primary);font-weight:750;margin-top:2px}
+    .country-stops{margin-top:10px;display:grid;gap:7px}
+    .summary-stop{padding:8px 9px;border-radius:14px;background:var(--surface-2)}
+    .summary-lists{display:grid;gap:8px;margin-top:8px}
+    .summary-list{padding:8px 9px;border-radius:14px;background:#f7faf8;border:1px solid var(--outline)}
+    .summary-list-title{font-size:.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+    .summary-items{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+    .summary-chip{font-size:.72rem;padding:5px 8px;border-radius:999px;background:#edf1ef;color:#3d4743}
+    .summary-chip.visited{background:var(--primary-container);color:var(--primary);font-weight:750}
+    .summary-empty{font-size:.74rem;color:var(--muted);margin-top:5px}
+    .summary-stop strong{display:block;font-size:.83rem}.summary-stop span{display:block;font-size:.72rem;color:var(--muted);margin-top:2px}
+    .toolbar{display:flex;justify-content:flex-end;margin-top:12px}.toolbar .field{max-width:180px}
+    .field{width:100%;border:1px solid var(--outline);border-radius:18px;padding:12px 14px;background:var(--surface);color:var(--text);outline:none}
+    .field:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(22,107,86,.12)}
+    .helper{margin-top:10px;padding:11px 13px;border-radius:18px;background:var(--primary-container);color:var(--primary-text);font-size:.83rem}
+    .destination{background:var(--surface);border:1px solid var(--outline);border-radius:26px;margin:14px 0;overflow:hidden;box-shadow:var(--shadow)}
+    .dest-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px;background:transparent;color:var(--text);text-align:left;border:0}
+    .dest-title{display:flex;align-items:center;gap:12px;min-width:0}.flag-bubble{flex:0 0 auto;width:46px;height:46px;border-radius:16px;display:grid;place-items:center;background:var(--surface-2);font-size:1.45rem}
+    .dest-country{
+      display:block;font-size:.72rem;font-weight:800;color:var(--primary);
+      text-transform:uppercase;letter-spacing:.055em;margin-bottom:2px
+    }
+    .dest-name{display:block;font-size:1.05rem;font-weight:800}.dest-date{display:block;font-size:.8rem;color:var(--muted);margin-top:3px}.dest-right{display:flex;align-items:center;gap:8px}
+    .dest-count{font-size:.75rem;color:var(--primary);font-weight:750;white-space:nowrap}
+    .chevron{font-size:1.25rem;line-height:1;color:var(--muted);transition:transform .2s ease}
+    .destination.expanded .chevron{transform:rotate(180deg)}
+    .destination.expanded .dest-head{background:var(--surface-2)}
+    .stay-editor{display:grid!important;grid-template-columns:1fr 1fr;gap:10px;padding:13px 15px;border-top:1px solid var(--outline);border-bottom:1px solid var(--outline);background:#fbfcfc}
+    .stay-editor label{font-size:.78rem;color:var(--muted);font-weight:650}.date-wrap{margin-top:5px;display:flex;width:100%;min-width:0;border:1px solid var(--outline);border-radius:15px;padding:10px 11px;background:var(--surface)}
+    .date-wrap input{display:block;width:100%;min-width:0;border:0;background:transparent;padding:0;color:var(--text);outline:none}
+    .nights-box{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:15px;padding:11px 12px;background:var(--primary-container);color:var(--primary-text)}
+    .nights-box strong{font-size:1.05rem}.autosave{font-size:.72rem;color:var(--primary);font-weight:780}
+    .dest-body{padding:2px 14px 13px}.place{border-top:1px solid var(--outline);padding:13px 1px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:11px;align-items:start}.place:first-child{border-top:0}
+    .check{width:23px;height:23px;margin-top:2px;accent-color:var(--primary)}.place-name{font-weight:760}.place-desc{color:var(--muted);font-size:.87rem;margin-top:3px;line-height:1.4}
+    .planned{width:36px;height:36px;border-radius:14px;padding:0;border:0;background:#edf1ef;color:#68736f;font-size:1.05rem}.planned.active{background:var(--primary);color:white}.visited .place-name{text-decoration:line-through;color:var(--muted)}
+    .hidden{display:none!important}.empty{text-align:center;color:var(--muted);padding:32px 12px}
+    .bottom{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;justify-content:center;gap:9px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border-top:1px solid var(--outline)}
+    .action{flex:1;max-width:260px;border:0;border-radius:18px;padding:12px 14px;font-weight:760}.action.primary{background:var(--primary);color:white}.action.secondary{background:var(--primary-container);color:var(--primary-text)}
+    @media(max-width:620px){.trip-summary{grid-template-columns:1fr}.country-card{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:start}.country-stops{margin-top:0}.toolbar{display:flex}}
+  
+    .update-banner{
+      display:none;align-items:center;justify-content:space-between;gap:12px;
+      margin:12px 0 0;padding:12px 14px;border-radius:18px;
+      background:#fff7df;color:#604500;border:1px solid #f0d789;
+      box-shadow:0 4px 14px rgba(70,52,0,.08)
+    }
+    .update-banner.show{display:flex}
+    .update-banner span{font-size:.82rem;font-weight:700}
+    .update-banner button{
+      border:0;border-radius:14px;padding:9px 12px;
+      background:#7a5a00;color:white;font-weight:800
+    }
+
+  
+    .place-tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:7px;
+      margin-top:10px;
+    }
+    .place-tag{
+      display:inline-flex;
+      align-items:center;
+      gap:5px;
+      min-height:28px;
+      padding:5px 10px;
+      border-radius:999px;
+      font-size:.74rem;
+      font-weight:800;
+      line-height:1;
+      border:1px solid transparent;
+    }
+    .place-tag.top{background:#fff3cd;color:#755800;border-color:#f1dda0}
+    .place-tag.dog{background:#e7f6ec;color:#176b3a;border-color:#c8e8d2}
+    .place-tag.nature{background:#e8f5e9;color:#226b2c;border-color:#cae7cd}
+    .place-tag.museum{background:#f2eafd;color:#68419b;border-color:#dfcdf7}
+    .place-tag.history{background:#fff0e6;color:#8a4b17;border-color:#f4d4bc}
+    .place-tag.panorama{background:#e8f2ff;color:#225c9c;border-color:#cbdff7}
+
+  
+    body, .app, .country-card, .destination, .place{
+      -webkit-user-select:none;
+      user-select:none;
+      -webkit-touch-callout:none;
+    }
+    input, button, textarea, select{
+      -webkit-user-select:auto;
+      user-select:auto;
+    }
+    .place-main{min-width:0}
+    .place-title-line{display:flex;align-items:center;gap:9px;min-width:0}
+    .place-title-line .place-name{flex:1;min-width:0}
+    .copy-place-btn{
+      flex:0 0 auto;width:34px;height:34px;border:0;border-radius:11px;
+      background:#edf3f1;color:#315a4d;display:inline-flex;
+      align-items:center;justify-content:center;font-size:1rem;cursor:pointer;
+    }
+    .copy-place-btn:active{transform:scale(.95)}
+    .summary-chip{
+      cursor:pointer;
+      border:0;
+      font:inherit;
+      text-align:left;
+    }
+    .copy-toast{
+      position:fixed;left:50%;bottom:22px;z-index:9999;
+      transform:translateX(-50%) translateY(18px);
+      opacity:0;pointer-events:none;background:#183c31;color:#fff;
+      padding:10px 14px;border-radius:999px;font-size:.82rem;font-weight:800;
+      box-shadow:0 8px 24px rgba(0,0,0,.18);transition:.2s ease;
+    }
+    .copy-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .place.flash-target{animation:flashTarget 1.4s ease}
+    @keyframes flashTarget{
+      0%,100%{box-shadow:none}
+      35%{box-shadow:0 0 0 4px rgba(22,124,88,.18)}
+    }
+
+  
+    .summary-city-link{
+      border:0;
+      background:transparent;
+      padding:0;
+      margin:0;
+      font:inherit;
+      font-weight:800;
+      color:inherit;
+      text-align:left;
+      cursor:pointer;
+    }
+    .summary-city-link:active{opacity:.7}
+    .destination.flash-destination{animation:flashDestination 1.4s ease}
+    @keyframes flashDestination{
+      0%,100%{box-shadow:none}
+      35%{box-shadow:0 0 0 4px rgba(22,124,88,.18)}
+    }
+
+  
+    .destination{
+      scroll-margin-top:92px;
+    }
+
+  
+    .scroll-top-btn{
+      position:fixed;
+      right:20px;
+      bottom:108px;
+      z-index:999;
+      width:52px;
+      height:52px;
+      border:0;
+      border-radius:18px;
+      background:#176f59;
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:1.45rem;
+      font-weight:900;
+      box-shadow:0 10px 28px rgba(19,79,63,.28);
+      opacity:0;
+      visibility:hidden;
+      transform:translateY(14px) scale(.92);
+      transition:opacity .2s ease, transform .2s ease, visibility .2s ease;
+      cursor:pointer;
+    }
+
+    .scroll-top-btn.show{
+      opacity:1;
+      visibility:visible;
+      transform:translateY(0) scale(1);
+    }
+
+    .scroll-top-btn:active{
+      transform:scale(.94);
+    }
+
+    @media (min-width:700px){
+      .scroll-top-btn{
+        right:max(24px, calc((100vw - 760px) / 2 + 24px));
+      }
+    }
+
+  
+    .currency-card{
+      margin:16px 0 18px;padding:18px;border-radius:26px;
+      background:linear-gradient(145deg,#effaf6,#e7f3ef);
+      border:1px solid rgba(30,91,72,.10);
+      box-shadow:0 8px 24px rgba(30,75,61,.08);
+    }
+    .currency-header{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:15px}
+    .currency-title{margin:0;font-size:1.08rem;font-weight:900;color:#153e32}
+    .currency-subtitle{margin:4px 0 0;font-size:.78rem;color:#60736d}
+    .currency-icon{
+      width:44px;height:44px;border-radius:15px;display:flex;align-items:center;
+      justify-content:center;background:#fff;font-size:1.35rem;
+      box-shadow:0 5px 15px rgba(27,77,62,.08)
+    }
+    .currency-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .currency-field{
+      position:relative;padding:12px;border-radius:18px;
+      background:rgba(255,255,255,.88);border:1px solid rgba(37,85,70,.10)
+    }
+    .currency-field label{
+      display:flex;align-items:center;gap:7px;margin-bottom:7px;
+      font-size:.76rem;font-weight:850;color:#536761
+    }
+    .currency-input-wrap{display:flex;align-items:center;gap:7px}
+    .currency-field input{
+      min-width:0;width:100%;border:0;outline:0;background:transparent;
+      font-size:1.18rem;font-weight:900;color:#142d26;padding:0
+    }
+    .currency-code{
+      flex:0 0 auto;font-size:.72rem;font-weight:900;color:#168064;
+      background:#ddf4ec;border-radius:10px;padding:5px 7px
+    }
+    .currency-rate{margin-top:13px;text-align:center;font-size:.72rem;color:#687a74}
+    @media(max-width:420px){
+      .currency-card{padding:15px}.currency-grid{gap:9px}
+      .currency-field{padding:10px}.currency-field input{font-size:1.05rem}
+    }
+
+  
+    .auth-overlay{
+      position:fixed;inset:0;z-index:10000;display:flex;align-items:center;
+      justify-content:center;padding:22px;
+      background:radial-gradient(circle at top left,rgba(42,139,108,.28),transparent 38%),
+                 linear-gradient(160deg,#0f3f33,#1d6955 62%,#dcefe8);
+    }
+    .auth-overlay.hidden{display:none}
+    .auth-card{
+      width:min(100%,420px);padding:24px;border-radius:30px;
+      background:rgba(255,255,255,.97);
+      box-shadow:0 24px 70px rgba(7,45,35,.28);
+      border:1px solid rgba(255,255,255,.68);
+    }
+    .auth-logo{
+      width:62px;height:62px;margin:0 auto 14px;border-radius:21px;
+      display:flex;align-items:center;justify-content:center;font-size:1.85rem;
+      background:linear-gradient(145deg,#e7f6ef,#fff);
+      box-shadow:0 8px 22px rgba(23,103,81,.16);
+    }
+    .auth-title{margin:0;text-align:center;font-size:1.45rem;font-weight:950;color:#153f33}
+    .auth-subtitle{margin:7px 0 20px;text-align:center;font-size:.84rem;color:#6a7b75;line-height:1.45}
+    .auth-field{margin-bottom:13px}
+    .auth-field label{display:block;margin:0 0 7px;font-size:.78rem;font-weight:850;color:#4f625c}
+    .auth-field input{
+      width:100%;box-sizing:border-box;border:1px solid #d5e2dd;border-radius:16px;
+      padding:13px 14px;background:#f9fcfb;color:#18352c;font-size:1rem;outline:none;
+    }
+    .auth-field input:focus{border-color:#2b8f70;box-shadow:0 0 0 3px rgba(43,143,112,.13)}
+    .auth-button{
+      width:100%;margin-top:5px;border:0;border-radius:17px;padding:14px 16px;
+      background:#176f59;color:#fff;font-size:.96rem;font-weight:900;
+      box-shadow:0 8px 20px rgba(23,111,89,.24)
+    }
+    .auth-button:active{transform:scale(.985)}
+    .auth-error{min-height:20px;margin-top:12px;text-align:center;color:#b23636;font-size:.78rem;font-weight:800}
+    .logout-btn{
+      width:42px;height:42px;border:0;border-radius:14px;background:#eef3f1;
+      color:#315a4d;font-size:1.05rem;font-weight:900;display:grid;place-items:center;
+    }
+
+  
+    .role-badge{
+      display:none;
+      align-items:center;
+      gap:5px;
+      padding:7px 9px;
+      border-radius:12px;
+      background:#e8f3ef;
+      color:#315f50;
+      font-size:.69rem;
+      font-weight:900;
+      white-space:nowrap;
+    }
+    .role-badge.show{display:flex}
+    .role-badge.viewer{background:#fff1d7;color:#755016}
+    .readonly-control{
+      opacity:.58!important;
+      cursor:not-allowed!important;
+    }
+
+  
+    .shared-checklist{
+      margin:18px 0;
+      padding:18px;
+      border-radius:26px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      border:1px solid var(--outline);
+    }
+
+    .shared-checklist-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .shared-checklist-title{
+      margin:0;
+      font-size:1.05rem;
+      font-weight:900;
+      color:var(--text);
+    }
+
+    .shared-checklist-subtitle{
+      margin-top:4px;
+      font-size:.75rem;
+      color:var(--muted);
+    }
+
+    .shared-checklist-count{
+      min-width:42px;
+      padding:7px 10px;
+      border-radius:999px;
+      background:var(--primary-container);
+      color:var(--primary);
+      text-align:center;
+      font-size:.74rem;
+      font-weight:900;
+    }
+
+    .checklist-add{
+      display:flex;
+      gap:8px;
+      margin-bottom:14px;
+    }
+
+    .checklist-add input{
+      flex:1;
+      min-width:0;
+      border:1px solid var(--outline);
+      border-radius:16px;
+      padding:12px 13px;
+      background:#f8faf9;
+      color:var(--text);
+      outline:none;
+    }
+
+    .checklist-add input:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 3px rgba(25,118,92,.12);
+    }
+
+    .checklist-add button{
+      border:0;
+      border-radius:16px;
+      padding:0 16px;
+      background:var(--primary);
+      color:#fff;
+      font-weight:900;
+    }
+
+    .checklist-list{
+      display:flex;
+      flex-direction:column;
+      gap:9px;
+    }
+
+    .checklist-item{
+      display:grid;
+      grid-template-columns:38px 1fr 38px;
+      align-items:center;
+      gap:9px;
+      padding:9px;
+      border:1px solid #e2e9e6;
+      border-radius:17px;
+      background:#fbfcfc;
+    }
+
+    .checklist-item.done{
+      background:#f0f6f3;
+    }
+
+    .checklist-check,
+    .checklist-delete{
+      width:38px;
+      height:38px;
+      border:0;
+      border-radius:13px;
+      display:grid;
+      place-items:center;
+      font-weight:900;
+    }
+
+    .checklist-check{
+      background:#edf2f0;
+      color:#66736e;
+      font-size:1rem;
+    }
+
+    .checklist-item.done .checklist-check{
+      background:var(--primary);
+      color:#fff;
+    }
+
+    .checklist-delete{
+      background:#fff0f0;
+      color:#a73e3e;
+    }
+
+    .checklist-text{
+      width:100%;
+      box-sizing:border-box;
+      border:0;
+      background:transparent;
+      color:var(--text);
+      font-size:.9rem;
+      outline:none;
+    }
+
+    .checklist-item.done .checklist-text{
+      color:var(--muted);
+      text-decoration:line-through;
+    }
+
+    .checklist-empty{
+      padding:20px 10px;
+      text-align:center;
+      color:var(--muted);
+      font-size:.82rem;
+    }
+
+    .checklist-note{
+      margin-top:11px;
+      text-align:center;
+      font-size:.7rem;
+      color:var(--muted);
+    }
+
+  
+    .app-page{
+      display:none;
+    }
+
+    .app-page.active{
+      display:block;
+    }
+
+    .page-nav-card{
+      width:calc(100% - 32px);
+      margin:16px auto 4px;
+      padding:15px 16px;
+      border:1px solid var(--outline);
+      border-radius:22px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      display:grid;
+      grid-template-columns:46px 1fr 28px;
+      align-items:center;
+      gap:12px;
+      text-align:left;
+      color:var(--text);
+    }
+
+    .page-nav-icon{
+      width:46px;
+      height:46px;
+      border-radius:16px;
+      background:var(--primary-container);
+      display:grid;
+      place-items:center;
+      font-size:1.35rem;
+    }
+
+    .page-nav-copy{
+      display:flex;
+      flex-direction:column;
+      gap:3px;
+    }
+
+    .page-nav-copy strong{
+      font-size:.92rem;
+      font-weight:900;
+    }
+
+    .page-nav-copy small{
+      color:var(--muted);
+      font-size:.73rem;
+    }
+
+    .page-nav-arrow{
+      font-size:1.7rem;
+      color:var(--primary);
+      font-weight:500;
+      text-align:right;
+    }
+
+    .checklist-page{
+      min-height:100vh;
+      padding-bottom:28px;
+      background:var(--background);
+    }
+
+    .subpage-header{
+      position:sticky;
+      top:0;
+      z-index:50;
+      display:grid;
+      grid-template-columns:44px 1fr;
+      align-items:center;
+      gap:10px;
+      padding:14px 16px;
+      background:rgba(247,250,248,.94);
+      backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--outline);
+    }
+
+    .subpage-header h1{
+      margin:0;
+      font-size:1.08rem;
+      line-height:1.2;
+      color:var(--text);
+    }
+
+    .subpage-header p{
+      margin:3px 0 0;
+      font-size:.72rem;
+      color:var(--muted);
+    }
+
+    .subpage-back{
+      width:42px;
+      height:42px;
+      border:0;
+      border-radius:15px;
+      background:#fff;
+      color:var(--primary);
+      box-shadow:0 4px 15px rgba(26,53,43,.09);
+      font-size:1.3rem;
+      font-weight:900;
+    }
+
+    #checklistPage .shared-checklist{
+      margin:18px 16px 28px;
+    }
+
+  
+    body.checklist-open #showSelectedButton,
+    body.checklist-open #resetButton,
+    body.checklist-open [data-action="show-selected"],
+    body.checklist-open [data-action="reset"],
+    body.checklist-open .show-selected-button,
+    body.checklist-open .reset-button{
+      display:none !important;
+    }
+
+  
+    body.checklist-open #showPlanned,
+    body.checklist-open #reset{
+      display:none !important;
+    }
+
+  
+    .checklist-main{
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    .checklist-meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:4px 10px;
+      font-size:.62rem;
+      line-height:1.35;
+      color:var(--muted);
+    }
+
+    .checklist-meta span{
+      white-space:normal;
+    }
+
+    .checklist-meta strong{
+      color:#44534d;
+      font-weight:800;
+    }
+
+    .checklist-item.done .checklist-meta{
+      opacity:.82;
+    }
+
+  
+    .checklist-delete-placeholder{
+      width:38px;
+      height:38px;
+      display:block;
+    }
+
+  
+    html{
+      background:#f7faf8;
+      -webkit-text-size-adjust:100%;
+    }
+
+    body{
+      padding-top:env(safe-area-inset-top);
+      padding-right:env(safe-area-inset-right);
+      padding-bottom:env(safe-area-inset-bottom);
+      padding-left:env(safe-area-inset-left);
+      overscroll-behavior-y:none;
+      -webkit-tap-highlight-color:transparent;
+      touch-action:manipulation;
+    }
+
+    button,
+    input,
+    textarea,
+    select{
+      font:inherit;
+    }
+
+    button{
+      -webkit-touch-callout:none;
+      user-select:none;
+    }
+
+    input,
+    textarea{
+      font-size:16px;
+    }
+
+    @media (display-mode: standalone){
+      body{
+        min-height:100vh;
+        min-height:100dvh;
+      }
+
+      .subpage-header{
+        top:env(safe-area-inset-top);
+      }
+    }
+
+  
+    /* Percorso sempre su una sola riga */
+    .hero-subtitle,
+    .hero-route,
+    .trip-route,
+    [data-role="trip-route"]{
+      white-space:nowrap !important;
+      overflow:hidden;
+      text-overflow:clip;
+      font-size:clamp(.78rem, 3.55vw, 1.15rem) !important;
+      letter-spacing:-.02em;
+    }
+
+    /* Evita il flash della pagina login mentre Firebase ripristina la sessione */
+    html.auth-pending #authOverlay,
+    html.auth-pending #homePage,
+    html.auth-pending #checklistPage{
+      visibility:hidden !important;
+    }
+
+    #authBootstrapLoader{
+      position:fixed;
+      inset:0;
+      z-index:100000;
+      display:none;
+      place-items:center;
+      background:#f7faf8;
+      color:#17372d;
+    }
+
+    html.auth-pending #authBootstrapLoader{
+      display:grid;
+    }
+
+    .auth-bootstrap-card{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:14px;
+      font-size:.82rem;
+      font-weight:800;
+    }
+
+    .auth-bootstrap-spinner{
+      width:34px;
+      height:34px;
+      border:3px solid rgba(23,55,45,.16);
+      border-top-color:#356b5a;
+      border-radius:50%;
+      animation:authBootstrapSpin .8s linear infinite;
+    }
+
+    @keyframes authBootstrapSpin{
+      to{ transform:rotate(360deg); }
+    }
+
+  
+    /* Impedisce qualsiasi scorrimento orizzontale */
+    html,
+    body{
+      width:100%;
+      max-width:100%;
+      overflow-x:hidden !important;
+    }
+
+    .app,
+    .topbar,
+    .bottom,
+    #homePage,
+    #checklistPage{
+      width:100%;
+      max-width:100%;
+      box-sizing:border-box;
+    }
+
+    .topbar{
+      min-width:0;
+    }
+
+    .topbar > div:first-child{
+      min-width:0;
+      flex:1 1 auto;
+      overflow:hidden;
+    }
+
+    .app-subtitle{
+      display:block;
+      width:100%;
+      max-width:100%;
+      min-width:0;
+      overflow:hidden;
+      white-space:nowrap;
+    }
+
+    .trip-route{
+      display:block;
+      width:100%;
+      max-width:100%;
+      min-width:0;
+      overflow:hidden !important;
+      white-space:nowrap !important;
+      text-overflow:clip;
+      font-size:clamp(.66rem, 2.9vw, 1rem) !important;
+      letter-spacing:-.035em;
+    }
+
+    .top-actions{
+      flex:0 0 auto;
+    }
+
+    .logout-btn{
+      width:auto !important;
+      min-width:64px;
+      padding:0 12px !important;
+      font-size:.72rem !important;
+      font-weight:850;
+      white-space:nowrap;
+    }
+
+    .bottom{
+      left:0;
+      right:0;
+      overflow:hidden;
+    }
+
+  
+    /* Intestazione a tre righe, leggera e senza overflow */
+    .topbar{
+      display:block !important;
+      margin:0 -14px;
+      padding:12px 16px 11px;
+      background:#f6f8f7 !important;
+      backdrop-filter:none !important;
+      -webkit-backdrop-filter:none !important;
+      contain:layout paint;
+    }
+
+    .topbar-title-row,
+    .topbar-route-row,
+    .topbar-actions-row{
+      width:100%;
+      min-width:0;
+      max-width:100%;
+    }
+
+    .topbar-title-row{
+      display:block;
+    }
+
+    .app-title{
+      font-size:1.18rem;
+      line-height:1.2;
+      font-weight:800;
+      white-space:nowrap;
+    }
+
+    .topbar-route-row{
+      margin-top:4px;
+    }
+
+    .app-subtitle{
+      width:100%;
+      max-width:100%;
+      margin:0;
+      overflow:visible !important;
+    }
+
+    .trip-route{
+      display:block;
+      width:100%;
+      max-width:100%;
+      overflow:visible !important;
+      white-space:nowrap !important;
+      font-size:clamp(.72rem, 3.2vw, .92rem) !important;
+      line-height:1.3;
+      letter-spacing:-.025em;
+    }
+
+    .topbar-actions-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .top-actions{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:8px;
+      min-width:0;
+      flex:0 0 auto;
+    }
+
+    .role-badge{
+      min-width:0;
+      max-width:55%;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .logout-btn{
+      min-width:62px;
+    }
+
+    /* Scorrimento più fluido */
+    html{
+      scroll-behavior:auto !important;
+    }
+
+    body{
+      overscroll-behavior-y:auto !important;
+      touch-action:auto !important;
+    }
+
+    .subpage-header{
+      backdrop-filter:none !important;
+      -webkit-backdrop-filter:none !important;
+      background:#f7faf8 !important;
+    }
+
+    .page-nav-card,
+    .card,
+    .shared-checklist,
+    .summary-card{
+      will-change:auto !important;
+    }
+
+    @media (max-width:380px){
+      .trip-route{
+        font-size:.68rem !important;
+        letter-spacing:-.04em;
+      }
+
+      .topbar{
+        padding-left:14px;
+        padding-right:14px;
+      }
+
+      .top-actions{
+        gap:6px;
+      }
+
+      .logout-btn{
+        min-width:56px;
+        padding-left:9px !important;
+        padding-right:9px !important;
+      }
+    }
+
+  
+    /* Topper professionale e compatto */
+    .topbar{
+      margin:0 -14px 14px !important;
+      padding:16px 18px 14px !important;
+      border-bottom:1px solid rgba(35,74,61,.10);
+      background:linear-gradient(180deg,#ffffff 0%,#f7faf8 100%) !important;
+      box-shadow:0 6px 22px rgba(24,58,47,.06);
+      contain:none !important;
+    }
+
+    .topbar-main{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 58px;
+      align-items:center;
+      gap:14px;
+    }
+
+    .topbar-copy{
+      min-width:0;
+    }
+
+    .app-title{
+      margin:0;
+      font-size:clamp(1.18rem,5vw,1.55rem);
+      line-height:1.12;
+      font-weight:900;
+      letter-spacing:-.035em;
+      color:#10251f;
+      white-space:nowrap;
+    }
+
+    .app-subtitle{
+      margin-top:7px;
+      width:100%;
+      min-width:0;
+      overflow:hidden !important;
+    }
+
+    .trip-route{
+      display:block;
+      width:100%;
+      max-width:100%;
+      white-space:nowrap !important;
+      overflow:hidden !important;
+      text-overflow:ellipsis;
+      font-size:clamp(.72rem,3.1vw,.92rem) !important;
+      line-height:1.35;
+      letter-spacing:-.015em;
+      color:#62706b;
+    }
+
+    .top-icon{
+      width:58px !important;
+      height:58px !important;
+      border-radius:18px !important;
+      overflow:hidden;
+      box-shadow:0 7px 18px rgba(28,70,56,.13);
+      flex:0 0 auto;
+    }
+
+    .top-icon img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .topbar-controls{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .role-badge{
+      display:inline-flex;
+      align-items:center;
+      min-height:38px;
+      max-width:58%;
+      padding:0 13px;
+      border-radius:999px;
+      font-size:.76rem;
+      font-weight:850;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      box-shadow:none !important;
+    }
+
+    .top-actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex:0 0 auto;
+    }
+
+    .header-icon-button,
+    .logout-btn{
+      height:40px !important;
+      border-radius:13px !important;
+      border:1px solid rgba(27,69,55,.10) !important;
+      background:#fff !important;
+      color:#174838 !important;
+      box-shadow:0 4px 12px rgba(23,72,56,.07) !important;
+    }
+
+    .header-icon-button{
+      width:42px !important;
+      min-width:42px !important;
+      padding:0 !important;
+      font-size:1rem !important;
+    }
+
+    .logout-btn{
+      min-width:66px !important;
+      padding:0 14px !important;
+      font-size:.74rem !important;
+      font-weight:850 !important;
+    }
+
+    @media (max-width:380px){
+      .topbar{
+        padding-left:15px !important;
+        padding-right:15px !important;
+      }
+
+      .topbar-main{
+        grid-template-columns:minmax(0,1fr) 52px;
+        gap:10px;
+      }
+
+      .top-icon{
+        width:52px !important;
+        height:52px !important;
+        border-radius:16px !important;
+      }
+
+      .app-title{
+        font-size:1.12rem;
+      }
+
+      .trip-route{
+        font-size:.68rem !important;
+      }
+
+      .role-badge{
+        max-width:52%;
+        padding-left:11px;
+        padding-right:11px;
+      }
+    }
+
+  
+    /* Correzione spazio vuoto laterale */
+    *,
+    *::before,
+    *::after{
+      box-sizing:border-box;
+    }
+
+    html,
+    body{
+      width:100%;
+      min-width:0;
+      max-width:none;
+      margin:0;
+      overflow-x:hidden !important;
+      background:#f7faf8;
+    }
+
+    body{
+      position:relative;
+    }
+
+    .app,
+    #homePage,
+    #checklistPage,
+    .topbar,
+    main,
+    .content,
+    .page-content{
+      width:100% !important;
+      max-width:none !important;
+      min-width:0 !important;
+      margin-left:0 !important;
+      margin-right:0 !important;
+    }
+
+    .app{
+      padding-left:14px !important;
+      padding-right:14px !important;
+    }
+
+    .topbar{
+      margin-left:-14px !important;
+      margin-right:-14px !important;
+      width:calc(100% + 28px) !important;
+      max-width:none !important;
+    }
+
+    img,
+    svg,
+    canvas{
+      max-width:100%;
+    }
+
+    /* Pagina checklist più professionale */
+    #checklistPage{
+      min-height:100dvh;
+      display:flex;
+      flex-direction:column;
+      background:#f7faf8;
+    }
+
+    #checklistPage.active{
+      display:flex;
+    }
+
+    #checklistPage .subpage-header{
+      flex:0 0 auto;
+      border-bottom:1px solid rgba(31,72,58,.10);
+      box-shadow:0 4px 16px rgba(23,72,56,.05);
+    }
+
+    #checklistPage .shared-checklist{
+      flex:1 0 auto;
+      width:auto !important;
+      margin:16px 14px 96px !important;
+    }
+
+    
+
+    
+
+    #checklistPage .checklist-footer-label::before{
+      content:"✓";
+      width:20px;
+      height:20px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      background:#dff4ec;
+      color:#17614b;
+      font-size:.72rem;
+      font-weight:900;
+    }
+
+    @media (max-width:420px){
+      .app{
+        padding-left:12px !important;
+        padding-right:12px !important;
+      }
+
+      .topbar{
+        margin-left:-12px !important;
+        margin-right:-12px !important;
+        width:calc(100% + 24px) !important;
+      }
+
+      #checklistPage .shared-checklist{
+        margin-left:12px !important;
+        margin-right:12px !important;
+      }
+    }
+
+  
+    .welcome-message{
+      min-height:18px;
+      margin-top:5px;
+      font-size:.76rem;
+      line-height:1.25;
+      font-weight:800;
+      color:#315e50;
+    }
+
+    .sync-status-row{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      min-height:17px;
+      margin-top:6px;
+      color:#71807b;
+      font-size:.62rem;
+      line-height:1.2;
+      font-weight:700;
+      white-space:nowrap;
+      overflow:hidden;
+    }
+
+    .sync-status-dot{
+      width:7px;
+      height:7px;
+      flex:0 0 7px;
+      border-radius:50%;
+      background:#9aa6a2;
+      box-shadow:0 0 0 3px rgba(154,166,162,.12);
+    }
+
+    .sync-status-dot.syncing{
+      background:#c68a00;
+      box-shadow:0 0 0 3px rgba(198,138,0,.12);
+      animation:syncPulse 1.1s ease-in-out infinite;
+    }
+
+    .sync-status-dot.online{
+      background:#1c8a66;
+      box-shadow:0 0 0 3px rgba(28,138,102,.12);
+    }
+
+    .sync-status-dot.offline{
+      background:#b45353;
+      box-shadow:0 0 0 3px rgba(180,83,83,.12);
+    }
+
+    #topSyncTime::before{
+      content:"·";
+      margin-right:6px;
+    }
+
+    @keyframes syncPulse{
+      0%,100%{ opacity:.45; }
+      50%{ opacity:1; }
+    }
+
+    @media (max-width:380px){
+      .welcome-message{
+        font-size:.7rem;
+      }
+
+      .sync-status-row{
+        font-size:.57rem;
+        gap:5px;
+      }
+    }
+
+  
+    
+
+    
+
+    
+
+    
+
+    @media (max-width:420px){
+      
+    }
+
+  
+    /* Separazione reale tra Home e Checklist */
+    #homePage:not(.active),
+    #checklistPage:not(.active){
+      display:none !important;
+    }
+
+    #homePage.active{
+      display:block !important;
+    }
+
+    #checklistPage.active{
+      display:flex !important;
+    }
+
+    #checklistPage{
+      width:100% !important;
+      min-height:100dvh;
+      flex-direction:column;
+      padding:0 0 calc(82px + env(safe-area-inset-bottom));
+      background:#f7faf8;
+      overflow-x:hidden;
+    }
+
+    /* I comandi dell’itinerario appartengono esclusivamente alla Home */
+    body.checklist-open > .bottom{
+      display:none !important;
+    }
+
+    body:not(.checklist-open) .checklist-page-footer{
+      display:none !important;
+    }
+
+    #checklistPage .shared-checklist{
+      flex:1 0 auto;
+      margin:16px 14px 22px !important;
+      padding-bottom:20px;
+    }
+
+    .visually-hidden{
+      position:absolute !important;
+      width:1px !important;
+      height:1px !important;
+      padding:0 !important;
+      margin:-1px !important;
+      overflow:hidden !important;
+      clip:rect(0,0,0,0) !important;
+      white-space:nowrap !important;
+      border:0 !important;
+    }
+
+    /* Footer professionale dedicato alla checklist */
+    .checklist-page-footer{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:80;
+      min-height:calc(70px + env(safe-area-inset-bottom));
+      padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      background:rgba(250,252,251,.98);
+      border-top:1px solid rgba(31,72,58,.12);
+      box-shadow:0 -8px 28px rgba(23,72,56,.08);
+    }
+
+    .checklist-footer-progress{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      min-width:0;
+      color:#164d3c;
+      font-size:.76rem;
+      font-weight:900;
+      white-space:nowrap;
+    }
+
+    .checklist-footer-check{
+      width:32px;
+      height:32px;
+      flex:0 0 32px;
+      display:grid;
+      place-items:center;
+      border-radius:50%;
+      background:#d9f3e9;
+      color:#087056;
+      font-size:1rem;
+      font-weight:950;
+    }
+
+    .checklist-footer-status{
+      min-width:0;
+      max-width:54%;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      color:#687872;
+      font-size:.67rem;
+      font-weight:750;
+      text-align:right;
+    }
+
+    @media (max-width:380px){
+      .checklist-page-footer{
+        padding-left:12px;
+        padding-right:12px;
+        gap:8px;
+      }
+
+      .checklist-footer-progress{
+        font-size:.69rem;
+      }
+
+      .checklist-footer-status{
+        max-width:48%;
+        font-size:.61rem;
+      }
+    }
+
+  
+    .welcome-message{
+      margin-top:8px !important;
+    }
+
+  
+    #lockToggle{
+      transition:background .18s ease, color .18s ease, transform .18s ease;
+    }
+
+    #lockToggle.is-locked{
+      background:#fff1e8 !important;
+      color:#9a4d19 !important;
+      border-color:rgba(154,77,25,.14) !important;
+    }
+
+    #lockToggle:not(.is-locked){
+      background:#eef8f4 !important;
+      color:#17614b !important;
+      border-color:rgba(23,97,75,.12) !important;
+    }
+
+  
+    #lockToggle{
+      position:relative;
+      display:grid !important;
+      place-items:center;
+      overflow:hidden;
+    }
+
+    #lockToggle .lock-icon{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      font-size:1.15rem;
+      line-height:1;
+      transition:opacity .16s ease, transform .16s ease;
+    }
+
+    #lockToggle .lock-icon-open{
+      opacity:1;
+      transform:scale(1);
+    }
+
+    #lockToggle .lock-icon-closed{
+      opacity:0;
+      transform:scale(.72);
+    }
+
+    #lockToggle.is-locked .lock-icon-open{
+      opacity:0;
+      transform:scale(.72);
+    }
+
+    #lockToggle.is-locked .lock-icon-closed{
+      opacity:1;
+      transform:scale(1);
+    }
+
+    #lockToggle:not(.is-locked){
+      background:#e9f7f1 !important;
+      color:#17614b !important;
+      border-color:rgba(23,97,75,.16) !important;
+    }
+
+    #lockToggle.is-locked{
+      background:#fff0e6 !important;
+      color:#9a4d19 !important;
+      border-color:rgba(154,77,25,.18) !important;
+    }
+
+  
+    .topbar{
+      transition:
+        background .22s ease,
+        border-color .22s ease,
+        box-shadow .22s ease;
+    }
+
+    .topbar.state-unlocked{
+      background:linear-gradient(180deg,#f0fbf6 0%,#e7f7ef 100%) !important;
+      border-bottom-color:rgba(30,122,88,.20) !important;
+      box-shadow:0 7px 24px rgba(30,122,88,.09) !important;
+    }
+
+    .topbar.state-locked{
+      background:linear-gradient(180deg,#fff8ef 0%,#ffefdc 100%) !important;
+      border-bottom-color:rgba(196,116,35,.22) !important;
+      box-shadow:0 7px 24px rgba(196,116,35,.10) !important;
+    }
+
+    .topbar.state-unlocked .role-badge{
+      background:#dff4e9 !important;
+      color:#17614b !important;
+      border:1px solid rgba(23,97,75,.12);
+    }
+
+    .topbar.state-locked .role-badge{
+      background:#ffe5c7 !important;
+      color:#8f4c16 !important;
+      border:1px solid rgba(143,76,22,.12);
+    }
+
+    .topbar.state-unlocked .welcome-message,
+    .topbar.state-unlocked .trip-route,
+    .topbar.state-unlocked .sync-status-row{
+      color:#315e50 !important;
+    }
+
+    .topbar.state-locked .welcome-message,
+    .topbar.state-locked .trip-route,
+    .topbar.state-locked .sync-status-row{
+      color:#865126 !important;
+    }
+
+  
+    .lock-mode-label{
+      display:inline-flex;
+      align-items:center;
+      min-height:34px;
+      padding:0 11px;
+      border-radius:999px;
+      font-size:.67rem;
+      font-weight:850;
+      white-space:nowrap;
+      transition:background .2s ease,color .2s ease;
+    }
+
+    .topbar.state-unlocked .lock-mode-label{
+      background:#d8f0e5;
+      color:#17614b;
+    }
+
+    .topbar.state-locked .lock-mode-label{
+      background:#ffe2bf;
+      color:#8f4c16;
+    }
+
+    @media (max-width:420px){
+      .lock-mode-label{
+        display:none;
+      }
+    }
+
+  
+    .shared-place-toolbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:11px 1px 12px;
+      border-bottom:1px solid var(--outline);
+    }
+    .shared-place-hint{
+      font-size:.72rem;
+      line-height:1.35;
+      color:var(--muted);
+    }
+    .add-shared-place{
+      flex:0 0 auto;
+      min-height:38px;
+      padding:0 13px;
+      border:0;
+      border-radius:13px;
+      background:var(--primary);
+      color:#fff;
+      font-weight:850;
+      font-size:.78rem;
+      box-shadow:0 5px 14px rgba(34,109,82,.17);
+    }
+    .shared-place-badge{
+      display:inline-flex;
+      align-items:center;
+      margin-top:7px;
+      padding:4px 8px;
+      border-radius:999px;
+      background:#e8f4ef;
+      color:#21634d;
+      font-size:.62rem;
+      font-weight:800;
+    }
+    .delete-shared-place{
+      width:34px;
+      height:34px;
+      border:0;
+      border-radius:12px;
+      background:#fff0ed;
+      color:#a14335;
+      font-size:.92rem;
+      flex:0 0 auto;
+    }
+    .place-actions{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:7px;
+    }
+    .shared-place-dialog{
+      width:min(92vw,460px);
+      border:0;
+      border-radius:22px;
+      padding:0;
+      box-shadow:0 22px 70px rgba(27,45,39,.28);
+    }
+    .shared-place-dialog::backdrop{
+      background:rgba(15,30,25,.48);
+      backdrop-filter:blur(3px);
+    }
+    .shared-place-form{
+      padding:20px;
+      display:grid;
+      gap:14px;
+    }
+    .shared-place-form h2{
+      margin:0;
+      font-size:1.12rem;
+    }
+    .shared-place-form label{
+      display:grid;
+      gap:6px;
+      font-size:.76rem;
+      font-weight:800;
+      color:var(--muted);
+    }
+    .shared-place-form input,
+    .shared-place-form textarea{
+      width:100%;
+      box-sizing:border-box;
+      border:1px solid var(--outline);
+      border-radius:13px;
+      padding:11px 12px;
+      font:inherit;
+      color:var(--text);
+      background:#fff;
+    }
+    .shared-place-form textarea{
+      min-height:90px;
+      resize:vertical;
+    }
+    .shared-place-form-actions{
+      display:flex;
+      justify-content:flex-end;
+      gap:9px;
+      margin-top:2px;
+    }
+    .shared-place-form-actions button{
+      min-height:40px;
+      border:0;
+      border-radius:13px;
+      padding:0 15px;
+      font-weight:850;
+    }
+    .shared-place-cancel{
+      background:#edf1ef;
+      color:var(--text);
+    }
+    .shared-place-save{
+      background:var(--primary);
+      color:white;
+    }
+
+</style>
+</head>
+<body>
+
+  <div id="authBootstrapLoader" aria-live="polite" aria-label="Caricamento applicazione">
+    <div class="auth-bootstrap-card">
+      <div class="auth-bootstrap-spinner" aria-hidden="true"></div>
+      <span>Caricamento…</span>
+    </div>
+  </div>
+
+
+<div id="authOverlay" class="auth-overlay" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+  <form id="authForm" class="auth-card">
+    <div class="auth-logo" aria-hidden="true">🔐</div>
+    <h1 id="authTitle" class="auth-title">Accesso al viaggio</h1>
+    <p class="auth-subtitle">Inserisci username e password per entrare nell’app.</p>
+
+    <div class="auth-field">
+      <label for="authUsername">Username</label>
+      <input id="authUsername" autocomplete="username" autocapitalize="none" required>
+    </div>
+
+    <div class="auth-field">
+      <label for="authPassword">Password</label>
+      <input id="authPassword" type="password" autocomplete="current-password" required>
+    </div>
+
+    <button class="auth-button" type="submit">Entra</button>
+    <div id="authError" class="auth-error" aria-live="polite"></div>
+  </form>
+</div>
+
+<div id="homePage" class="app app-page active">
+  <header class="topbar">
+    <div class="topbar-main">
+      <div class="topbar-copy">
+        <div class="app-title">Vacanze Agosto 2026</div>
+        <div class="app-subtitle">
+          <span class="trip-route">Slovenia → Croazia → Bosnia-Erzegovina</span>
+        </div>
+        <div id="welcomeMessage" class="welcome-message" aria-live="polite"></div>
+        <div class="sync-status-row" aria-live="polite">
+          <span id="topSyncDot" class="sync-status-dot"></span>
+          <span id="topSyncStatus">Connessione…</span>
+          <span id="topSyncTime"></span>
+        </div>
+      </div>
+      <div class="top-icon" aria-hidden="true">
+        <img src="icon-192.png" alt="">
+      </div>
+    </div>
+
+    <div class="topbar-controls">
+      <div id="roleBadge" class="role-badge" aria-live="polite"></div>
+      <div class="top-actions">
+        <span id="lockModeLabel" class="lock-mode-label">Modalità modifica</span>
+        <button id="lockToggle" class="header-icon-button lock-button" type="button" aria-label="Blocca modifiche" title="Blocca modifiche">
+      <span class="lock-icon lock-icon-open" aria-hidden="true">🔓</span>
+      <span class="lock-icon lock-icon-closed" aria-hidden="true">🔒</span>
+    </button>
+        <button id="logoutButton" class="logout-btn" type="button" aria-label="Uscire" title="Uscire">Uscire</button>
+      </div>
+    </div>
+  </header>
+  <div id="lockedBanner" class="locked-banner">Modalità bloccata: i dati non possono essere modificati.</div>
+  <div id="updateBanner" class="update-banner">
+    <span>È disponibile una nuova versione dell’app.</span>
+    <button id="updateNow" type="button">Aggiorna</button>
+  </div>
+
+  <button id="openChecklistPage" class="page-nav-card" type="button">
+    <span class="page-nav-icon">🧳</span>
+    <span class="page-nav-copy">
+      <strong>Cose da non dimenticare</strong>
+      <small>Apri la checklist condivisa</small>
+    </span>
+    <span class="page-nav-arrow">›</span>
+  </button>
+
+  <section class="hero">
+    <div class="hero-kicker">Il tuo viaggio</div>
+    <div class="travelers" aria-label="Partecipanti al viaggio">
+      <div class="traveler">
+        <img src="traveler-user.jpg" alt="Foto del viaggiatore" />
+      </div>
+      <div class="traveler">
+        <img src="traveler-wife.jpg" alt="Foto della viaggiatrice" />
+      </div>
+      <div class="traveler">
+        <img src="traveler-milo.jpg" alt="Foto di Milo" />
+      </div>
+    </div>
+    <div class="hero-title" id="heroDates">14–24 agosto 2026</div>
+    <div class="hero-meta" id="heroRoute">5 tappe principali · 10 notti</div>
+    <div class="hero-stats">
+      <div class="hero-stat"><strong id="visitedCount">0</strong><span>visitati</span></div>
+      <div class="hero-stat"><strong id="plannedCount">0</strong><span>selezionati</span></div>
+      <div class="hero-stat"><strong id="totalCount">0</strong><span>posti totali</span></div>
+    </div>
+    <div class="bar"><div id="progressBar"></div></div>
+  </section>
+
+  <div class="section-label">
+    <h2>Riepilogo pernottamenti</h2>
+    <span>Aggiornamento automatico</span>
+  </div>
+  
+<section class="currency-card" aria-labelledby="currencyTitle">
+  <div class="currency-header">
+    <div>
+      <h2 id="currencyTitle" class="currency-title">Calcolatrice cambi</h2>
+      <p class="currency-subtitle">Scrivi un importo in qualsiasi campo</p>
+    </div>
+    <div class="currency-icon" aria-hidden="true">💱</div>
+  </div>
+
+  <div class="currency-grid">
+    <div class="currency-field">
+      <label for="currencyEuro">🇪🇺 Euro</label>
+      <div class="currency-input-wrap">
+        <input id="currencyEuro" inputmode="decimal" autocomplete="off" value="1">
+        <span class="currency-code">EUR</span>
+      </div>
+    </div>
+
+    <div class="currency-field">
+      <label for="currencySlovenia">🇸🇮 Slovenia</label>
+      <div class="currency-input-wrap">
+        <input id="currencySlovenia" inputmode="decimal" autocomplete="off" value="1">
+        <span class="currency-code">EUR</span>
+      </div>
+    </div>
+
+    <div class="currency-field">
+      <label for="currencyCroatia">🇭🇷 Croazia</label>
+      <div class="currency-input-wrap">
+        <input id="currencyCroatia" inputmode="decimal" autocomplete="off" value="1">
+        <span class="currency-code">EUR</span>
+      </div>
+    </div>
+
+    <div class="currency-field">
+      <label for="currencyBosnia">🇧🇦 Bosnia</label>
+      <div class="currency-input-wrap">
+        <input id="currencyBosnia" inputmode="decimal" autocomplete="off" value="1,96">
+        <span class="currency-code">BAM</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="currency-rate">1 EUR = 1,95583 BAM · disponibile anche offline</div>
+</section>
+
+
+
+
+<section id="tripSummary" class="trip-summary" aria-live="polite"></section>
+
+  <div class="section-label">
+    <h2>Luoghi del viaggio</h2>
+    <span>Seleziona e spunta</span>
+  </div>
+
+  <div class="toolbar">
+    <select id="filter" class="field" aria-label="Filtro">
+      <option value="all">Tutti</option>
+      <option value="planned">Da visitare</option>
+      <option value="visited">Visitati</option>
+      <option value="unvisited">Non visitati</option>
+    </select>
+  </div>
+  <div class="helper">Tocca una destinazione per aprire i suoi luoghi. Le destinazioni iniziali vengono lette da viaggio.json. I nuovi posti aggiunti nell’app sono condivisi in tempo reale.</div>
+
+  <main id="destinations"></main>
+</div>
+
+<div class="bottom">
+  <button id="showPlanned" class="action primary" type="button">★ Solo selezionati</button>
+  <button id="reset" class="action secondary" type="button">Azzera</button>
+</div>
+
+<div id="checklistPage" class="app-page checklist-page">
+  <div class="subpage-header">
+    <button id="backToHome" class="subpage-back" type="button" aria-label="Torna all’itinerario">←</button>
+    <div>
+      <h1>Cose da non dimenticare</h1>
+      <p>Checklist condivisa delle cose da portare</p>
+    </div>
+  </div>
+  <section class="shared-checklist" aria-labelledby="sharedChecklistTitle">
+  <div class="shared-checklist-head">
+    <div>
+      <h2 id="sharedChecklistTitle" class="shared-checklist-title">Lista condivisa</h2>
+      <div class="shared-checklist-subtitle">Mohammad e Mahnoush</div>
+    </div>
+    
+  </div>
+
+  <form id="sharedChecklistForm" class="checklist-add">
+    <input id="sharedChecklistInput" type="text" maxlength="180"
+           placeholder="Aggiungi una nuova voce…" autocomplete="off">
+    <button type="submit">Aggiungi</button>
+  </form>
+
+  <div id="sharedChecklistList" class="checklist-list"></div>
+  <span id="sharedChecklistStatus" class="visually-hidden">Connessione al database…</span>
+</section>
+
+  
+
+  <footer class="checklist-page-footer" aria-live="polite">
+    <div class="checklist-footer-progress">
+      <span class="checklist-footer-check" aria-hidden="true">✓</span>
+      <span id="sharedChecklistFooterCount">0/0 cose preparate</span>
+    </div>
+    <div id="sharedChecklistFooterStatus" class="checklist-footer-status">
+      Connessione…
+    </div>
+  </footer>
+</div>
+
+
+
+<script>
+
+function hideUpdateBannerImmediately() {
+  const banner =
+    document.getElementById("updateBanner") ||
+    document.querySelector(".update-banner") ||
+    document.querySelector("[data-update-banner]");
+
+  if (banner) {
+    banner.hidden = true;
+    banner.style.display = "none";
+    banner.setAttribute("aria-hidden", "true");
+  }
+
+  const button =
+    document.getElementById("updateButton") ||
+    document.querySelector(".update-button") ||
+    document.querySelector("[data-action='update']");
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Aggiornamento…";
+  }
+}
+
+</script>
+<script>
+(function(){
+  const standalone =
+    window.matchMedia("(display-mode: standalone)").matches ||
+    window.navigator.standalone === true;
+
+  document.documentElement.classList.toggle("standalone-mode", standalone);
+
+  if (standalone) {
+    document.addEventListener("touchmove", function(event){
+      if (event.scale && event.scale !== 1) event.preventDefault();
+    }, { passive:false });
+  }
+})();
+</script>
+
+<script>
+let trip = [];
+let tripConfig = null;
+let sharedPlaces = [];
+let baseTrip = [];
+
+function normalizeTravelConfig(config){
+  const destinations = [];
+
+  (config.countries || []).forEach(country => {
+    (country.cities || []).forEach(city => {
+      destinations.push({
+        countryName: country.name || "",
+        country: country.flag || "📍",
+        city: city.city || "",
+        arrival: city.arrival || "",
+        departure: city.departure || "",
+        accommodation: city.accommodation?.name || city.city || "",
+        accommodationAddress: city.accommodation?.address || "",
+        accommodationMaps: city.accommodation?.maps || "",
+        places: (city.places || []).map(place => [
+          place.name || "",
+          place.description || "",
+          place.favorite ? "top" : "",
+          place.maps || "",
+          place.dogFriendly === true ? "dog" : "",
+          place.notes || ""
+        ])
+      });
+    });
+  });
+
+  return destinations.filter(dest => dest.city);
+}
+
+
+function mergeSharedPlaces(baseDestinations, records){
+  const merged = baseDestinations.map(destination => ({
+    ...destination,
+    places: [...destination.places]
+  }));
+
+  (records || []).forEach(record => {
+    const destination = merged.find(item => item.city === record.city);
+    if(!destination || !record.name) return;
+
+    destination.places.push([
+      record.name || "",
+      record.description || "",
+      record.favorite ? "top" : "",
+      record.maps || "",
+      record.dogFriendly ? "dog" : "",
+      record.notes || "",
+      record.id || "",
+      true
+    ]);
+  });
+
+  return merged;
+}
+
+window.refreshTripWithSharedPlaces = function(){
+  if(!baseTrip.length) return;
+  trip = mergeSharedPlaces(baseTrip, sharedPlaces);
+  if(typeof render === "function") render();
+  if(typeof applyLockState === "function") applyLockState();
+};
+
+function applyTripHeader(config){
+  const tripInfo = config.trip || {};
+
+  const title = document.querySelector(".hero-title");
+  if(title && tripInfo.subtitle) title.textContent = tripInfo.subtitle;
+
+  const heroMeta = document.querySelector(".hero-meta");
+  if(heroMeta && tripInfo.start && tripInfo.end){
+    heroMeta.textContent = `${formatDate(tripInfo.start)} – ${formatDate(tripInfo.end)}`;
+  }
+
+  const travelers = document.querySelector(".travelers");
+  if(travelers && Array.isArray(tripInfo.travelers)){
+    travelers.innerHTML = tripInfo.travelers.map(person => `
+      <div class="traveler">
+        <img src="${person.photo}" alt="${person.alt || "Foto viaggiatore"}" />
+      </div>
+    `).join("");
+  }
+}
+
+async function loadTravelConfig(){
+  try{
+    const response = await fetch("./viaggio.json", {cache:"no-store"});
+    if(!response.ok) throw new Error("Configurazione non disponibile");
+
+    tripConfig = await response.json();
+    baseTrip = normalizeTravelConfig(tripConfig);
+    trip = mergeSharedPlaces(baseTrip, sharedPlaces);
+
+    if(!trip.length) throw new Error("Nessuna destinazione valida");
+
+    applyTripHeader(tripConfig);
+
+    trip.forEach(dest => {
+      if(!state["stay::"+dest.city]){
+        state["stay::"+dest.city] = {
+          arrival: dest.arrival,
+          departure: dest.departure
+        };
+      }
+    });
+
+    save();
+    render();
+    applyLockState();
+  }catch(error){
+    document.getElementById("destinations").innerHTML =
+      '<div class="empty">Impossibile leggere il file viaggio.json. Controlla il formato del file.</div>';
+    console.error(error);
+  }
+}
+
+
+const key = "vacanze-agosto-2026-state-v1";
+let state = JSON.parse(localStorage.getItem(key) || "{}");
+let plannedOnly = false;
+
+const slug = (city, place) => city + "::" + place;
+// Remove obsolete accordion state created by older app versions.
+delete state["ui::activeDestination"];
+Object.keys(state).forEach(k=>{
+  if(k.startsWith("open::")) delete state[k];
+});
+
+const save = () => {
+  localStorage.setItem(key, JSON.stringify(state));
+  if (typeof window.saveSharedTripState === "function") {
+    window.saveSharedTripState();
+  }
+};
+
+function isSharedTripKey(value){
+  return value === "app::locked" ||
+         value.startsWith("stay::") ||
+         (value.includes("::") && !value.startsWith("ui::") && !value.startsWith("open::"));
+}
+
+function getSharedTripState(){
+  const shared = {};
+  Object.entries(state).forEach(([stateKey, value]) => {
+    if(isSharedTripKey(stateKey)) shared[stateKey] = value;
+  });
+  return shared;
+}
+
+window.getSharedTripState = getSharedTripState;
+
+window.applySharedTripState = function(remoteState){
+  if(!remoteState || typeof remoteState !== "object") return;
+
+  Object.keys(state).forEach(stateKey => {
+    if(isSharedTripKey(stateKey)) delete state[stateKey];
+  });
+
+  Object.entries(remoteState).forEach(([stateKey, value]) => {
+    if(isSharedTripKey(stateKey)) state[stateKey] = value;
+  });
+
+  localStorage.setItem(key, JSON.stringify(state));
+  isLocked = Boolean(state["app::locked"]);
+
+  if(typeof render === "function" && trip.length) render();
+  if(typeof applyLockState === "function") applyLockState();
+};
+save();
+
+let isLocked = Boolean(state["app::locked"]);
+let activeDestination = "";
+let pendingScrollTarget = null;
+
+function applyLockState(){
+  const lockButton = document.getElementById("lockToggle");
+  const banner = document.getElementById("lockedBanner");
+  const roleBadge = document.getElementById("roleBadge");
+  const authUser = localStorage.getItem("vacanze-agosto-2026-auth-user") || "";
+  const isViewer = authUser === "mahnoush";
+  const effectiveLocked = isLocked || isViewer;
+
+  if(lockButton){
+    lockButton.textContent = isLocked ? "🔒" : "🔓";
+    lockButton.classList.toggle("locked", isLocked);
+    lockButton.setAttribute("aria-label", isLocked ? "Sblocca modifiche" : "Blocca modifiche");
+    lockButton.style.display = isViewer ? "none" : "";
+  }
+
+  if(banner){
+    banner.textContent = isViewer
+      ? "Accesso in sola lettura: puoi consultare il viaggio e usare la calcolatrice."
+      : "Modalità bloccata: i dati non possono essere modificati.";
+    banner.classList.toggle("show", effectiveLocked);
+  }
+
+  if(roleBadge){
+    roleBadge.classList.toggle("show", Boolean(authUser));
+    roleBadge.classList.toggle("viewer", isViewer);
+    roleBadge.textContent = isViewer ? "👁 Sola lettura" : (authUser ? "⚙ Admin" : "");
+  }
+
+  document.querySelectorAll(".arrival-date,.departure-date,.check,.planned,#reset").forEach(el=>{
+    el.disabled = effectiveLocked;
+    el.classList.toggle("readonly-control", effectiveLocked);
+  });
+}
+
+function getDefaultStay(dest){
+  return {
+    arrival: dest.arrival || "",
+    departure: dest.departure || ""
+  };
+}
+
+function nightsBetween(a,b){
+  if(!a || !b) return 0;
+  const start = new Date(a+"T00:00:00");
+  const end = new Date(b+"T00:00:00");
+  const diff = Math.round((end-start)/86400000);
+  return diff > 0 ? diff : 0;
+}
+
+function formatDate(value){
+  if(!value) return "Data da definire";
+  return new Intl.DateTimeFormat("it-IT",{day:"numeric",month:"short"}).format(new Date(value+"T00:00:00"));
+}
+
+function renderTripSummary(){
+  const root = document.getElementById("tripSummary");
+  const groups = {};
+  let totalNights = 0;
+  let minArrival = null;
+  let maxDeparture = null;
+
+  trip.forEach(dest=>{
+    const stay = {...getDefaultStay(dest), ...(state["stay::"+dest.city]||{})};
+    const nights = nightsBetween(stay.arrival, stay.departure);
+    totalNights += nights;
+
+    if(stay.arrival && (!minArrival || stay.arrival < minArrival)) minArrival = stay.arrival;
+    if(stay.departure && (!maxDeparture || stay.departure > maxDeparture)) maxDeparture = stay.departure;
+
+    if(!groups[dest.countryName]){
+      groups[dest.countryName] = {flag:dest.country,name:dest.countryName,nights:0,stops:[]};
+    }
+    groups[dest.countryName].nights += nights;
+    const selectedPlaces = dest.places
+      .filter(place => {
+        const placeState = state[slug(dest.city, place[0])] || {};
+        return placeState.planned && !placeState.visited;
+      })
+      .map(place => place[0]);
+
+    const visitedPlaces = dest.places
+      .filter(place => {
+        const placeState = state[slug(dest.city, place[0])] || {};
+        return Boolean(placeState.visited);
+      })
+      .map(place => place[0]);
+
+    groups[dest.countryName].stops.push({
+      city:dest.city,
+      nights,
+      arrival:stay.arrival,
+      departure:stay.departure,
+      accommodation:dest.accommodation,
+      selectedPlaces,
+      visitedPlaces
+    });
+  });
+
+  root.innerHTML = Object.values(groups).map(group=>`
+    <article class="country-card">
+      <div class="country-head">
+        <span class="country-flag">${group.flag}</span>
+        <div>
+          <div class="country-name">${group.name}</div>
+          <div class="country-nights">${group.nights} ${group.nights===1?"notte":"notti"}</div>
+        </div>
+      </div>
+      <div class="country-stops">
+        ${group.stops.map(stop=>`
+          <div class="summary-stop">
+            <button type="button" class="summary-city-link" data-scroll-city="${escapeHtml(stop.city)}">${escapeHtml(stop.city)}</button>
+            <span>${formatDate(stop.arrival)} → ${formatDate(stop.departure)} · ${stop.nights} ${stop.nights===1?"notte":"notti"}</span>
+            ${stop.accommodation && stop.accommodation.trim().toLowerCase() !== stop.city.trim().toLowerCase()
+              ? `<span>🏨 ${escapeHtml(stop.accommodation)}</span>`
+              : ""}
+            <div class="summary-lists">
+              <div class="summary-list">
+                <div class="summary-list-title">Da visitare</div>
+                ${stop.selectedPlaces.length
+                  ? `<div class="summary-items">${stop.selectedPlaces.map(name=>`<button type="button" class="summary-chip" data-scroll-city="${escapeHtml(stop.city)}" data-scroll-place="${escapeHtml(name)}">${escapeHtml(name)}</button>`).join("")}</div>`
+                  : `<div class="summary-empty">Nessun luogo selezionato</div>`}
+              </div>
+              <div class="summary-list">
+                <div class="summary-list-title">Già visitati</div>
+                ${stop.visitedPlaces.length
+                  ? `<div class="summary-items">${stop.visitedPlaces.map(name=>`<button type="button" class="summary-chip visited" data-scroll-city="${escapeHtml(stop.city)}" data-scroll-place="${escapeHtml(name)}">${escapeHtml(name)}</button>`).join("")}</div>`
+                  : `<div class="summary-empty">Nessun luogo visitato</div>`}
+              </div>
+            </div>
+          </div>`).join("")}
+      </div>
+    </article>`).join("");
+
+  root.querySelectorAll(".summary-city-link").forEach(button => {
+    button.addEventListener("click", () => {
+      scrollToDestination(button.dataset.scrollCity || "");
+    });
+  });
+
+  root.querySelectorAll(".summary-chip[data-scroll-place]").forEach(button => {
+    button.addEventListener("click", () => {
+      scrollToPlace(
+        button.dataset.scrollCity || "",
+        button.dataset.scrollPlace || ""
+      );
+    });
+  });
+
+  document.getElementById("heroRoute").textContent =
+    `${trip.length} tappe principali · ${totalNights} ${totalNights===1?"notte":"notti"}`;
+
+  if(minArrival && maxDeparture){
+    const year = new Date(minArrival+"T00:00:00").getFullYear();
+    document.getElementById("heroDates").textContent =
+      `${formatDate(minArrival)} – ${formatDate(maxDeparture)} ${year}`;
+  }
+}
+
+
+function escapeHtml(value){
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function buildPlaceTags(place){
+  const tags = [];
+  const favorite = String(place[2] || "").trim().toLowerCase();
+  const dog = String(place[4] || "").trim().toLowerCase();
+  const description = String(place[1] || "").trim().toLowerCase();
+
+  if(favorite === "top" || favorite === "imperdibile"){
+    tags.push({label:"Top", icon:"⭐", className:"top"});
+  }
+
+  if(dog === "dog"){
+    tags.push({label:"Dog friendly", icon:"🐶", className:"dog"});
+  }
+
+  if(description.includes("natura") || description.includes("parco") || description.includes("cascat") || description.includes("fiume")){
+    tags.push({label:"Natura", icon:"🌿", className:"nature"});
+  }else if(description.includes("museo")){
+    tags.push({label:"Museo", icon:"🏛️", className:"museum"});
+  }else if(description.includes("storia") || description.includes("storico") || description.includes("monumento")){
+    tags.push({label:"Storia", icon:"🏺", className:"history"});
+  }else if(description.includes("panorama") || description.includes("montagna")){
+    tags.push({label:"Panorama", icon:"🏞️", className:"panorama"});
+  }
+
+  const unique = [];
+  const seen = new Set();
+
+  for(const tag of tags){
+    const label = String(tag.label || "").trim();
+    if(!label) continue;
+    const key = label.toLowerCase();
+    if(seen.has(key)) continue;
+    seen.add(key);
+    unique.push({...tag, label});
+  }
+
+  if(!unique.length) return "";
+
+  return `<div class="place-tags">${unique.map(tag =>
+    `<span class="place-tag ${tag.className}"><span aria-hidden="true">${tag.icon}</span><span>${escapeHtml(tag.label)}</span></span>`
+  ).join("")}</div>`;
+}
+
+
+function slugifyDom(value){
+  return String(value || "")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function placeDomId(city, placeName){
+  return `place-${slugifyDom(city)}-${slugifyDom(placeName)}`;
+}
+
+function destinationDomId(city){
+  return `destination-${slugifyDom(city)}`;
+}
+
+async function copyPlaceName(name, city, country){
+  const parts = [name, city, country]
+    .map(value => String(value || "").trim())
+    .filter(Boolean);
+
+  const text = parts.join(", ");
+  if(!text) return;
+
+  try{
+    await navigator.clipboard.writeText(text);
+  }catch(error){
+    const area = document.createElement("textarea");
+    area.value = text;
+    area.setAttribute("readonly", "");
+    area.style.position = "fixed";
+    area.style.opacity = "0";
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand("copy");
+    area.remove();
+  }
+
+  showCopyToast(`Copiato: ${text}`);
+}
+
+function showCopyToast(message){
+  let toast = document.getElementById("copyToast");
+  if(!toast){
+    toast = document.createElement("div");
+    toast.id = "copyToast";
+    toast.className = "copy-toast";
+    document.body.appendChild(toast);
+  }
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(window.__copyToastTimer);
+  window.__copyToastTimer = setTimeout(() => toast.classList.remove("show"), 1600);
+}
+
+function scrollToDestination(city){
+  activeDestination = city;
+  pendingScrollTarget = {
+    type: "destination",
+    id: destinationDomId(city)
+  };
+  render();
+}
+
+function scrollToPlace(city, placeName){
+  activeDestination = city;
+  pendingScrollTarget = {
+    type: "place",
+    id: placeDomId(city, placeName)
+  };
+  render();
+}
+
+function performPendingScroll(){
+  if(!pendingScrollTarget) return;
+
+  const pending = pendingScrollTarget;
+  pendingScrollTarget = null;
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const target = document.getElementById(pending.id);
+      if(!target) return;
+
+      const outerDestination = pending.type === "place"
+        ? target.closest(".destination")
+        : target;
+
+      if(!outerDestination) return;
+
+      const topbar = document.querySelector(".topbar");
+      const topbarHeight = topbar
+        ? Math.ceil(topbar.getBoundingClientRect().height)
+        : 0;
+
+      const spacingBelowHeader = 12;
+      const topOffset = topbarHeight + spacingBelowHeader;
+
+      const top =
+        outerDestination.getBoundingClientRect().top +
+        window.scrollY -
+        topOffset;
+
+      window.scrollTo({
+        top,
+        behavior:"smooth"
+      });
+
+      outerDestination.classList.add("flash-destination");
+      setTimeout(() => {
+        outerDestination.classList.remove("flash-destination");
+      }, 1600);
+
+      if(pending.type === "place"){
+        target.classList.add("flash-target");
+        setTimeout(() => {
+          target.classList.remove("flash-target");
+        }, 1600);
+      }
+    });
+  });
+}
+
+function render(){
+  const q = "";
+  const filter = document.getElementById("filter").value;
+  const root = document.getElementById("destinations");
+  root.innerHTML = "";
+
+  let total=0, visited=0, planned=0, visible=0;
+
+  trip.forEach((dest, idx)=>{
+    total += dest.places.length;
+    const section = document.createElement("section");
+    section.className = "destination";
+    section.id = destinationDomId(dest.city);
+
+    const matchingPlaces = dest.places.filter(p=>{
+      const id=slug(dest.city,p[0]);
+      const s=state[id]||{};
+      if(s.visited) visited++;
+      if(s.planned) planned++;
+
+      const text=(dest.city+" "+p.join(" ")).toLowerCase();
+      if(q && !text.includes(q)) return false;
+      if(plannedOnly && !s.planned) return false;
+      if(filter==="planned" && !s.planned) return false;
+      if(filter==="visited" && !s.visited) return false;
+      if(filter==="unvisited" && s.visited) return false;
+      return true;
+    });
+
+    if(!matchingPlaces.length) return;
+    visible += matchingPlaces.length;
+
+    const head = document.createElement("button");
+    head.type="button"; head.className="dest-head"; head.setAttribute("aria-expanded", String(activeDestination===dest.city));
+
+    const stayKey = "stay::"+dest.city;
+    const stay = {...getDefaultStay(dest), ...(state[stayKey]||{})};
+
+    const nights = nightsBetween(stay.arrival, stay.departure);
+
+    head.innerHTML=`
+      <span class="dest-title">
+        <span class="flag-bubble">${dest.country}</span>
+        <span>
+          <span class="dest-country">${dest.countryName}</span>
+          <span class="dest-name">${dest.city}</span>
+          <span class="dest-date">${formatDate(stay.arrival)} → ${formatDate(stay.departure)} · ${nights} ${nights===1?"notte":"notti"}</span>
+          ${dest.accommodation && dest.accommodation.trim().toLowerCase() !== dest.city.trim().toLowerCase()
+            ? `<span class="dest-date">🏨 ${escapeHtml(dest.accommodation)}</span>`
+            : ""}
+        </span>
+      </span>
+      <span class="dest-right"><span class="dest-count">${matchingPlaces.length} posti</span><span class="chevron">⌄</span></span>`;
+
+    const editor = document.createElement("div");
+    editor.className = "stay-editor";
+    editor.innerHTML = `
+      <label>Arrivo
+        <span class="date-wrap"><input class="arrival-date" type="date" value="${stay.arrival||""}"></span>
+      </label>
+      <label>Partenza
+        <span class="date-wrap"><input class="departure-date" type="date" value="${stay.departure||""}"></span>
+      </label>
+      <div class="nights-box">
+        <span><strong class="nights-value">${nights}</strong> ${nights===1?"notte":"notti"} di permanenza</span>
+        <span class="autosave">Sincronizzazione condivisa</span>
+      </div>`;
+
+    const body = document.createElement("div");
+    body.className="dest-body";
+
+    if(localStorage.getItem("vacanze-agosto-2026-auth-user") === "mohammad"){
+      const toolbar = document.createElement("div");
+      toolbar.className = "shared-place-toolbar";
+      toolbar.innerHTML = `
+        <span class="shared-place-hint">I nuovi posti saranno visibili subito su entrambi i cellulari.</span>
+        <button class="add-shared-place" type="button">＋ Aggiungi posto</button>`;
+      toolbar.querySelector(".add-shared-place").addEventListener("click", event=>{
+        event.stopPropagation();
+        if(typeof window.openSharedPlaceDialog === "function"){
+          window.openSharedPlaceDialog(dest.city);
+        }
+      });
+      body.appendChild(toolbar);
+    }
+
+    matchingPlaces.forEach((p,i)=>{
+      const id=slug(dest.city,p[0]);
+      const s=state[id]||{};
+      const item=document.createElement("div");
+      item.className="place"+(s.visited?" visited":"");
+      item.id = placeDomId(dest.city, p[0]);
+      item.innerHTML=`
+        <input class="check" type="checkbox" aria-label="Segna come visitato" ${s.visited?"checked":""}>
+        <div class="place-main">
+          <div class="place-title-line">
+            <div class="place-name">${escapeHtml(p[0])}</div>
+            <button class="copy-place-btn" type="button" aria-label="Copia nome luogo" title="Copia nome luogo">📋</button>
+          </div>
+          <div class="place-desc">${escapeHtml(p[1])}</div>
+          ${buildPlaceTags(p)}
+          ${p[7] === true ? `<span class="shared-place-badge">Condiviso in tempo reale</span>` : ""}
+        </div>
+        <div class="place-actions">
+          <button class="planned ${s.planned?"active":""}" type="button" aria-label="Aggiungi ai posti da visitare">★</button>
+          ${p[7] === true && localStorage.getItem("vacanze-agosto-2026-auth-user") === "mohammad"
+            ? `<button class="delete-shared-place" type="button" aria-label="Elimina posto condiviso" title="Elimina posto">🗑</button>`
+            : ""}
+        </div>`;
+      const check=item.querySelector(".check");
+      const star=item.querySelector(".planned");
+      const copyButton=item.querySelector(".copy-place-btn");
+      const deleteSharedButton=item.querySelector(".delete-shared-place");
+      if(deleteSharedButton){
+        deleteSharedButton.addEventListener("click", async event=>{
+          event.stopPropagation();
+          if(typeof window.deleteSharedPlace === "function"){
+            await window.deleteSharedPlace(p[6], p[0]);
+          }
+        });
+      }
+      copyButton.addEventListener("click", event=>{
+        event.stopPropagation();
+        copyPlaceName(p[0], dest.city, dest.countryName);
+      });
+      check.addEventListener("change",()=>{
+        state[id]={...(state[id]||{}),visited:check.checked}; save(); render();
+      });
+      star.addEventListener("click",()=>{
+        const current=state[id]||{};
+        state[id]={...current,planned:!current.planned}; save(); render();
+      });
+      body.appendChild(item);
+    });
+
+    const arrivalInput = editor.querySelector(".arrival-date");
+    const departureInput = editor.querySelector(".departure-date");
+
+    function saveStay(){
+      const arrival = arrivalInput.value;
+      const departure = departureInput.value;
+      state[stayKey] = {arrival, departure};
+      save();
+      render();
+    }
+
+    arrivalInput.addEventListener("change", ()=>{ if(!isLocked) saveStay(); });
+    departureInput.addEventListener("change", ()=>{ if(!isLocked) saveStay(); });
+
+    const isOpen = activeDestination === dest.city;
+
+    // Dates and number of nights are always visible, even when the places list is closed.
+    editor.classList.remove("hidden");
+
+    // Only the list of places is collapsible.
+    body.classList.toggle("hidden", !isOpen);
+    section.classList.toggle("expanded", isOpen);
+
+    head.addEventListener("click",()=>{
+      activeDestination = isOpen ? "" : dest.city;
+      render();
+    });
+
+    section.appendChild(head);
+    section.appendChild(editor);
+    section.appendChild(body);
+    root.appendChild(section);
+  });
+
+  document.getElementById("visitedCount").textContent=visited;
+  document.getElementById("plannedCount").textContent=planned;
+  document.getElementById("totalCount").textContent=total;
+  document.getElementById("progressBar").style.width=(total?visited/total*100:0)+"%";
+  renderTripSummary();
+  setTimeout(applyLockState, 0);
+  performPendingScroll();
+
+  if(!visible){
+    const e=document.createElement("div");e.className="empty";e.textContent="Nessun posto corrisponde ai filtri.";
+    root.appendChild(e);
+  }
+}
+
+document.getElementById("filter").addEventListener("change",render);
+document.getElementById("showPlanned").addEventListener("click",()=>{
+  plannedOnly=!plannedOnly;
+  document.getElementById("showPlanned").textContent=plannedOnly?"Mostra tutti":"★ Solo selezionati";
+  render();
+});
+document.getElementById("reset").addEventListener("click",()=>{
+  if(isLocked) return;
+  if(confirm("Vuoi cancellare tutte le selezioni e le visite?")){
+    state={};
+    state["app::locked"] = false;
+    save();
+    render();
+  }
+});
+
+document.getElementById("lockToggle").addEventListener("click",()=>{
+  isLocked = !isLocked;
+  state["app::locked"] = isLocked;
+  save();
+  applyLockState();
+});
+
+loadTravelConfig();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  let refreshing = false;
+
+  window.addEventListener("load", async function () {
+    const registration = await navigator.serviceWorker.register("./service-worker.js");
+
+    function showUpdateBanner() {
+      const banner = document.getElementById("updateBanner");
+      if (banner) banner.classList.add("show");
+    }
+
+    if (registration.waiting) {
+      showUpdateBanner();
+    }
+
+    registration.addEventListener("updatefound", function () {
+      const newWorker = registration.installing;
+      if (!newWorker) return;
+
+      newWorker.addEventListener("statechange", function () {
+        if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+          showUpdateBanner();
+        }
+      });
+    });
+
+    document.getElementById("updateNow")?.addEventListener("click", function () {
+      if (registration.waiting) {
+        registration.waiting.postMessage({type:"SKIP_WAITING"});
+      } else {
+        window.location.reload();
+      }
+    });
+
+    navigator.serviceWorker.addEventListener("controllerchange", function () {
+      if (refreshing) return;
+      refreshing = true;
+      window.location.reload();
+    });
+
+    // Check for updates when the app comes back to foreground.
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") {
+        registration.update();
+      }
+    });
+  });
+}
+</script>
+
+<script>
+document.addEventListener("contextmenu", event => {
+  if(!["INPUT","TEXTAREA"].includes(event.target.tagName)) event.preventDefault();
+});
+document.addEventListener("selectstart", event => {
+  if(!["INPUT","TEXTAREA"].includes(event.target.tagName)) event.preventDefault();
+});
+</script>
+
+
+<button id="scrollTopButton" class="scroll-top-btn" type="button" aria-label="Torna all'inizio" title="Torna all'inizio">↑</button>
+
+<script>
+(function(){
+  const button = document.getElementById("scrollTopButton");
+  if(!button) return;
+
+  function updateScrollTopButton(){
+    const threshold = Math.max(500, window.innerHeight * 0.75);
+    button.classList.toggle("show", window.scrollY > threshold);
+  }
+
+  button.addEventListener("click", function(){
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  });
+
+  window.addEventListener("scroll", updateScrollTopButton, {passive:true});
+  window.addEventListener("resize", updateScrollTopButton);
+  updateScrollTopButton();
+})();
+</script>
+
+
+
+<script>
+(function(){
+  const RATE_BAM = 1.95583;
+  const AUTH_STORAGE_KEY = "vacanze-agosto-2026-auth-user";
+  const CALCULATOR_STORAGE_PREFIX = "vacanze-agosto-2026-calculator::";
+
+  const fields = {
+    euro: document.getElementById("currencyEuro"),
+    slovenia: document.getElementById("currencySlovenia"),
+    croatia: document.getElementById("currencyCroatia"),
+    bosnia: document.getElementById("currencyBosnia")
+  };
+
+  if(Object.values(fields).some(field => !field)) return;
+  let updating = false;
+
+  function currentUser(){
+    return localStorage.getItem(AUTH_STORAGE_KEY) || "guest";
+  }
+
+  function storageKey(){
+    return CALCULATOR_STORAGE_PREFIX + currentUser();
+  }
+
+  function parseAmount(value){
+    const normalized = String(value || "")
+      .trim()
+      .replace(/\s/g, "")
+      .replace(",", ".");
+    const number = Number(normalized);
+    return Number.isFinite(number) ? number : 0;
+  }
+
+  function formatAmount(value){
+    return new Intl.NumberFormat("it-IT", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
+    }).format(value);
+  }
+
+  function saveCalculator(){
+    const data = {};
+    Object.entries(fields).forEach(([key, field]) => {
+      data[key] = field.value;
+    });
+    localStorage.setItem(storageKey(), JSON.stringify(data));
+  }
+
+  function loadCalculator(){
+    const saved = JSON.parse(localStorage.getItem(storageKey()) || "null");
+
+    updating = true;
+    if(saved){
+      Object.entries(fields).forEach(([key, field]) => {
+        field.value = saved[key] ?? "";
+      });
+    }else{
+      fields.euro.value = "1";
+      fields.slovenia.value = "1";
+      fields.croatia.value = "1";
+      fields.bosnia.value = "1,96";
+    }
+    updating = false;
+  }
+
+  function updateFrom(source){
+    if(updating) return;
+    updating = true;
+
+    const sourceValue = parseAmount(fields[source].value);
+    const euroValue = source === "bosnia"
+      ? sourceValue / RATE_BAM
+      : sourceValue;
+
+    if(source !== "euro") fields.euro.value = formatAmount(euroValue);
+    if(source !== "slovenia") fields.slovenia.value = formatAmount(euroValue);
+    if(source !== "croatia") fields.croatia.value = formatAmount(euroValue);
+    if(source !== "bosnia") fields.bosnia.value = formatAmount(euroValue * RATE_BAM);
+
+    updating = false;
+    saveCalculator();
+  }
+
+  Object.entries(fields).forEach(([key, field]) => {
+    field.addEventListener("input", () => updateFrom(key));
+    field.addEventListener("focus", () => field.select());
+  });
+
+  window.loadUserCalculator = loadCalculator;
+  loadCalculator();
+})();
+</script>
+
+
+
+
+
+<script>
+(function(){
+  function isViewer(){
+    return localStorage.getItem("vacanze-agosto-2026-auth-user") === "mahnoush";
+  }
+
+  function isAllowedForViewer(target){
+    return Boolean(
+      target.closest(".currency-card") ||
+      target.closest(".shared-checklist") ||
+      target.closest("#logoutButton") ||
+      target.closest(".destination-head") ||
+      target.closest(".summary-stop") ||
+      target.closest(".copy-button") ||
+      target.closest("a") ||
+      target.closest("#showPlanned") ||
+      target.closest("#filter") ||
+      target.closest("#scrollTopButton")
+    );
+  }
+
+  document.addEventListener("click", function(event){
+    if(!isViewer()) return;
+    const target = event.target;
+    const modifyingControl = target.closest(
+      ".arrival-date,.departure-date,.check,.planned,#reset,#lockToggle"
+    );
+    if(modifyingControl && !isAllowedForViewer(target)){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  }, true);
+
+  document.addEventListener("change", function(event){
+    if(!isViewer()) return;
+    const target = event.target;
+    if(target.matches(".arrival-date,.departure-date,.check,.planned")){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  }, true);
+})();
+</script>
+
+
+
+
+
+
+<script>
+(function(){
+  const homePage = document.getElementById("homePage");
+  const checklistPage = document.getElementById("checklistPage");
+  const openButton = document.getElementById("openChecklistPage");
+  const backButton = document.getElementById("backToHome");
+
+  if(!homePage || !checklistPage || !openButton || !backButton) return;
+
+  function renderPage(page){
+    const showChecklist = page === "checklist";
+    homePage.classList.toggle("active", !showChecklist);
+    checklistPage.classList.toggle("active", showChecklist);
+    document.body.classList.toggle("checklist-open", showChecklist);
+    window.scrollTo(0, 0);
+  }
+
+  function openChecklist(){
+    history.pushState({ page: "checklist" }, "", "#checklist");
+    renderPage("checklist");
+  }
+
+  function goHome(){
+    if (location.hash === "#checklist") {
+      history.back();
+    } else {
+      history.replaceState({ page: "home" }, "", "#home");
+      renderPage("home");
+    }
+  }
+
+  openButton.addEventListener("click", openChecklist);
+  backButton.addEventListener("click", goHome);
+
+  window.addEventListener("popstate", function(){
+    renderPage(location.hash === "#checklist" ? "checklist" : "home");
+  });
+
+  if (location.hash === "#checklist") {
+    history.replaceState({ page: "home" }, "", "#home");
+    history.pushState({ page: "checklist" }, "", "#checklist");
+    renderPage("checklist");
+  } else {
+    history.replaceState({ page: "home" }, "", "#home");
+    renderPage("home");
+  }
+})();
+</script>
+
+
+<script>
+  window.setTimeout(function(){
+    document.documentElement.classList.remove("auth-pending");
+  }, 8000);
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+import {
+  getAuth,
+  setPersistence,
+  browserLocalPersistence,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+import {
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+  collection,
+  addDoc,
+  updateDoc,
+  setDoc,
+  getDoc,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC5W_aAJ58Dv6mIkgoSiMpV-5xACOim0gk",
+  authDomain: "vacanze-agosto-2026-4815f.firebaseapp.com",
+  projectId: "vacanze-agosto-2026-4815f",
+  storageBucket: "vacanze-agosto-2026-4815f.firebasestorage.app",
+  messagingSenderId: "358951220706",
+  appId: "1:358951220706:web:c3d58ea2b8f9f1ff93b5bb"
+};
+
+const AUTH_STORAGE_KEY = "vacanze-agosto-2026-auth-user";
+const USER_EMAILS = {
+  mohammad: "mohammad@vacanze.local",
+  mahnoush: "mahnoush@vacanze.local"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+await setPersistence(auth, browserLocalPersistence);
+
+let db;
+try {
+  db = initializeFirestore(app, {
+    localCache: persistentLocalCache({
+      tabManager: persistentMultipleTabManager()
+    })
+  });
+} catch (error) {
+  console.warn("Cache persistente non disponibile:", error);
+  db = initializeFirestore(app, {});
+}
+
+const checklistCollection = collection(
+  db,
+  "trips",
+  "agosto-2026",
+  "checklist"
+);
+
+const sharedItineraryDoc = doc(
+  db,
+  "trips",
+  "agosto-2026",
+  "shared",
+  "itinerary"
+);
+
+const sharedPlacesCollection = collection(
+  db,
+  "trips",
+  "agosto-2026",
+  "places"
+);
+
+let unsubscribeItinerary = null;
+let itinerarySaveTimer = null;
+let applyingRemoteItinerary = false;
+let itinerarySnapshotReady = false;
+let unsubscribeSharedPlaces = null;
+
+const overlay = document.getElementById("authOverlay");
+const form = document.getElementById("authForm");
+const usernameInput = document.getElementById("authUsername");
+const passwordInput = document.getElementById("authPassword");
+const errorBox = document.getElementById("authError");
+const logoutButton = document.getElementById("logoutButton");
+
+const checklistForm = document.getElementById("sharedChecklistForm");
+const checklistInput = document.getElementById("sharedChecklistInput");
+const checklistList = document.getElementById("sharedChecklistList");
+const checklistCount = document.getElementById("sharedChecklistCount");
+const checklistFooterCount = document.getElementById("sharedChecklistFooterCount");
+const checklistFooterStatus = document.getElementById("sharedChecklistFooterStatus");
+const checklistStatus = document.getElementById("sharedChecklistStatus");
+
+let checklistItems = [];
+let unsubscribeChecklist = null;
+
+function usernameFromEmail(email) {
+  const normalized = String(email || "").toLowerCase();
+  return Object.keys(USER_EMAILS).find(
+    username => USER_EMAILS[username] === normalized
+  ) || "";
+}
+
+function setChecklistStatus(text, isError = false) {
+  if (checklistStatus) {
+    checklistStatus.textContent = text;
+  }
+  if (checklistFooterStatus) {
+    checklistFooterStatus.textContent = text;
+    checklistFooterStatus.style.color = isError ? "#a73e3e" : "";
+  }
+}
+
+function showApp() {
+  overlay.classList.add("hidden");
+  document.documentElement.style.overflow = "";
+  document.body.style.overflow = "";
+  updateWelcomeMessage(localStorage.getItem(AUTH_STORAGE_KEY) || "");
+  setTopSyncStatus(navigator.onLine ? "syncing" : "offline");
+  if (typeof applyLockState === "function") applyLockState();
+  if (typeof window.loadUserCalculator === "function") {
+    window.loadUserCalculator();
+  }
+}
+
+function showLogin() {
+  updateWelcomeMessage("");
+  setTopSyncStatus("idle");
+  overlay.classList.remove("hidden");
+  document.documentElement.style.overflow = "hidden";
+  document.body.style.overflow = "hidden";
+  setTimeout(() => usernameInput.focus(), 50);
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+
+function displayUser(value) {
+  const username = String(value || "").trim().toLowerCase();
+  if (username === "mohammad") return "Mohammad";
+  if (username === "mahnoush") return "Mahnoush";
+  return username ? username.charAt(0).toUpperCase() + username.slice(1) : "—";
+}
+
+function displayAction(value) {
+  const actions = {
+    created: "creazione",
+    text: "testo modificato",
+    checked: "segnata come fatta",
+    unchecked: "spunta rimossa"
+  };
+  return actions[value] || "";
+}
+
+
+function updateWelcomeMessage(username) {
+  const element = document.getElementById("welcomeMessage");
+  if (!element) return;
+
+  if (username === "mohammad") {
+    element.textContent = "Bentornato, Mohammad 👋";
+  } else if (username === "mahnoush") {
+    element.textContent = "Bentornata, Mahnoush 👋";
+  } else {
+    element.textContent = "";
+  }
+}
+
+function setTopSyncStatus(state, time = "") {
+  const status = document.getElementById("topSyncStatus");
+  const dot = document.getElementById("topSyncDot");
+  const timeElement = document.getElementById("topSyncTime");
+
+  if (!status || !dot || !timeElement) return;
+
+  dot.classList.remove("syncing", "online", "offline");
+
+  if (state === "syncing") {
+    status.textContent = "Sincronizzazione…";
+    dot.classList.add("syncing");
+  } else if (state === "offline") {
+    status.textContent = "Offline";
+    dot.classList.add("offline");
+  } else if (state === "online") {
+    status.textContent = "Sincronizzato";
+    dot.classList.add("online");
+  } else {
+    status.textContent = "Connessione…";
+  }
+
+  timeElement.textContent = time ? `Ultimo aggiornamento ${time}` : "";
+}
+
+function currentShortTime() {
+  return new Intl.DateTimeFormat("it-IT", {
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(new Date());
+}
+
+function itemTime(item) {
+  if (item.createdAt && typeof item.createdAt.toMillis === "function") {
+    return item.createdAt.toMillis();
+  }
+  return Number(item.createdAtClient || 0);
+}
+
+function renderChecklist() {
+  const completed = checklistItems.filter(item => item.done).length;
+  if (checklistCount) {
+    checklistCount.textContent = `${completed}/${checklistItems.length}`;
+  }
+  if (checklistFooterCount) {
+    checklistFooterCount.textContent =
+      `${completed}/${checklistItems.length} cose preparate`;
+  }
+
+  if (checklistItems.length === 0) {
+    checklistList.innerHTML =
+      '<div class="checklist-empty">Nessuna voce. Aggiungi la prima cosa da portare.</div>';
+    return;
+  }
+
+  checklistList.innerHTML = checklistItems.map(item => {
+    const creator = displayUser(item.createdBy);
+    const lastEditor = displayUser(item.lastModifiedBy || item.editedBy || item.createdBy);
+    const lastAction = displayAction(item.lastModifiedAction);
+    const checkedBy = displayUser(item.checkedBy);
+    const uncheckedBy = displayUser(item.uncheckedBy);
+
+    return `
+      <div class="checklist-item ${item.done ? "done" : ""}"
+           data-id="${escapeHtml(item.id)}">
+        <button class="checklist-check" type="button"
+                aria-label="${item.done ? "Togli la spunta" : "Segna come fatta"}">
+          ${item.done ? "✓" : ""}
+        </button>
+        <div class="checklist-main">
+          <input class="checklist-text" type="text" maxlength="180"
+                 value="${escapeHtml(item.text || "")}"
+                 aria-label="Cosa da portare">
+          <div class="checklist-meta">
+            <span><strong>Creata da:</strong> ${escapeHtml(creator)}</span>
+            <span><strong>Ultima modifica:</strong> ${escapeHtml(lastEditor)}${lastAction ? ` · ${escapeHtml(lastAction)}` : ""}</span>
+            <span><strong>Fatta da:</strong> ${escapeHtml(checkedBy)}</span>
+            <span><strong>Spunta tolta da:</strong> ${escapeHtml(uncheckedBy)}</span>
+          </div>
+        </div>
+        ${
+          (localStorage.getItem(AUTH_STORAGE_KEY) === "mohammad" ||
+           item.createdBy === localStorage.getItem(AUTH_STORAGE_KEY))
+            ? `<button class="checklist-delete" type="button"
+                       aria-label="Cancella riga">🗑</button>`
+            : `<span class="checklist-delete-placeholder" aria-hidden="true"></span>`
+        }
+      </div>
+    `;
+  }).join("");
+}
+
+
+function currentUsername() {
+  return localStorage.getItem(AUTH_STORAGE_KEY) || "";
+}
+
+function setSharedTripSyncStatus(text, state = "syncing") {
+  if (state === "online") {
+    setTopSyncStatus("online", currentShortTime());
+  } else if (state === "offline") {
+    setTopSyncStatus("offline");
+  } else {
+    setTopSyncStatus("syncing");
+  }
+
+  const autosaves = document.querySelectorAll(".autosave");
+  autosaves.forEach(element => {
+    element.textContent = text;
+  });
+}
+
+window.saveSharedTripState = function() {
+  if (applyingRemoteItinerary) return;
+  if (!auth.currentUser) return;
+  if (currentUsername() !== "mohammad") return;
+  if (!itinerarySnapshotReady) return;
+
+  clearTimeout(itinerarySaveTimer);
+  setSharedTripSyncStatus(
+    navigator.onLine ? "Salvataggio condiviso…" : "Salvato offline",
+    navigator.onLine ? "syncing" : "offline"
+  );
+
+  itinerarySaveTimer = window.setTimeout(async () => {
+    try {
+      const sharedState =
+        typeof window.getSharedTripState === "function"
+          ? window.getSharedTripState()
+          : {};
+
+      await setDoc(sharedItineraryDoc, {
+        state: sharedState,
+        updatedBy: currentUsername(),
+        updatedAt: serverTimestamp(),
+        updatedAtClient: Date.now(),
+        schemaVersion: 1
+      });
+
+      setSharedTripSyncStatus(
+        navigator.onLine ? "Sincronizzato tra i due telefoni" : "Salvato offline",
+        navigator.onLine ? "online" : "offline"
+      );
+    } catch (error) {
+      console.error("Errore salvataggio itinerario:", error);
+      setSharedTripSyncStatus(
+        "Errore sincronizzazione itinerario",
+        navigator.onLine ? "syncing" : "offline"
+      );
+    }
+  }, 350);
+};
+
+async function startItinerarySync() {
+  if (unsubscribeItinerary) unsubscribeItinerary();
+  itinerarySnapshotReady = false;
+
+  setSharedTripSyncStatus(
+    navigator.onLine ? "Caricamento dati condivisi…" : "Caricamento offline…",
+    navigator.onLine ? "syncing" : "offline"
+  );
+
+  unsubscribeItinerary = onSnapshot(
+    sharedItineraryDoc,
+    { includeMetadataChanges: true },
+    async snapshot => {
+      const username = currentUsername();
+
+      if (!snapshot.exists()) {
+        itinerarySnapshotReady = true;
+
+        // The first admin login seeds Firestore using the itinerary already
+        // available locally. A read-only user never creates or overwrites it.
+        if (username === "mohammad") {
+          try {
+            const sharedState =
+              typeof window.getSharedTripState === "function"
+                ? window.getSharedTripState()
+                : {};
+
+            await setDoc(sharedItineraryDoc, {
+              state: sharedState,
+              updatedBy: username,
+              updatedAt: serverTimestamp(),
+              updatedAtClient: Date.now(),
+              schemaVersion: 1
+            });
+          } catch (error) {
+            console.error("Errore inizializzazione itinerario:", error);
+          }
+        }
+        return;
+      }
+
+      const data = snapshot.data() || {};
+      applyingRemoteItinerary = true;
+      try {
+        if (typeof window.applySharedTripState === "function") {
+          window.applySharedTripState(data.state || {});
+        }
+      } finally {
+        applyingRemoteItinerary = false;
+        itinerarySnapshotReady = true;
+      }
+
+      if (snapshot.metadata.hasPendingWrites) {
+        setSharedTripSyncStatus("Salvataggio condiviso…", "syncing");
+      } else if (snapshot.metadata.fromCache && !navigator.onLine) {
+        setSharedTripSyncStatus("Dati disponibili offline", "offline");
+      } else {
+        setSharedTripSyncStatus("Sincronizzato tra i due telefoni", "online");
+      }
+    },
+    error => {
+      console.error("Errore sincronizzazione itinerario:", error);
+      itinerarySnapshotReady = true;
+      setSharedTripSyncStatus(
+        "Errore sincronizzazione itinerario",
+        navigator.onLine ? "syncing" : "offline"
+      );
+    }
+  );
+}
+
+
+const sharedPlaceDialog = document.getElementById("sharedPlaceDialog");
+const sharedPlaceForm = document.getElementById("sharedPlaceForm");
+const sharedPlaceCity = document.getElementById("sharedPlaceCity");
+const sharedPlaceName = document.getElementById("sharedPlaceName");
+const sharedPlaceDescription = document.getElementById("sharedPlaceDescription");
+const sharedPlaceMaps = document.getElementById("sharedPlaceMaps");
+const sharedPlaceCancel = document.getElementById("sharedPlaceCancel");
+
+window.openSharedPlaceDialog = function(city){
+  if(currentUsername() !== "mohammad") return;
+  sharedPlaceCity.value = city || "";
+  sharedPlaceName.value = "";
+  sharedPlaceDescription.value = "";
+  sharedPlaceMaps.value = "";
+  sharedPlaceDialog.showModal();
+  window.setTimeout(() => sharedPlaceName.focus(), 60);
+};
+
+sharedPlaceCancel.addEventListener("click", () => sharedPlaceDialog.close());
+
+sharedPlaceForm.addEventListener("submit", async event => {
+  event.preventDefault();
+  if(currentUsername() !== "mohammad") return;
+
+  const city = sharedPlaceCity.value.trim();
+  const name = sharedPlaceName.value.trim();
+  if(!city || !name) return;
+
+  const saveButton = sharedPlaceForm.querySelector(".shared-place-save");
+  saveButton.disabled = true;
+  saveButton.textContent = "Salvataggio…";
+
+  try{
+    await addDoc(sharedPlacesCollection, {
+      city,
+      name,
+      description: sharedPlaceDescription.value.trim(),
+      maps: sharedPlaceMaps.value.trim(),
+      favorite: false,
+      dogFriendly: false,
+      notes: "",
+      createdBy: currentUsername(),
+      createdAt: serverTimestamp(),
+      createdAtClient: Date.now()
+    });
+    sharedPlaceDialog.close();
+  }catch(error){
+    console.error("Errore aggiunta posto:", error);
+    alert("Non è stato possibile aggiungere il posto. Controlla le regole Firebase.");
+  }finally{
+    saveButton.disabled = false;
+    saveButton.textContent = "Salva e condividi";
+  }
+});
+
+window.deleteSharedPlace = async function(documentId, placeName){
+  if(currentUsername() !== "mohammad" || !documentId) return;
+  const confirmed = confirm(`Eliminare "${placeName}" da entrambi i cellulari?`);
+  if(!confirmed) return;
+
+  try{
+    await deleteDoc(doc(db, "trips", "agosto-2026", "places", documentId));
+  }catch(error){
+    console.error("Errore eliminazione posto:", error);
+    alert("Non è stato possibile eliminare il posto.");
+  }
+};
+
+function startSharedPlacesSync(){
+  if(unsubscribeSharedPlaces) unsubscribeSharedPlaces();
+
+  unsubscribeSharedPlaces = onSnapshot(
+    sharedPlacesCollection,
+    {includeMetadataChanges:true},
+    snapshot => {
+      sharedPlaces = snapshot.docs.map(placeDoc => ({
+        id: placeDoc.id,
+        ...placeDoc.data()
+      })).sort((a,b) =>
+        Number(a.createdAtClient || 0) - Number(b.createdAtClient || 0)
+      );
+
+      if(typeof window.refreshTripWithSharedPlaces === "function"){
+        window.refreshTripWithSharedPlaces();
+      }
+
+      if(snapshot.metadata.hasPendingWrites){
+        setTopSyncStatus("syncing");
+      }else if(snapshot.metadata.fromCache && !navigator.onLine){
+        setTopSyncStatus("offline");
+      }else{
+        setTopSyncStatus("online", currentShortTime());
+      }
+    },
+    error => {
+      console.error("Errore sincronizzazione posti:", error);
+      setTopSyncStatus(navigator.onLine ? "syncing" : "offline");
+    }
+  );
+}
+
+function startChecklistSync() {
+  if (unsubscribeChecklist) unsubscribeChecklist();
+
+  setChecklistStatus("Sincronizzazione…");
+
+  unsubscribeChecklist = onSnapshot(
+    checklistCollection,
+    { includeMetadataChanges: true },
+    snapshot => {
+      checklistItems = snapshot.docs.map(snapshotDoc => ({
+        id: snapshotDoc.id,
+        ...snapshotDoc.data()
+      })).sort((a, b) => itemTime(a) - itemTime(b));
+
+      renderChecklist();
+
+      const hasPendingWrites = snapshot.metadata.hasPendingWrites;
+      const fromCache = snapshot.metadata.fromCache;
+
+      if (hasPendingWrites) {
+        setChecklistStatus("Salvataggio…");
+        setTopSyncStatus("syncing");
+      } else if (fromCache && !navigator.onLine) {
+        setChecklistStatus("Offline: le modifiche saranno sincronizzate");
+        setTopSyncStatus("offline");
+      } else {
+        setChecklistStatus("Sincronizzata tra i due telefoni");
+        setTopSyncStatus("online", currentShortTime());
+      }
+    },
+    error => {
+      console.error(error);
+      setChecklistStatus(
+        "Errore di sincronizzazione. Controlla Internet e le regole Firebase.",
+        true
+      );
+      setTopSyncStatus(navigator.onLine ? "syncing" : "offline");
+    }
+  );
+}
+
+form.addEventListener("submit", async event => {
+  event.preventDefault();
+  errorBox.textContent = "";
+
+  const username = String(usernameInput.value || "").trim().toLowerCase();
+  const password = String(passwordInput.value || "");
+  const email = USER_EMAILS[username];
+
+  if (!email) {
+    errorBox.textContent = "Username non valido.";
+    return;
+  }
+
+  try {
+    errorBox.textContent = "Accesso in corso…";
+    await signInWithEmailAndPassword(auth, email, password);
+    passwordInput.value = "";
+    errorBox.textContent = "";
+  } catch (error) {
+    console.error(error);
+    errorBox.textContent = "Username o password non corretti.";
+    passwordInput.select();
+  }
+});
+
+logoutButton.addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+onAuthStateChanged(auth, user => {
+  document.documentElement.classList.remove("auth-pending");
+
+  if (unsubscribeChecklist) {
+    unsubscribeChecklist();
+    unsubscribeChecklist = null;
+  }
+
+  if (unsubscribeItinerary) {
+    unsubscribeItinerary();
+    unsubscribeItinerary = null;
+  }
+
+  if (unsubscribeSharedPlaces) {
+    unsubscribeSharedPlaces();
+    unsubscribeSharedPlaces = null;
+  }
+  itinerarySnapshotReady = false;
+  clearTimeout(itinerarySaveTimer);
+
+  if (user) {
+    const username = usernameFromEmail(user.email);
+    if (!username) {
+      signOut(auth);
+      return;
+    }
+
+    localStorage.setItem(AUTH_STORAGE_KEY, username);
+    errorBox.textContent = "";
+    showApp();
+    startChecklistSync();
+    startItinerarySync();
+    startSharedPlacesSync();
+  } else {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    checklistItems = [];
+    renderChecklist();
+    setChecklistStatus("Accedi per vedere la checklist");
+    usernameInput.value = "";
+    passwordInput.value = "";
+    errorBox.textContent = "";
+    if (typeof window.loadUserCalculator === "function") {
+      window.loadUserCalculator();
+    }
+    history.replaceState({ page: "home" }, "", "#home");
+    showLogin();
+  }
+});
+
+
+window.addEventListener("online", () => {
+  if (auth.currentUser) {
+    setSharedTripSyncStatus("Riconnessione e sincronizzazione…", "syncing");
+  }
+});
+
+window.addEventListener("offline", () => {
+  if (auth.currentUser) {
+    setSharedTripSyncStatus("Offline: le modifiche saranno sincronizzate", "offline");
+  }
+});
+
+checklistForm.addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const text = checklistInput.value.trim();
+  const username = localStorage.getItem(AUTH_STORAGE_KEY) || "";
+
+  if (!text || !auth.currentUser) return;
+
+  checklistInput.value = "";
+
+  try {
+    await addDoc(checklistCollection, {
+      text,
+      done: false,
+      createdBy: username,
+      createdAt: serverTimestamp(),
+      createdAtClient: Date.now(),
+      lastModifiedBy: username,
+      lastModifiedAction: "created",
+      lastModifiedAt: serverTimestamp(),
+      checkedBy: "",
+      uncheckedBy: ""
+    });
+    checklistInput.focus();
+  } catch (error) {
+    console.error(error);
+    checklistInput.value = text;
+    setChecklistStatus("Non è stato possibile aggiungere la voce.", true);
+  }
+});
+
+checklistList.addEventListener("click", async event => {
+  const row = event.target.closest(".checklist-item");
+  if (!row || !auth.currentUser) return;
+
+  const item = checklistItems.find(entry => entry.id === row.dataset.id);
+  if (!item) return;
+
+  try {
+    if (event.target.closest(".checklist-check")) {
+      const username = localStorage.getItem(AUTH_STORAGE_KEY) || "";
+      const willBeDone = !item.done;
+      const update = {
+        done: willBeDone,
+        editedBy: username,
+        editedAt: serverTimestamp(),
+        lastModifiedBy: username,
+        lastModifiedAction: willBeDone ? "checked" : "unchecked",
+        lastModifiedAt: serverTimestamp()
+      };
+
+      if (willBeDone) {
+        update.checkedBy = username;
+      } else {
+        update.uncheckedBy = username;
+      }
+
+      await updateDoc(doc(checklistCollection, item.id), update);
+      return;
+    }
+
+    if (event.target.closest(".checklist-delete")) {
+      const username = localStorage.getItem(AUTH_STORAGE_KEY) || "";
+      const canDelete = username === "mohammad" || item.createdBy === username;
+
+      if (!canDelete) {
+        setChecklistStatus("Puoi eliminare solo le righe create da te.", true);
+        return;
+      }
+
+      await deleteDoc(doc(checklistCollection, item.id));
+    }
+  } catch (error) {
+    console.error(error);
+    setChecklistStatus("Modifica non salvata.", true);
+  }
+});
+
+checklistList.addEventListener("change", async event => {
+  if (!event.target.matches(".checklist-text") || !auth.currentUser) return;
+
+  const row = event.target.closest(".checklist-item");
+  if (!row) return;
+
+  const item = checklistItems.find(entry => entry.id === row.dataset.id);
+  if (!item) return;
+
+  const text = event.target.value.trim();
+
+  try {
+    if (!text) {
+      await deleteDoc(doc(checklistCollection, item.id));
+    } else if (text !== item.text) {
+      const username = localStorage.getItem(AUTH_STORAGE_KEY) || "";
+      await updateDoc(doc(checklistCollection, item.id), {
+        text,
+        editedBy: username,
+        editedAt: serverTimestamp(),
+        lastModifiedBy: username,
+        lastModifiedAction: "text",
+        lastModifiedAt: serverTimestamp()
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    setChecklistStatus("Testo non salvato.", true);
+  }
+});
+
+window.addEventListener("online", () => {
+  if (auth.currentUser) {
+    setChecklistStatus("Riconnessione…");
+    setTopSyncStatus("syncing");
+  }
+});
+
+window.addEventListener("offline", () => {
+  if (auth.currentUser) {
+    setChecklistStatus("Offline: le modifiche saranno sincronizzate");
+    setTopSyncStatus("offline");
+  }
+});
+</script>
+
+
+
+
+
+<script>
+(function(){
+  let updateInProgress = false;
+
+  function getUpdateElements(){
+    return {
+      banner:
+        document.getElementById("updateBanner") ||
+        document.querySelector(".update-banner") ||
+        document.querySelector("[data-update-banner]"),
+      button:
+        document.getElementById("updateButton") ||
+        document.querySelector(".update-button") ||
+        document.querySelector("[data-action='update']")
+    };
+  }
+
+  function hideUpdateBanner(){
+    const { banner, button } = getUpdateElements();
+
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Aggiornamento…";
+    }
+
+    if (banner) {
+      banner.hidden = true;
+      banner.style.display = "none";
+      banner.setAttribute("aria-hidden", "true");
+    }
+  }
+
+  async function applyAppUpdate(){
+    if (updateInProgress) return;
+    updateInProgress = true;
+    hideUpdateBanner();
+
+    try {
+      const registration = await navigator.serviceWorker.getRegistration();
+
+      if (!registration) {
+        window.location.reload();
+        return;
+      }
+
+      await registration.update();
+
+      const waiting = registration.waiting;
+      const installing = registration.installing;
+
+      if (waiting) {
+        waiting.postMessage({ type: "SKIP_WAITING" });
+      } else if (installing) {
+        installing.addEventListener("statechange", function(){
+          if (installing.state === "installed") {
+            if (registration.waiting) {
+              registration.waiting.postMessage({ type: "SKIP_WAITING" });
+            } else {
+              window.location.reload();
+            }
+          }
+        });
+      } else {
+        window.location.reload();
+      }
+
+      window.setTimeout(function(){
+        window.location.reload();
+      }, 2500);
+    } catch (error) {
+      console.error("Aggiornamento app non riuscito:", error);
+      window.location.reload();
+    }
+  }
+
+  document.addEventListener("click", function(event){
+    const button = event.target.closest(
+      "#updateButton, .update-button, [data-action='update']"
+    );
+    if (!button) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    applyAppUpdate();
+  }, true);
+
+  navigator.serviceWorker?.addEventListener("controllerchange", function(){
+    if (window.__appReloading) return;
+    window.__appReloading = true;
+    window.location.reload();
+  });
+})();
+</script>
+
+
+
+
+
+<script>
+(function(){
+  const button = document.getElementById("lockToggle");
+  if (!button) return;
+
+  const STORAGE_KEY = "vacanze-agosto-2026-locked";
+
+  function getStoredLockState(){
+    return localStorage.getItem(STORAGE_KEY) === "true";
+  }
+
+  function setLockVisual(locked){
+    button.classList.toggle("is-locked", locked);
+    button.setAttribute("aria-label", locked ? "Sblocca modifiche" : "Blocca modifiche");
+    button.setAttribute("title", locked ? "Sblocca modifiche" : "Blocca modifiche");
+    button.dataset.locked = locked ? "true" : "false";
+  }
+
+  function detectCurrentState(){
+    if (button.dataset.locked === "true") return true;
+    if (button.dataset.locked === "false") return false;
+
+    const aria = (button.getAttribute("aria-label") || "").toLowerCase();
+    if (aria.includes("sblocca")) return true;
+    if (aria.includes("blocca")) return false;
+
+    return getStoredLockState();
+  }
+
+  // Capture the click so the visual state always follows the actual toggle.
+  button.addEventListener("click", function(){
+    window.setTimeout(function(){
+      let locked = detectCurrentState();
+
+      // If the original app logic did not expose the new state,
+      // use the persisted state and invert it.
+      const stored = getStoredLockState();
+      if (locked === stored) {
+        locked = !stored;
+        localStorage.setItem(STORAGE_KEY, String(locked));
+      }
+
+      setLockVisual(locked);
+    }, 0);
+  });
+
+  // Keep compatibility with the original applyLockState function.
+  const originalApplyLockState = window.applyLockState;
+  window.applyLockState = function(){
+    if (typeof originalApplyLockState === "function") {
+      originalApplyLockState.apply(this, arguments);
+    }
+
+    window.setTimeout(function(){
+      const locked = getStoredLockState();
+      setLockVisual(locked);
+    }, 0);
+  };
+
+  setLockVisual(getStoredLockState());
+})();
+</script>
+
+
+<script>
+(function(){
+  const button = document.getElementById("lockToggle");
+  const topbar = document.querySelector(".topbar");
+  const modeLabel = document.getElementById("lockModeLabel");
+
+  if (!button || !topbar) return;
+
+  function isLocked(){
+    return button.classList.contains("is-locked") ||
+           button.dataset.locked === "true" ||
+           (button.getAttribute("aria-label") || "").toLowerCase().includes("sblocca");
+  }
+
+  function applyTopbarState(){
+    const locked = isLocked();
+
+    topbar.classList.toggle("state-locked", locked);
+    topbar.classList.toggle("state-unlocked", !locked);
+
+    if (modeLabel) {
+      modeLabel.textContent = locked ? "Sola lettura" : "Modalità modifica";
+    }
+  }
+
+  const observer = new MutationObserver(applyTopbarState);
+  observer.observe(button, {
+    attributes:true,
+    childList:true,
+    subtree:true,
+    attributeFilter:["class","data-locked","aria-label"]
+  });
+
+  button.addEventListener("click", function(){
+    window.setTimeout(applyTopbarState, 0);
+  });
+
+  document.addEventListener("DOMContentLoaded", applyTopbarState);
+  window.setTimeout(applyTopbarState, 0);
+})();
+</script>
+
+
+<dialog id="sharedPlaceDialog" class="shared-place-dialog">
+  <form id="sharedPlaceForm" class="shared-place-form" method="dialog">
+    <h2>Aggiungi un nuovo posto</h2>
+    <input id="sharedPlaceCity" type="hidden">
+    <label>Nome del posto
+      <input id="sharedPlaceName" type="text" maxlength="120" required
+             placeholder="Es. Cascate di Kravica">
+    </label>
+    <label>Descrizione
+      <textarea id="sharedPlaceDescription" maxlength="500"
+                placeholder="Breve descrizione del posto"></textarea>
+    </label>
+    <label>Link Google Maps
+      <input id="sharedPlaceMaps" type="url" maxlength="500"
+             placeholder="https://maps.google.com/...">
+    </label>
+    <div class="shared-place-form-actions">
+      <button class="shared-place-cancel" type="button" id="sharedPlaceCancel">Annulla</button>
+      <button class="shared-place-save" type="submit">Salva e condividi</button>
+    </div>
+  </form>
+</dialog>
+
+</body>
+</html>
