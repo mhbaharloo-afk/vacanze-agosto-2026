@@ -309,6 +309,26 @@
       color:#315a4d;font-size:1.05rem;font-weight:900;display:grid;place-items:center;
     }
 
+  
+    .role-badge{
+      display:none;
+      align-items:center;
+      gap:5px;
+      padding:7px 9px;
+      border-radius:12px;
+      background:#e8f3ef;
+      color:#315f50;
+      font-size:.69rem;
+      font-weight:900;
+      white-space:nowrap;
+    }
+    .role-badge.show{display:flex}
+    .role-badge.viewer{background:#fff1d7;color:#755016}
+    .readonly-control{
+      opacity:.58!important;
+      cursor:not-allowed!important;
+    }
+
   </style>
 </head>
 <body>
@@ -341,6 +361,7 @@
       <div class="app-subtitle">Slovenia → Croazia → Bosnia-Erzegovina</div>
     </div>
     <div class="top-actions">
+      <div id="roleBadge" class="role-badge" aria-live="polite"></div>
       <button id="logoutButton" class="logout-btn" type="button" aria-label="Esci" title="Esci">⇥</button>
       <button id="lockToggle" class="lock-button" type="button" aria-label="Blocca modifiche">🔓</button>
       <div class="top-icon" aria-hidden="true"><img src="icon-192.png" alt="" /></div>
@@ -558,13 +579,34 @@ let pendingScrollTarget = null;
 function applyLockState(){
   const lockButton = document.getElementById("lockToggle");
   const banner = document.getElementById("lockedBanner");
-  lockButton.textContent = isLocked ? "🔒" : "🔓";
-  lockButton.classList.toggle("locked", isLocked);
-  lockButton.setAttribute("aria-label", isLocked ? "Sblocca modifiche" : "Blocca modifiche");
-  banner.classList.toggle("show", isLocked);
+  const roleBadge = document.getElementById("roleBadge");
+  const authUser = localStorage.getItem("vacanze-agosto-2026-auth-user") || "";
+  const isViewer = authUser === "mahnoush";
+  const effectiveLocked = isLocked || isViewer;
+
+  if(lockButton){
+    lockButton.textContent = isLocked ? "🔒" : "🔓";
+    lockButton.classList.toggle("locked", isLocked);
+    lockButton.setAttribute("aria-label", isLocked ? "Sblocca modifiche" : "Blocca modifiche");
+    lockButton.style.display = isViewer ? "none" : "";
+  }
+
+  if(banner){
+    banner.textContent = isViewer
+      ? "Accesso in sola lettura: puoi consultare il viaggio e usare la calcolatrice."
+      : "Modalità bloccata: i dati non possono essere modificati.";
+    banner.classList.toggle("show", effectiveLocked);
+  }
+
+  if(roleBadge){
+    roleBadge.classList.toggle("show", Boolean(authUser));
+    roleBadge.classList.toggle("viewer", isViewer);
+    roleBadge.textContent = isViewer ? "👁 Sola lettura" : (authUser ? "⚙ Admin" : "");
+  }
 
   document.querySelectorAll(".arrival-date,.departure-date,.check,.planned,#reset").forEach(el=>{
-    el.disabled = isLocked;
+    el.disabled = effectiveLocked;
+    el.classList.toggle("readonly-control", effectiveLocked);
   });
 }
 
@@ -1204,6 +1246,7 @@ document.addEventListener("selectstart", event => {
     overlay.classList.add("hidden");
     document.documentElement.style.overflow = "";
     document.body.style.overflow = "";
+    if(typeof applyLockState === "function") applyLockState();
   }
 
   function showLogin(){
@@ -1242,6 +1285,50 @@ document.addEventListener("selectstart", event => {
     errorBox.textContent = "";
     showLogin();
   });
+})();
+</script>
+
+
+<script>
+(function(){
+  function isViewer(){
+    return localStorage.getItem("vacanze-agosto-2026-auth-user") === "mahnoush";
+  }
+
+  function isAllowedForViewer(target){
+    return Boolean(
+      target.closest(".currency-card") ||
+      target.closest("#logoutButton") ||
+      target.closest(".destination-head") ||
+      target.closest(".summary-stop") ||
+      target.closest(".copy-button") ||
+      target.closest("a") ||
+      target.closest("#showPlanned") ||
+      target.closest("#filter") ||
+      target.closest("#scrollTopButton")
+    );
+  }
+
+  document.addEventListener("click", function(event){
+    if(!isViewer()) return;
+    const target = event.target;
+    const modifyingControl = target.closest(
+      ".arrival-date,.departure-date,.check,.planned,#reset,#lockToggle"
+    );
+    if(modifyingControl && !isAllowedForViewer(target)){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  }, true);
+
+  document.addEventListener("change", function(event){
+    if(!isViewer()) return;
+    const target = event.target;
+    if(target.matches(".arrival-date,.departure-date,.check,.planned")){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  }, true);
 })();
 </script>
 
