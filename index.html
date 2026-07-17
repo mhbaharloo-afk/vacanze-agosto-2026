@@ -1233,6 +1233,76 @@
       }
     }
 
+  
+    .welcome-message{
+      min-height:18px;
+      margin-top:5px;
+      font-size:.76rem;
+      line-height:1.25;
+      font-weight:800;
+      color:#315e50;
+    }
+
+    .sync-status-row{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      min-height:17px;
+      margin-top:6px;
+      color:#71807b;
+      font-size:.62rem;
+      line-height:1.2;
+      font-weight:700;
+      white-space:nowrap;
+      overflow:hidden;
+    }
+
+    .sync-status-dot{
+      width:7px;
+      height:7px;
+      flex:0 0 7px;
+      border-radius:50%;
+      background:#9aa6a2;
+      box-shadow:0 0 0 3px rgba(154,166,162,.12);
+    }
+
+    .sync-status-dot.syncing{
+      background:#c68a00;
+      box-shadow:0 0 0 3px rgba(198,138,0,.12);
+      animation:syncPulse 1.1s ease-in-out infinite;
+    }
+
+    .sync-status-dot.online{
+      background:#1c8a66;
+      box-shadow:0 0 0 3px rgba(28,138,102,.12);
+    }
+
+    .sync-status-dot.offline{
+      background:#b45353;
+      box-shadow:0 0 0 3px rgba(180,83,83,.12);
+    }
+
+    #topSyncTime::before{
+      content:"·";
+      margin-right:6px;
+    }
+
+    @keyframes syncPulse{
+      0%,100%{ opacity:.45; }
+      50%{ opacity:1; }
+    }
+
+    @media (max-width:380px){
+      .welcome-message{
+        font-size:.7rem;
+      }
+
+      .sync-status-row{
+        font-size:.57rem;
+        gap:5px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1271,8 +1341,14 @@
     <div class="topbar-main">
       <div class="topbar-copy">
         <div class="app-title">Vacanze Agosto 2026</div>
+        <div id="welcomeMessage" class="welcome-message" aria-live="polite"></div>
         <div class="app-subtitle">
           <span class="trip-route">Slovenia → Croazia → Bosnia-Erzegovina</span>
+        </div>
+        <div class="sync-status-row" aria-live="polite">
+          <span id="topSyncDot" class="sync-status-dot"></span>
+          <span id="topSyncStatus">Connessione…</span>
+          <span id="topSyncTime"></span>
         </div>
       </div>
       <div class="top-icon" aria-hidden="true">
@@ -2336,27 +2412,43 @@ document.addEventListener("selectstart", event => {
 
   if(!homePage || !checklistPage || !openButton || !backButton) return;
 
-  function showPage(page, updateHash = true){
+  function renderPage(page){
     const showChecklist = page === "checklist";
     homePage.classList.toggle("active", !showChecklist);
     checklistPage.classList.toggle("active", showChecklist);
     document.body.classList.toggle("checklist-open", showChecklist);
-
-    if(updateHash){
-      history.replaceState(null, "", showChecklist ? "#checklist" : "#home");
-    }
-
     window.scrollTo(0, 0);
   }
 
-  openButton.addEventListener("click", () => showPage("checklist"));
-  backButton.addEventListener("click", () => showPage("home"));
+  function openChecklist(){
+    history.pushState({ page: "checklist" }, "", "#checklist");
+    renderPage("checklist");
+  }
 
-  window.addEventListener("hashchange", () => {
-    showPage(location.hash === "#checklist" ? "checklist" : "home", false);
+  function goHome(){
+    if (location.hash === "#checklist") {
+      history.back();
+    } else {
+      history.replaceState({ page: "home" }, "", "#home");
+      renderPage("home");
+    }
+  }
+
+  openButton.addEventListener("click", openChecklist);
+  backButton.addEventListener("click", goHome);
+
+  window.addEventListener("popstate", function(){
+    renderPage(location.hash === "#checklist" ? "checklist" : "home");
   });
 
-  showPage(location.hash === "#checklist" ? "checklist" : "home", false);
+  if (location.hash === "#checklist") {
+    history.replaceState({ page: "home" }, "", "#home");
+    history.pushState({ page: "checklist" }, "", "#checklist");
+    renderPage("checklist");
+  } else {
+    history.replaceState({ page: "home" }, "", "#home");
+    renderPage("home");
+  }
 })();
 </script>
 
@@ -2461,6 +2553,8 @@ function showApp() {
   overlay.classList.add("hidden");
   document.documentElement.style.overflow = "";
   document.body.style.overflow = "";
+  updateWelcomeMessage(localStorage.getItem(AUTH_STORAGE_KEY) || "");
+  setTopSyncStatus(navigator.onLine ? "syncing" : "offline");
   if (typeof applyLockState === "function") applyLockState();
   if (typeof window.loadUserCalculator === "function") {
     window.loadUserCalculator();
@@ -2468,6 +2562,8 @@ function showApp() {
 }
 
 function showLogin() {
+  updateWelcomeMessage("");
+  setTopSyncStatus("idle");
   overlay.classList.remove("hidden");
   document.documentElement.style.overflow = "hidden";
   document.body.style.overflow = "hidden";
@@ -2499,6 +2595,52 @@ function displayAction(value) {
     unchecked: "spunta rimossa"
   };
   return actions[value] || "";
+}
+
+
+function updateWelcomeMessage(username) {
+  const element = document.getElementById("welcomeMessage");
+  if (!element) return;
+
+  if (username === "mohammad") {
+    element.textContent = "Bentornato, Mohammad 👋";
+  } else if (username === "mahnoush") {
+    element.textContent = "Bentornata, Mahnoush 👋";
+  } else {
+    element.textContent = "";
+  }
+}
+
+function setTopSyncStatus(state, time = "") {
+  const status = document.getElementById("topSyncStatus");
+  const dot = document.getElementById("topSyncDot");
+  const timeElement = document.getElementById("topSyncTime");
+
+  if (!status || !dot || !timeElement) return;
+
+  dot.classList.remove("syncing", "online", "offline");
+
+  if (state === "syncing") {
+    status.textContent = "Sincronizzazione…";
+    dot.classList.add("syncing");
+  } else if (state === "offline") {
+    status.textContent = "Offline";
+    dot.classList.add("offline");
+  } else if (state === "online") {
+    status.textContent = "Sincronizzato";
+    dot.classList.add("online");
+  } else {
+    status.textContent = "Connessione…";
+  }
+
+  timeElement.textContent = time ? `Ultimo aggiornamento ${time}` : "";
+}
+
+function currentShortTime() {
+  return new Intl.DateTimeFormat("it-IT", {
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(new Date());
 }
 
 function itemTime(item) {
@@ -2576,10 +2718,13 @@ function startChecklistSync() {
 
       if (hasPendingWrites) {
         setChecklistStatus("Salvataggio…");
+        setTopSyncStatus("syncing");
       } else if (fromCache && !navigator.onLine) {
         setChecklistStatus("Offline: le modifiche saranno sincronizzate");
+        setTopSyncStatus("offline");
       } else {
         setChecklistStatus("Sincronizzata tra i due telefoni");
+        setTopSyncStatus("online", currentShortTime());
       }
     },
     error => {
@@ -2588,6 +2733,7 @@ function startChecklistSync() {
         "Errore di sincronizzazione. Controlla Internet e le regole Firebase.",
         true
       );
+      setTopSyncStatus(navigator.onLine ? "syncing" : "offline");
     }
   );
 }
@@ -2655,7 +2801,7 @@ onAuthStateChanged(auth, user => {
     if (typeof window.loadUserCalculator === "function") {
       window.loadUserCalculator();
     }
-    if(location.hash === "#checklist") location.hash = "#home";
+    history.replaceState({ page: "home" }, "", "#home");
     showLogin();
   }
 });
@@ -2770,38 +2916,116 @@ checklistList.addEventListener("change", async event => {
 });
 
 window.addEventListener("online", () => {
-  if (auth.currentUser) setChecklistStatus("Riconnessione…");
+  if (auth.currentUser) {
+    setChecklistStatus("Riconnessione…");
+    setTopSyncStatus("syncing");
+  }
 });
 
 window.addEventListener("offline", () => {
   if (auth.currentUser) {
     setChecklistStatus("Offline: le modifiche saranno sincronizzate");
+    setTopSyncStatus("offline");
   }
 });
 </script>
 
 
+
+
+
 <script>
-document.addEventListener("click", function(event){
-  const button = event.target.closest(
-    "#updateButton, .update-button, [data-action='update']"
-  );
-  if (!button) return;
+(function(){
+  let updateInProgress = false;
 
-  hideUpdateBannerImmediately();
+  function getUpdateElements(){
+    return {
+      banner:
+        document.getElementById("updateBanner") ||
+        document.querySelector(".update-banner") ||
+        document.querySelector("[data-update-banner]"),
+      button:
+        document.getElementById("updateButton") ||
+        document.querySelector(".update-button") ||
+        document.querySelector("[data-action='update']")
+    };
+  }
 
-  window.setTimeout(function(){
-    if (document.visibilityState === "visible") {
+  function hideUpdateBanner(){
+    const { banner, button } = getUpdateElements();
+
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Aggiornamento…";
+    }
+
+    if (banner) {
+      banner.hidden = true;
+      banner.style.display = "none";
+      banner.setAttribute("aria-hidden", "true");
+    }
+  }
+
+  async function applyAppUpdate(){
+    if (updateInProgress) return;
+    updateInProgress = true;
+    hideUpdateBanner();
+
+    try {
+      const registration = await navigator.serviceWorker.getRegistration();
+
+      if (!registration) {
+        window.location.reload();
+        return;
+      }
+
+      await registration.update();
+
+      const waiting = registration.waiting;
+      const installing = registration.installing;
+
+      if (waiting) {
+        waiting.postMessage({ type: "SKIP_WAITING" });
+      } else if (installing) {
+        installing.addEventListener("statechange", function(){
+          if (installing.state === "installed") {
+            if (registration.waiting) {
+              registration.waiting.postMessage({ type: "SKIP_WAITING" });
+            } else {
+              window.location.reload();
+            }
+          }
+        });
+      } else {
+        window.location.reload();
+      }
+
+      window.setTimeout(function(){
+        window.location.reload();
+      }, 2500);
+    } catch (error) {
+      console.error("Aggiornamento app non riuscito:", error);
       window.location.reload();
     }
-  }, 1800);
-}, true);
+  }
 
-navigator.serviceWorker?.addEventListener("controllerchange", function(){
-  if (window.__pwaReloading) return;
-  window.__pwaReloading = true;
-  window.location.reload();
-});
+  document.addEventListener("click", function(event){
+    const button = event.target.closest(
+      "#updateButton, .update-button, [data-action='update']"
+    );
+    if (!button) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    applyAppUpdate();
+  }, true);
+
+  navigator.serviceWorker?.addEventListener("controllerchange", function(){
+    if (window.__appReloading) return;
+    window.__appReloading = true;
+    window.location.reload();
+  });
+})();
 </script>
 
 </body>
