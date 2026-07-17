@@ -12,3 +12,12 @@ mahnoush / 123456
 
 Checklist cloud:
 trips/agosto-2026/checklist
+
+REGOLE FIRESTORE OBBLIGATORIE
+
+Apri Firebase Console > Firestore Database > Regole.
+Copia tutto il contenuto del file firestore.rules e premi Pubblica.
+
+Permessi eliminazione:
+- Mohammad può eliminare qualsiasi riga.
+- Mahnoush può eliminare soltanto le righe con createdBy = "mahnoush".

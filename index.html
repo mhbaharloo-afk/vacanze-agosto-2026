@@ -632,6 +632,13 @@
       opacity:.82;
     }
 
+  
+    .checklist-delete-placeholder{
+      width:38px;
+      height:38px;
+      display:block;
+    }
+
   </style>
 </head>
 <body>
@@ -1875,8 +1882,13 @@ function renderChecklist() {
             <span><strong>Spunta tolta da:</strong> ${escapeHtml(uncheckedBy)}</span>
           </div>
         </div>
-        <button class="checklist-delete" type="button"
-                aria-label="Cancella riga">🗑</button>
+        ${
+          (localStorage.getItem(AUTH_STORAGE_KEY) === "mohammad" ||
+           item.createdBy === localStorage.getItem(AUTH_STORAGE_KEY))
+            ? `<button class="checklist-delete" type="button"
+                       aria-label="Cancella riga">🗑</button>`
+            : `<span class="checklist-delete-placeholder" aria-hidden="true"></span>`
+        }
       </div>
     `;
   }).join("");
@@ -2047,6 +2059,14 @@ checklistList.addEventListener("click", async event => {
     }
 
     if (event.target.closest(".checklist-delete")) {
+      const username = localStorage.getItem(AUTH_STORAGE_KEY) || "";
+      const canDelete = username === "mohammad" || item.createdBy === username;
+
+      if (!canDelete) {
+        setChecklistStatus("Puoi eliminare solo le righe create da te.", true);
+        return;
+      }
+
       await deleteDoc(doc(checklistCollection, item.id));
     }
   } catch (error) {
