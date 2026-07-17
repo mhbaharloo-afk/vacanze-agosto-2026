@@ -188,6 +188,47 @@
       scroll-margin-top:92px;
     }
 
+  
+    .scroll-top-btn{
+      position:fixed;
+      right:20px;
+      bottom:108px;
+      z-index:999;
+      width:52px;
+      height:52px;
+      border:0;
+      border-radius:18px;
+      background:#176f59;
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:1.45rem;
+      font-weight:900;
+      box-shadow:0 10px 28px rgba(19,79,63,.28);
+      opacity:0;
+      visibility:hidden;
+      transform:translateY(14px) scale(.92);
+      transition:opacity .2s ease, transform .2s ease, visibility .2s ease;
+      cursor:pointer;
+    }
+
+    .scroll-top-btn.show{
+      opacity:1;
+      visibility:visible;
+      transform:translateY(0) scale(1);
+    }
+
+    .scroll-top-btn:active{
+      transform:scale(.94);
+    }
+
+    @media (min-width:700px){
+      .scroll-top-btn{
+        right:max(24px, calc((100vw - 760px) / 2 + 24px));
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -913,6 +954,32 @@ document.addEventListener("contextmenu", event => {
 document.addEventListener("selectstart", event => {
   if(!["INPUT","TEXTAREA"].includes(event.target.tagName)) event.preventDefault();
 });
+</script>
+
+
+<button id="scrollTopButton" class="scroll-top-btn" type="button" aria-label="Torna all'inizio" title="Torna all'inizio">↑</button>
+
+<script>
+(function(){
+  const button = document.getElementById("scrollTopButton");
+  if(!button) return;
+
+  function updateScrollTopButton(){
+    const threshold = Math.max(500, window.innerHeight * 0.75);
+    button.classList.toggle("show", window.scrollY > threshold);
+  }
+
+  button.addEventListener("click", function(){
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  });
+
+  window.addEventListener("scroll", updateScrollTopButton, {passive:true});
+  window.addEventListener("resize", updateScrollTopButton);
+  updateScrollTopButton();
+})();
 </script>
 
 </body>
