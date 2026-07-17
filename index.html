@@ -183,6 +183,11 @@
       35%{box-shadow:0 0 0 4px rgba(22,124,88,.18)}
     }
 
+  
+    .destination{
+      scroll-margin-top:12px;
+    }
+
   </style>
 </head>
 <body>
@@ -633,24 +638,34 @@ function performPendingScroll(){
       const target = document.getElementById(pending.id);
       if(!target) return;
 
-      const topOffset = 14;
-      const top = target.getBoundingClientRect().top + window.scrollY - topOffset;
+      const outerDestination = pending.type === "place"
+        ? target.closest(".destination")
+        : target;
 
-      window.scrollTo(0, top);
+      if(!outerDestination) return;
 
+      const topOffset = 10;
+      const top =
+        outerDestination.getBoundingClientRect().top +
+        window.scrollY -
+        topOffset;
+
+      window.scrollTo({
+        top,
+        behavior:"smooth"
+      });
+
+      outerDestination.classList.add("flash-destination");
       setTimeout(() => {
-        target.scrollIntoView({
-          behavior: "smooth",
-          block: pending.type === "place" ? "center" : "start"
-        });
-      }, 20);
+        outerDestination.classList.remove("flash-destination");
+      }, 1600);
 
-      const flashClass = pending.type === "place"
-        ? "flash-target"
-        : "flash-destination";
-
-      target.classList.add(flashClass);
-      setTimeout(() => target.classList.remove(flashClass), 1600);
+      if(pending.type === "place"){
+        target.classList.add("flash-target");
+        setTimeout(() => {
+          target.classList.remove("flash-target");
+        }, 1600);
+      }
     });
   });
 }
