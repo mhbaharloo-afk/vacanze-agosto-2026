@@ -1167,40 +1167,9 @@
       margin:16px 14px 96px !important;
     }
 
-    #checklistPage::after{
-      content:"";
-      position:fixed;
-      left:0;
-      right:0;
-      bottom:0;
-      height:calc(66px + env(safe-area-inset-bottom));
-      background:rgba(247,250,248,.97);
-      border-top:1px solid rgba(31,72,58,.10);
-      box-shadow:0 -8px 24px rgba(23,72,56,.06);
-      z-index:35;
-      pointer-events:none;
-    }
+    
 
-    #checklistPage .checklist-footer-label{
-      position:fixed;
-      left:50%;
-      bottom:calc(18px + env(safe-area-inset-bottom));
-      transform:translateX(-50%);
-      z-index:40;
-      display:flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 13px;
-      border-radius:999px;
-      background:#ffffff;
-      border:1px solid rgba(31,72,58,.10);
-      box-shadow:0 6px 18px rgba(23,72,56,.08);
-      color:#4f625b;
-      font-size:.72rem;
-      font-weight:800;
-      white-space:nowrap;
-      pointer-events:none;
-    }
+    
 
     #checklistPage .checklist-footer-label::before{
       content:"✓";
@@ -1304,39 +1273,137 @@
     }
 
   
-    #checklistPage .checklist-footer-label{
-      max-width:calc(100% - 28px);
-      justify-content:center;
-      padding:9px 14px;
-      gap:8px;
-      overflow:hidden;
+    
+
+    
+
+    
+
+    
+
+    @media (max-width:420px){
+      
     }
 
-    #sharedChecklistFooterCount{
-      color:#174838;
+  
+    /* Separazione reale tra Home e Checklist */
+    #homePage:not(.active),
+    #checklistPage:not(.active){
+      display:none !important;
+    }
+
+    #homePage.active{
+      display:block !important;
+    }
+
+    #checklistPage.active{
+      display:flex !important;
+    }
+
+    #checklistPage{
+      width:100% !important;
+      min-height:100dvh;
+      flex-direction:column;
+      padding:0 0 calc(82px + env(safe-area-inset-bottom));
+      background:#f7faf8;
+      overflow-x:hidden;
+    }
+
+    /* I comandi dell’itinerario appartengono esclusivamente alla Home */
+    body.checklist-open > .bottom{
+      display:none !important;
+    }
+
+    body:not(.checklist-open) .checklist-page-footer{
+      display:none !important;
+    }
+
+    #checklistPage .shared-checklist{
+      flex:1 0 auto;
+      margin:16px 14px 22px !important;
+      padding-bottom:20px;
+    }
+
+    .visually-hidden{
+      position:absolute !important;
+      width:1px !important;
+      height:1px !important;
+      padding:0 !important;
+      margin:-1px !important;
+      overflow:hidden !important;
+      clip:rect(0,0,0,0) !important;
+      white-space:nowrap !important;
+      border:0 !important;
+    }
+
+    /* Footer professionale dedicato alla checklist */
+    .checklist-page-footer{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:80;
+      min-height:calc(70px + env(safe-area-inset-bottom));
+      padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      background:rgba(250,252,251,.98);
+      border-top:1px solid rgba(31,72,58,.12);
+      box-shadow:0 -8px 28px rgba(23,72,56,.08);
+    }
+
+    .checklist-footer-progress{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      min-width:0;
+      color:#164d3c;
+      font-size:.76rem;
       font-weight:900;
       white-space:nowrap;
     }
 
-    .checklist-footer-separator{
-      color:#9aaba4;
-      flex:0 0 auto;
+    .checklist-footer-check{
+      width:32px;
+      height:32px;
+      flex:0 0 32px;
+      display:grid;
+      place-items:center;
+      border-radius:50%;
+      background:#d9f3e9;
+      color:#087056;
+      font-size:1rem;
+      font-weight:950;
     }
 
-    #sharedChecklistFooterStatus{
+    .checklist-footer-status{
       min-width:0;
+      max-width:54%;
       overflow:hidden;
       text-overflow:ellipsis;
       white-space:nowrap;
-      color:#667670;
+      color:#687872;
+      font-size:.67rem;
       font-weight:750;
+      text-align:right;
     }
 
-    @media (max-width:420px){
-      #checklistPage .checklist-footer-label{
-        font-size:.66rem;
-        padding-left:11px;
-        padding-right:11px;
+    @media (max-width:380px){
+      .checklist-page-footer{
+        padding-left:12px;
+        padding-right:12px;
+        gap:8px;
+      }
+
+      .checklist-footer-progress{
+        font-size:.69rem;
+      }
+
+      .checklist-footer-status{
+        max-width:48%;
+        font-size:.61rem;
       }
     }
 
@@ -1542,14 +1609,20 @@
   </form>
 
   <div id="sharedChecklistList" class="checklist-list"></div>
-  <div class="checklist-note"><span id="sharedChecklistStatus">Connessione al database…</span></div>
+  <span id="sharedChecklistStatus" class="visually-hidden">Connessione al database…</span>
 </section>
 
-  <div class="checklist-footer-label" aria-live="polite">
-    <span id="sharedChecklistFooterCount">0/0 cose preparate</span>
-    <span class="checklist-footer-separator">•</span>
-    <span id="sharedChecklistFooterStatus">Checklist condivisa e sincronizzata</span>
-  </div>
+  
+
+  <footer class="checklist-page-footer" aria-live="polite">
+    <div class="checklist-footer-progress">
+      <span class="checklist-footer-check" aria-hidden="true">✓</span>
+      <span id="sharedChecklistFooterCount">0/0 cose preparate</span>
+    </div>
+    <div id="sharedChecklistFooterStatus" class="checklist-footer-status">
+      Connessione…
+    </div>
+  </footer>
 </div>
 
 
@@ -2591,7 +2664,6 @@ function usernameFromEmail(email) {
 function setChecklistStatus(text, isError = false) {
   if (checklistStatus) {
     checklistStatus.textContent = text;
-    checklistStatus.style.color = isError ? "#a73e3e" : "";
   }
   if (checklistFooterStatus) {
     checklistFooterStatus.textContent = text;
