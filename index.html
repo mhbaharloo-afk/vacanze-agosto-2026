@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="app-version" content="51">
+  <meta name="app-version" content="52">
   <meta name="theme-color" content="#1f6f5f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -1554,168 +1554,10 @@
     }
 
   
-    .shared-place-toolbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:11px 1px 12px;
-      border-bottom:1px solid var(--outline);
-    }
-    .shared-place-hint{
-      font-size:.72rem;
-      line-height:1.35;
-      color:var(--muted);
-    }
-    .add-shared-place{
-      flex:0 0 auto;
-      min-height:38px;
-      padding:0 13px;
-      border:0;
-      border-radius:13px;
-      background:var(--primary);
-      color:#fff;
-      font-weight:850;
-      font-size:.78rem;
-      box-shadow:0 5px 14px rgba(34,109,82,.17);
-    }
-    .shared-place-badge{
-      display:inline-flex;
-      align-items:center;
-      margin-top:7px;
-      padding:4px 8px;
-      border-radius:999px;
-      background:#e8f4ef;
-      color:#21634d;
-      font-size:.62rem;
-      font-weight:800;
-    }
-    .delete-shared-place{
-      width:34px;
-      height:34px;
-      border:0;
-      border-radius:12px;
-      background:#fff0ed;
-      color:#a14335;
-      font-size:.92rem;
-      flex:0 0 auto;
-    }
-    .place-actions{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:7px;
-    }
-    .shared-place-dialog{
-      width:min(92vw,460px);
-      border:0;
-      border-radius:22px;
-      padding:0;
-      box-shadow:0 22px 70px rgba(27,45,39,.28);
-    }
-    .shared-place-dialog::backdrop{
-      background:rgba(15,30,25,.48);
-      backdrop-filter:blur(3px);
-    }
-    .shared-place-form{
-      padding:20px;
-      display:grid;
-      gap:14px;
-    }
-    .shared-place-form h2{
-      margin:0;
-      font-size:1.12rem;
-    }
-    .shared-place-form label{
-      display:grid;
-      gap:6px;
-      font-size:.76rem;
-      font-weight:800;
-      color:var(--muted);
-    }
-    .shared-place-form input,
-    .shared-place-form textarea{
-      width:100%;
-      box-sizing:border-box;
-      border:1px solid var(--outline);
-      border-radius:13px;
-      padding:11px 12px;
-      font:inherit;
-      color:var(--text);
-      background:#fff;
-    }
-    .shared-place-form textarea{
-      min-height:90px;
-      resize:vertical;
-    }
-    .shared-place-form-actions{
-      display:flex;
-      justify-content:flex-end;
-      gap:9px;
-      margin-top:2px;
-    }
-    .shared-place-form-actions button{
-      min-height:40px;
-      border:0;
-      border-radius:13px;
-      padding:0 15px;
-      font-weight:850;
-    }
-    .shared-place-cancel{
-      background:#edf1ef;
-      color:var(--text);
-    }
-    .shared-place-save{
-      background:var(--primary);
-      color:white;
-    }
+    
 
 
-    .add-shared-place{
-      display:inline-flex !important;
-      align-items:center;
-      justify-content:center;
-      gap:5px;
-      min-width:132px;
-      white-space:nowrap;
-      cursor:pointer;
-    }
-
-    @media (max-width:520px){
-      .shared-place-toolbar{
-        align-items:stretch;
-        flex-direction:column;
-      }
-
-      .add-shared-place{
-        width:100%;
-        min-height:44px;
-        font-size:.82rem;
-      }
-    }
-
-
-    .shared-place-toolbar.always-visible{
-      display:flex !important;
-      margin:0 14px 12px;
-      padding:11px;
-      border:1px solid rgba(34,109,82,.16);
-      border-radius:15px;
-      background:#f0f8f4;
-    }
-
-    .destination .shared-place-toolbar.always-visible.hidden{
-      display:flex !important;
-    }
-
-    .destination:not(.expanded) .shared-place-toolbar.always-visible{
-      display:flex !important;
-    }
-
-    .shared-place-toolbar.always-visible .add-shared-place{
-      position:relative;
-      z-index:4;
-    }
+    
 
 
 .dynamic-itinerary-section{
@@ -2033,6 +1875,68 @@
   }
 }
 
+
+.shared-place-toolbar,
+.add-shared-place{
+  display:none !important;
+}
+
+.dynamic-add-country-footer{
+  display:grid;
+  gap:7px;
+  margin:18px 0 4px;
+  padding:14px;
+  border:1px dashed rgba(34,109,82,.28);
+  border-radius:18px;
+  background:#f4faf7;
+  text-align:center;
+}
+
+.dynamic-add-country-footer .dynamic-primary-button{
+  width:100%;
+  min-height:46px;
+}
+
+.dynamic-add-country-footer p{
+  margin:0;
+  color:var(--muted);
+  font-size:.7rem;
+}
+
+.dynamic-country.destination{
+  margin-top:14px;
+}
+
+.dynamic-country .dest-head{
+  width:100%;
+}
+
+.dynamic-country-content.dest-body{
+  display:block;
+}
+
+.dynamic-country-content.dest-body[hidden]{
+  display:none !important;
+}
+
+.dynamic-stay.place-card{
+  display:block;
+  padding:0;
+  overflow:hidden;
+}
+
+.dynamic-stay-toolbar{
+  display:flex;
+  gap:8px;
+  padding:11px;
+  border-bottom:1px solid var(--outline);
+  background:#f8faf9;
+}
+
+.dynamic-stay-content[hidden]{
+  display:none !important;
+}
+
 </style>
 </head>
 <body>
@@ -2208,22 +2112,6 @@
   <div class="helper">Tocca una destinazione per aprire i suoi luoghi. Le destinazioni iniziali vengono lette da viaggio.json. I nuovi posti aggiunti nell’app sono condivisi in tempo reale.</div>
 
   
-<section id="dynamicItinerarySection" class="dynamic-itinerary-section">
-  <div class="dynamic-itinerary-header">
-    <div>
-      <div class="eyebrow">ITINERARIO CONDIVISO</div>
-      <h2>Paesi, pernottamenti e attrazioni</h2>
-      <p>Ogni nuovo elemento viene sincronizzato automaticamente tra i due cellulari.</p>
-    </div>
-    <button id="addCountryButton" class="dynamic-primary-button" type="button">
-      ＋ Nuovo paese
-    </button>
-  </div>
-  <div id="dynamicCountriesList" class="dynamic-countries-list">
-    <div class="dynamic-empty">Caricamento itinerario condiviso…</div>
-  </div>
-</section>
-
 <main id="destinations"></main>
 </div>
 
@@ -2430,6 +2318,7 @@ async function loadTravelConfig(){
     save();
     render();
     applyLockState();
+    if (typeof renderDynamicItinerary === "function") renderDynamicItinerary();
   }catch(error){
     document.getElementById("destinations").innerHTML =
       '<div class="empty">Impossibile leggere il file viaggio.json. Controlla il formato del file.</div>';
@@ -2900,37 +2789,6 @@ function render(){
     const body = document.createElement("div");
     body.className="dest-body";
 
-    let sharedPlaceToolbar = null;
-    const loggedAdmin =
-      String(localStorage.getItem("vacanze-agosto-2026-auth-user") || "")
-        .trim()
-        .toLowerCase() === "mohammad";
-
-    if(loggedAdmin){
-      sharedPlaceToolbar = document.createElement("div");
-      sharedPlaceToolbar.className = "shared-place-toolbar always-visible";
-      sharedPlaceToolbar.innerHTML = `
-        <span class="shared-place-hint">
-          Aggiungi un nuovo posto a ${escapeHtml(dest.city)}. Sarà visibile subito su entrambi i cellulari.
-        </span>
-        <button class="add-shared-place" type="button" aria-label="Aggiungi un nuovo posto a ${escapeHtml(dest.city)}">
-          ＋ Aggiungi posto
-        </button>`;
-
-      sharedPlaceToolbar
-        .querySelector(".add-shared-place")
-        .addEventListener("click", event=>{
-          event.preventDefault();
-          event.stopPropagation();
-
-          if(typeof window.openSharedPlaceDialog === "function"){
-            window.openSharedPlaceDialog(dest.city);
-          }else{
-            alert("Il modulo di aggiunta non è ancora pronto. Riapri l'app tra qualche secondo.");
-          }
-        });
-    }
-
     matchingPlaces.forEach((p,i)=>{
       const id=slug(dest.city,p[0]);
       const s=state[id]||{};
@@ -3010,9 +2868,6 @@ function render(){
 
     section.appendChild(head);
     section.appendChild(editor);
-    if(sharedPlaceToolbar){
-      section.appendChild(sharedPlaceToolbar);
-    }
     section.appendChild(body);
     root.appendChild(section);
   });
@@ -3885,8 +3740,8 @@ function startSharedPlacesSync(){
 }
 
 
-const dynamicCountriesList = document.getElementById("dynamicCountriesList");
-const addCountryButton = document.getElementById("addCountryButton");
+const dynamicCountriesList = document.getElementById("destinations");
+const addCountryButton = null;
 const dynamicRecordDialog = document.getElementById("dynamicRecordDialog");
 const dynamicRecordForm = document.getElementById("dynamicRecordForm");
 const dynamicRecordTitle = document.getElementById("dynamicRecordTitle");
@@ -3909,42 +3764,41 @@ function dynamicDateLabel(value){
 }
 
 function renderDynamicItinerary(){
-  if(!dynamicCountriesList) return;
+  const root = document.getElementById("destinations");
+  if(!root) return;
 
-  if(addCountryButton){
-    addCountryButton.style.display = isDynamicAdmin() ? "inline-flex" : "none";
-  }
+  // Remove only previously generated dynamic records and the final add button.
+  root.querySelectorAll(".dynamic-country, .dynamic-add-country-footer").forEach(node => node.remove());
 
-  if(!dynamicCountries.length){
-    dynamicCountriesList.innerHTML = `
-      <div class="dynamic-empty">
-        Nessun paese aggiunto dall’app.
-        ${isDynamicAdmin() ? "Premi “Nuovo paese” per iniziare." : ""}
-      </div>`;
-    return;
-  }
+  const admin = isDynamicAdmin();
 
-  dynamicCountriesList.innerHTML = dynamicCountries.map(country => {
-    const countryOpen = openDynamicCountryId === country.id;
-    const stays = dynamicStays
-      .filter(stay => stay.countryId === country.id)
-      .sort((a,b) => Number(a.createdAtClient||0)-Number(b.createdAtClient||0));
+  dynamicCountries
+    .slice()
+    .sort((a,b) => Number(a.createdAtClient||0) - Number(b.createdAtClient||0))
+    .forEach(country => {
+      const countryOpen = openDynamicCountryId === country.id;
+      const stays = dynamicStays
+        .filter(stay => stay.countryId === country.id)
+        .sort((a,b) => Number(a.createdAtClient||0)-Number(b.createdAtClient||0));
 
-    return `
-      <article class="dynamic-country ${countryOpen ? "is-open" : ""}" data-country-id="${escapeHtml(country.id)}">
-        <button class="dynamic-country-toggle" type="button" aria-expanded="${countryOpen}">
-          <span class="dynamic-country-title">
-            <span class="dynamic-country-flag">${escapeHtml(country.flag || "🌍")}</span>
-            <span>
-              <span class="dynamic-country-name">${escapeHtml(country.name || "")}</span>
-              <span class="dynamic-country-count">${stays.length} ${stays.length === 1 ? "pernottamento" : "pernottamenti"}</span>
-            </span>
-          </span>
-          <span class="dynamic-chevron">⌄</span>
+      const countrySection = document.createElement("section");
+      countrySection.className = `destination dynamic-country ${countryOpen ? "expanded is-open" : ""}`;
+      countrySection.dataset.countryId = country.id;
+
+      countrySection.innerHTML = `
+        <button class="dest-head dynamic-country-toggle" type="button" aria-expanded="${countryOpen}">
+          <div class="dest-title">
+            <span class="flag">${escapeHtml(country.flag || "🌍")}</span>
+            <div>
+              <strong>${escapeHtml(country.name || "")}</strong>
+              <small>${stays.length} ${stays.length === 1 ? "pernottamento" : "pernottamenti"}</small>
+            </div>
+          </div>
+          <span class="chevron">⌄</span>
         </button>
 
-        <div class="dynamic-country-content" ${countryOpen ? "" : "hidden"}>
-          ${isDynamicAdmin() ? `
+        <div class="dynamic-country-content dest-body" ${countryOpen ? "" : "hidden"}>
+          ${admin ? `
             <div class="dynamic-country-toolbar">
               <button class="dynamic-secondary-button add-dynamic-stay" type="button">
                 ＋ Nuovo pernottamento
@@ -3963,7 +3817,7 @@ function renderDynamicItinerary(){
                 .filter(Boolean).join(" → ");
 
               return `
-                <section class="dynamic-stay ${stayOpen ? "is-open" : ""}" data-stay-id="${escapeHtml(stay.id)}">
+                <article class="place-card dynamic-stay ${stayOpen ? "is-open" : ""}" data-stay-id="${escapeHtml(stay.id)}">
                   <button class="dynamic-stay-toggle" type="button" aria-expanded="${stayOpen}">
                     <span>
                       <span class="dynamic-stay-name">🏨 ${escapeHtml(stay.city || "")}</span>
@@ -3979,7 +3833,7 @@ function renderDynamicItinerary(){
                   </button>
 
                   <div class="dynamic-stay-content" ${stayOpen ? "" : "hidden"}>
-                    ${isDynamicAdmin() ? `
+                    ${admin ? `
                       <div class="dynamic-stay-toolbar">
                         <button class="dynamic-tertiary-button add-dynamic-attraction" type="button">
                           ＋ Aggiungi posto da visitare
@@ -3995,32 +3849,47 @@ function renderDynamicItinerary(){
                             ${attraction.description ? `<div class="dynamic-attraction-desc">${escapeHtml(attraction.description)}</div>` : ""}
                             ${attraction.maps ? `<a href="${escapeHtml(attraction.maps)}" target="_blank" rel="noopener">Apri su Google Maps</a>` : ""}
                           </div>
-                          ${isDynamicAdmin() ? `
+                          ${admin ? `
                             <button class="dynamic-delete-button delete-dynamic-attraction" type="button" aria-label="Elimina attrazione">🗑</button>
                           ` : ""}
                         </div>
                       `).join("") : `<div class="dynamic-empty">Nessun posto da visitare aggiunto.</div>`}
                     </div>
                   </div>
-                </section>
+                </article>
               `;
             }).join("") : `<div class="dynamic-empty">Nessun pernottamento aggiunto.</div>`}
           </div>
         </div>
-      </article>
-    `;
-  }).join("");
+      `;
 
-  dynamicCountriesList.querySelectorAll(".dynamic-country-toggle").forEach(button => {
+      root.appendChild(countrySection);
+    });
+
+  if(admin){
+    const footer = document.createElement("div");
+    footer.className = "dynamic-add-country-footer";
+    footer.innerHTML = `
+      <button id="addCountryButtonIntegrated" class="dynamic-primary-button" type="button">
+        ＋ Aggiungi nuovo paese
+      </button>
+      <p>Il nuovo paese sarà aggiunto qui, alla fine dell’itinerario.</p>
+    `;
+    root.appendChild(footer);
+    footer.querySelector("#addCountryButtonIntegrated")
+      .addEventListener("click", () => openDynamicDialog("country"));
+  }
+
+  root.querySelectorAll(".dynamic-country-toggle").forEach(button => {
     button.addEventListener("click", () => {
       const countryId = button.closest(".dynamic-country").dataset.countryId;
       openDynamicCountryId = openDynamicCountryId === countryId ? "" : countryId;
-      if(openDynamicCountryId !== countryId) openDynamicStayId = "";
+      if(!openDynamicCountryId) openDynamicStayId = "";
       renderDynamicItinerary();
     });
   });
 
-  dynamicCountriesList.querySelectorAll(".dynamic-stay-toggle").forEach(button => {
+  root.querySelectorAll(".dynamic-stay-toggle").forEach(button => {
     button.addEventListener("click", event => {
       event.stopPropagation();
       const stay = button.closest(".dynamic-stay");
@@ -4031,7 +3900,7 @@ function renderDynamicItinerary(){
     });
   });
 
-  dynamicCountriesList.querySelectorAll(".add-dynamic-stay").forEach(button => {
+  root.querySelectorAll(".add-dynamic-stay").forEach(button => {
     button.addEventListener("click", event => {
       event.stopPropagation();
       const countryId = button.closest(".dynamic-country").dataset.countryId;
@@ -4040,7 +3909,7 @@ function renderDynamicItinerary(){
     });
   });
 
-  dynamicCountriesList.querySelectorAll(".add-dynamic-attraction").forEach(button => {
+  root.querySelectorAll(".add-dynamic-attraction").forEach(button => {
     button.addEventListener("click", event => {
       event.stopPropagation();
       const stayId = button.closest(".dynamic-stay").dataset.stayId;
@@ -4051,7 +3920,7 @@ function renderDynamicItinerary(){
     });
   });
 
-  dynamicCountriesList.querySelectorAll(".delete-dynamic-country").forEach(button => {
+  root.querySelectorAll(".delete-dynamic-country").forEach(button => {
     button.addEventListener("click", async event => {
       event.stopPropagation();
       const countryId = button.closest(".dynamic-country").dataset.countryId;
@@ -4068,7 +3937,7 @@ function renderDynamicItinerary(){
     });
   });
 
-  dynamicCountriesList.querySelectorAll(".delete-dynamic-stay").forEach(button => {
+  root.querySelectorAll(".delete-dynamic-stay").forEach(button => {
     button.addEventListener("click", async event => {
       event.stopPropagation();
       const stayId = button.closest(".dynamic-stay").dataset.stayId;
@@ -4081,7 +3950,7 @@ function renderDynamicItinerary(){
     });
   });
 
-  dynamicCountriesList.querySelectorAll(".delete-dynamic-attraction").forEach(button => {
+  root.querySelectorAll(".delete-dynamic-attraction").forEach(button => {
     button.addEventListener("click", async event => {
       event.stopPropagation();
       const attractionId = button.closest(".dynamic-attraction").dataset.attractionId;
@@ -4139,7 +4008,7 @@ function openDynamicDialog(mode, parentId=""){
   window.setTimeout(() => dynamicRecordFields.querySelector("input")?.focus(), 50);
 }
 
-addCountryButton?.addEventListener("click", () => openDynamicDialog("country"));
+
 dynamicRecordCancel?.addEventListener("click", () => dynamicRecordDialog.close());
 
 dynamicRecordForm?.addEventListener("submit", async event => {
