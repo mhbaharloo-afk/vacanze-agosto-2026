@@ -1,0 +1,31 @@
+COME MODIFICARE IL VIAGGIO
+
+Modifica solo il file:
+viaggio.json
+
+Puoi cambiare:
+- titolo e date del viaggio
+- foto dei viaggiatori
+- paesi e bandiere
+- città
+- arrivo e partenza
+- pernottamento
+- luoghi da visitare
+- preferiti
+- link Google Maps
+- dog-friendly
+- note
+
+ATTENZIONE
+Il file JSON deve mantenere:
+- parentesi graffe e quadre
+- virgole tra gli elementi
+- virgolette doppie
+
+Dopo aver modificato viaggio.json:
+1. salva il file su GitHub;
+2. attendi qualche secondo;
+3. apri l'app;
+4. premi Aggiorna quando compare il messaggio.
+
+L'app conserva una copia offline del file viaggio.json.

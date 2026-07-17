@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#1f6f5f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Vacanze 2026" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <title>Vacanze Agosto 2026</title>
+  <style>
+    :root{
+      --bg:#f6f8f7;--surface:#ffffff;--surface-2:#eef7f3;--text:#17201d;
+      --muted:#65716d;--primary:#166b56;--primary-container:#d5f5e8;
+      --primary-text:#063c2e;--outline:#d9e2de;
+      --shadow:0 3px 10px rgba(24,43,36,.08),0 12px 28px rgba(24,43,36,.06);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Roboto,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text);-webkit-tap-highlight-color:transparent}
+    button,input,select{font:inherit} button{cursor:pointer}
+    .app{max-width:780px;margin:auto;padding:0 14px 104px}
+    .topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 -14px;padding:14px 18px;background:rgba(246,248,247,.94);backdrop-filter:blur(18px);border-bottom:1px solid rgba(217,226,222,.8)}
+    .app-title{font-size:1.2rem;font-weight:750}.app-subtitle{font-size:.82rem;color:var(--muted);margin-top:2px}
+    .top-actions{display:flex;align-items:center;gap:8px}
+    .top-icon{width:42px;height:42px;border:0;border-radius:14px;display:grid;place-items:center;background:var(--primary-container);overflow:hidden}.top-icon img{width:100%;height:100%;object-fit:cover}
+    .lock-button{width:42px;height:42px;border:0;border-radius:14px;display:grid;place-items:center;background:#edf1ef;color:var(--text);font-size:1.1rem}
+    .lock-button.locked{background:#ffe9c7;color:#7a4a00}
+    .locked-banner{display:none;margin-top:10px;padding:10px 12px;border-radius:16px;background:#fff0d8;color:#6f4600;font-size:.82rem;font-weight:700}
+    .locked-banner.show{display:block}
+    .hero{margin-top:16px;padding:18px;border-radius:28px;background:linear-gradient(145deg,var(--primary),#0e5745);color:white;box-shadow:var(--shadow)}
+    .hero-kicker{font-size:.8rem;opacity:.8;text-transform:uppercase;letter-spacing:.08em}.hero-title{font-size:1.35rem;font-weight:800;margin-top:2px;text-align:center}.hero-meta{font-size:.9rem;opacity:.9;margin-top:7px;text-align:center}
+    .travelers{display:flex;align-items:center;justify-content:center;gap:18px;margin:18px 0 20px}
+    .traveler{display:grid;justify-items:center;gap:5px}
+    .traveler img{
+      width:72px;height:72px;border-radius:50%;object-fit:cover;object-position:center;
+      border:3px solid rgba(255,255,255,.92);
+      box-shadow:0 5px 14px rgba(0,0,0,.2)
+    }
+
+    .hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:20px}
+    .hero-stat{padding:10px;border-radius:18px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.14)}
+    .hero-stat strong{display:block;font-size:1.15rem}.hero-stat span{font-size:.75rem;opacity:.82}
+    .bar{height:9px;background:rgba(255,255,255,.22);border-radius:999px;overflow:hidden;margin-top:14px}.bar>div{height:100%;width:0;background:white;border-radius:999px;transition:.25s}
+    .section-label{display:flex;justify-content:space-between;align-items:center;margin:22px 2px 10px}.section-label h2{font-size:1.05rem;margin:0}.section-label span{font-size:.8rem;color:var(--muted)}
+    .trip-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .country-card{min-width:0;background:var(--surface);border:1px solid var(--outline);border-radius:22px;padding:13px;box-shadow:0 2px 8px rgba(24,43,36,.04)}
+    .country-head{display:flex;align-items:center;gap:8px}.country-flag{font-size:1.5rem}.country-name{font-weight:780;font-size:.92rem}.country-nights{font-size:.78rem;color:var(--primary);font-weight:750;margin-top:2px}
+    .country-stops{margin-top:10px;display:grid;gap:7px}
+    .summary-stop{padding:8px 9px;border-radius:14px;background:var(--surface-2)}
+    .summary-lists{display:grid;gap:8px;margin-top:8px}
+    .summary-list{padding:8px 9px;border-radius:14px;background:#f7faf8;border:1px solid var(--outline)}
+    .summary-list-title{font-size:.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+    .summary-items{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+    .summary-chip{font-size:.72rem;padding:5px 8px;border-radius:999px;background:#edf1ef;color:#3d4743}
+    .summary-chip.visited{background:var(--primary-container);color:var(--primary);font-weight:750}
+    .summary-empty{font-size:.74rem;color:var(--muted);margin-top:5px}
+    .summary-stop strong{display:block;font-size:.83rem}.summary-stop span{display:block;font-size:.72rem;color:var(--muted);margin-top:2px}
+    .toolbar{display:flex;justify-content:flex-end;margin-top:12px}.toolbar .field{max-width:180px}
+    .field{width:100%;border:1px solid var(--outline);border-radius:18px;padding:12px 14px;background:var(--surface);color:var(--text);outline:none}
+    .field:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(22,107,86,.12)}
+    .helper{margin-top:10px;padding:11px 13px;border-radius:18px;background:var(--primary-container);color:var(--primary-text);font-size:.83rem}
+    .destination{background:var(--surface);border:1px solid var(--outline);border-radius:26px;margin:14px 0;overflow:hidden;box-shadow:var(--shadow)}
+    .dest-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px;background:transparent;color:var(--text);text-align:left;border:0}
+    .dest-title{display:flex;align-items:center;gap:12px;min-width:0}.flag-bubble{flex:0 0 auto;width:46px;height:46px;border-radius:16px;display:grid;place-items:center;background:var(--surface-2);font-size:1.45rem}
+    .dest-country{
+      display:block;font-size:.72rem;font-weight:800;color:var(--primary);
+      text-transform:uppercase;letter-spacing:.055em;margin-bottom:2px
+    }
+    .dest-name{display:block;font-size:1.05rem;font-weight:800}.dest-date{display:block;font-size:.8rem;color:var(--muted);margin-top:3px}.dest-right{display:flex;align-items:center;gap:8px}
+    .dest-count{font-size:.75rem;color:var(--primary);font-weight:750;white-space:nowrap}
+    .chevron{font-size:1.25rem;line-height:1;color:var(--muted);transition:transform .2s ease}
+    .destination.expanded .chevron{transform:rotate(180deg)}
+    .destination.expanded .dest-head{background:var(--surface-2)}
+    .stay-editor{display:grid!important;grid-template-columns:1fr 1fr;gap:10px;padding:13px 15px;border-top:1px solid var(--outline);border-bottom:1px solid var(--outline);background:#fbfcfc}
+    .stay-editor label{font-size:.78rem;color:var(--muted);font-weight:650}.date-wrap{margin-top:5px;display:flex;width:100%;min-width:0;border:1px solid var(--outline);border-radius:15px;padding:10px 11px;background:var(--surface)}
+    .date-wrap input{display:block;width:100%;min-width:0;border:0;background:transparent;padding:0;color:var(--text);outline:none}
+    .nights-box{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:15px;padding:11px 12px;background:var(--primary-container);color:var(--primary-text)}
+    .nights-box strong{font-size:1.05rem}.autosave{font-size:.72rem;color:var(--primary);font-weight:780}
+    .dest-body{padding:2px 14px 13px}.place{border-top:1px solid var(--outline);padding:13px 1px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:11px;align-items:start}.place:first-child{border-top:0}
+    .check{width:23px;height:23px;margin-top:2px;accent-color:var(--primary)}.place-name{font-weight:760}.place-desc{color:var(--muted);font-size:.87rem;margin-top:3px;line-height:1.4}
+    .badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.badge{font-size:.7rem;padding:4px 8px;border-radius:999px;background:#edf1ef;color:#46514d}.badge.top{background:var(--primary-container);color:var(--primary);font-weight:750}
+    .planned{width:36px;height:36px;border-radius:14px;padding:0;border:0;background:#edf1ef;color:#68736f;font-size:1.05rem}.planned.active{background:var(--primary);color:white}.visited .place-name{text-decoration:line-through;color:var(--muted)}
+    .hidden{display:none!important}.empty{text-align:center;color:var(--muted);padding:32px 12px}
+    .bottom{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;justify-content:center;gap:9px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border-top:1px solid var(--outline)}
+    .action{flex:1;max-width:260px;border:0;border-radius:18px;padding:12px 14px;font-weight:760}.action.primary{background:var(--primary);color:white}.action.secondary{background:var(--primary-container);color:var(--primary-text)}
+    @media(max-width:620px){.trip-summary{grid-template-columns:1fr}.country-card{display:grid;grid-template-columns:120px 1fr;gap:10px;align-items:start}.country-stops{margin-top:0}.toolbar{display:flex}}
+  
+    .update-banner{
+      display:none;align-items:center;justify-content:space-between;gap:12px;
+      margin:12px 0 0;padding:12px 14px;border-radius:18px;
+      background:#fff7df;color:#604500;border:1px solid #f0d789;
+      box-shadow:0 4px 14px rgba(70,52,0,.08)
+    }
+    .update-banner.show{display:flex}
+    .update-banner span{font-size:.82rem;font-weight:700}
+    .update-banner button{
+      border:0;border-radius:14px;padding:9px 12px;
+      background:#7a5a00;color:white;font-weight:800
+    }
+
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div>
+      <div class="app-title">Vacanze Agosto 2026</div>
+      <div class="app-subtitle">Slovenia → Croazia → Bosnia-Erzegovina</div>
+    </div>
+    <div class="top-actions">
+      <button id="lockToggle" class="lock-button" type="button" aria-label="Blocca modifiche">🔓</button>
+      <div class="top-icon" aria-hidden="true"><img src="icon-192.png" alt="" /></div>
+    </div>
+  </div>
+  <div id="lockedBanner" class="locked-banner">Modalità bloccata: i dati non possono essere modificati.</div>
+  <div id="updateBanner" class="update-banner">
+    <span>È disponibile una nuova versione dell’app.</span>
+    <button id="updateNow" type="button">Aggiorna</button>
+  </div>
+
+  <section class="hero">
+    <div class="hero-kicker">Il tuo viaggio</div>
+    <div class="travelers" aria-label="Partecipanti al viaggio">
+      <div class="traveler">
+        <img src="traveler-user.jpg" alt="Foto del viaggiatore" />
+      </div>
+      <div class="traveler">
+        <img src="traveler-wife.jpg" alt="Foto della viaggiatrice" />
+      </div>
+      <div class="traveler">
+        <img src="traveler-milo.jpg" alt="Foto di Milo" />
+      </div>
+    </div>
+    <div class="hero-title" id="heroDates">14–24 agosto 2026</div>
+    <div class="hero-meta" id="heroRoute">5 tappe principali · 10 notti</div>
+    <div class="hero-stats">
+      <div class="hero-stat"><strong id="visitedCount">0</strong><span>visitati</span></div>
+      <div class="hero-stat"><strong id="plannedCount">0</strong><span>selezionati</span></div>
+      <div class="hero-stat"><strong id="totalCount">0</strong><span>posti totali</span></div>
+    </div>
+    <div class="bar"><div id="progressBar"></div></div>
+  </section>
+
+  <div class="section-label">
+    <h2>Riepilogo pernottamenti</h2>
+    <span>Aggiornamento automatico</span>
+  </div>
+  <section id="tripSummary" class="trip-summary" aria-live="polite"></section>
+
+  <div class="section-label">
+    <h2>Luoghi del viaggio</h2>
+    <span>Seleziona e spunta</span>
+  </div>
+
+  <div class="toolbar">
+    <select id="filter" class="field" aria-label="Filtro">
+      <option value="all">Tutti</option>
+      <option value="planned">Da visitare</option>
+      <option value="visited">Visitati</option>
+      <option value="unvisited">Non visitati</option>
+    </select>
+  </div>
+  <div class="helper">Tocca una destinazione per aprire i suoi luoghi. Paesi, pernottamenti e luoghi vengono letti dal file viaggio.json.</div>
+
+  <main id="destinations"></main>
+</div>
+
+<div class="bottom">
+  <button id="showPlanned" class="action primary" type="button">★ Solo selezionati</button>
+  <button id="reset" class="action secondary" type="button">Azzera</button>
+</div>
+
+<script>
+let trip = [];
+let tripConfig = null;
+
+function normalizeTravelConfig(config){
+  const destinations = [];
+
+  (config.countries || []).forEach(country => {
+    (country.cities || []).forEach(city => {
+      destinations.push({
+        countryName: country.name || "",
+        country: country.flag || "📍",
+        city: city.city || "",
+        arrival: city.arrival || "",
+        departure: city.departure || "",
+        accommodation: city.accommodation?.name || city.city || "",
+        accommodationAddress: city.accommodation?.address || "",
+        accommodationMaps: city.accommodation?.maps || "",
+        places: (city.places || []).map(place => [
+          place.name || "",
+          place.description || "",
+          place.favorite ? "top" : "",
+          place.maps || "",
+          place.dogFriendly === true ? "dog" : "",
+          place.notes || ""
+        ])
+      });
+    });
+  });
+
+  return destinations.filter(dest => dest.city);
+}
+
+function applyTripHeader(config){
+  const tripInfo = config.trip || {};
+
+  const title = document.querySelector(".hero-title");
+  if(title && tripInfo.subtitle) title.textContent = tripInfo.subtitle;
+
+  const heroMeta = document.querySelector(".hero-meta");
+  if(heroMeta && tripInfo.start && tripInfo.end){
+    heroMeta.textContent = `${formatDate(tripInfo.start)} – ${formatDate(tripInfo.end)}`;
+  }
+
+  const travelers = document.querySelector(".travelers");
+  if(travelers && Array.isArray(tripInfo.travelers)){
+    travelers.innerHTML = tripInfo.travelers.map(person => `
+      <div class="traveler">
+        <img src="${person.photo}" alt="${person.alt || "Foto viaggiatore"}" />
+      </div>
+    `).join("");
+  }
+}
+
+async function loadTravelConfig(){
+  try{
+    const response = await fetch("./viaggio.json", {cache:"no-store"});
+    if(!response.ok) throw new Error("Configurazione non disponibile");
+
+    tripConfig = await response.json();
+    trip = normalizeTravelConfig(tripConfig);
+
+    if(!trip.length) throw new Error("Nessuna destinazione valida");
+
+    applyTripHeader(tripConfig);
+
+    trip.forEach(dest => {
+      if(!state["stay::"+dest.city]){
+        state["stay::"+dest.city] = {
+          arrival: dest.arrival,
+          departure: dest.departure
+        };
+      }
+    });
+
+    save();
+    render();
+    applyLockState();
+  }catch(error){
+    document.getElementById("destinations").innerHTML =
+      '<div class="empty">Impossibile leggere il file viaggio.json. Controlla il formato del file.</div>';
+    console.error(error);
+  }
+}
+
+
+const key = "vacanze-agosto-2026-state-v1";
+let state = JSON.parse(localStorage.getItem(key) || "{}");
+let plannedOnly = false;
+
+const slug = (city, place) => city + "::" + place;
+// Remove obsolete accordion state created by older app versions.
+delete state["ui::activeDestination"];
+Object.keys(state).forEach(k=>{
+  if(k.startsWith("open::")) delete state[k];
+});
+
+const save = () => localStorage.setItem(key, JSON.stringify(state));
+save();
+
+let isLocked = Boolean(state["app::locked"]);
+let activeDestination = "";
+
+function applyLockState(){
+  const lockButton = document.getElementById("lockToggle");
+  const banner = document.getElementById("lockedBanner");
+  lockButton.textContent = isLocked ? "🔒" : "🔓";
+  lockButton.classList.toggle("locked", isLocked);
+  lockButton.setAttribute("aria-label", isLocked ? "Sblocca modifiche" : "Blocca modifiche");
+  banner.classList.toggle("show", isLocked);
+
+  document.querySelectorAll(".arrival-date,.departure-date,.check,.planned,#reset").forEach(el=>{
+    el.disabled = isLocked;
+  });
+}
+
+function getDefaultStay(dest){
+  return {
+    arrival: dest.arrival || "",
+    departure: dest.departure || ""
+  };
+}
+
+function nightsBetween(a,b){
+  if(!a || !b) return 0;
+  const start = new Date(a+"T00:00:00");
+  const end = new Date(b+"T00:00:00");
+  const diff = Math.round((end-start)/86400000);
+  return diff > 0 ? diff : 0;
+}
+
+function formatDate(value){
+  if(!value) return "Data da definire";
+  return new Intl.DateTimeFormat("it-IT",{day:"numeric",month:"short"}).format(new Date(value+"T00:00:00"));
+}
+
+function renderTripSummary(){
+  const root = document.getElementById("tripSummary");
+  const groups = {};
+  let totalNights = 0;
+  let minArrival = null;
+  let maxDeparture = null;
+
+  trip.forEach(dest=>{
+    const stay = {...getDefaultStay(dest), ...(state["stay::"+dest.city]||{})};
+    const nights = nightsBetween(stay.arrival, stay.departure);
+    totalNights += nights;
+
+    if(stay.arrival && (!minArrival || stay.arrival < minArrival)) minArrival = stay.arrival;
+    if(stay.departure && (!maxDeparture || stay.departure > maxDeparture)) maxDeparture = stay.departure;
+
+    if(!groups[dest.countryName]){
+      groups[dest.countryName] = {flag:dest.country,name:dest.countryName,nights:0,stops:[]};
+    }
+    groups[dest.countryName].nights += nights;
+    const selectedPlaces = dest.places
+      .filter(place => {
+        const placeState = state[slug(dest.city, place[0])] || {};
+        return placeState.planned && !placeState.visited;
+      })
+      .map(place => place[0]);
+
+    const visitedPlaces = dest.places
+      .filter(place => {
+        const placeState = state[slug(dest.city, place[0])] || {};
+        return Boolean(placeState.visited);
+      })
+      .map(place => place[0]);
+
+    groups[dest.countryName].stops.push({
+      city:dest.city,
+      nights,
+      arrival:stay.arrival,
+      departure:stay.departure,
+      accommodation:dest.accommodation,
+      selectedPlaces,
+      visitedPlaces
+    });
+  });
+
+  root.innerHTML = Object.values(groups).map(group=>`
+    <article class="country-card">
+      <div class="country-head">
+        <span class="country-flag">${group.flag}</span>
+        <div>
+          <div class="country-name">${group.name}</div>
+          <div class="country-nights">${group.nights} ${group.nights===1?"notte":"notti"}</div>
+        </div>
+      </div>
+      <div class="country-stops">
+        ${group.stops.map(stop=>`
+          <div class="summary-stop">
+            <strong>${stop.city}</strong>
+            <span>${formatDate(stop.arrival)} → ${formatDate(stop.departure)} · ${stop.nights} ${stop.nights===1?"notte":"notti"}</span>
+            <span>Pernottamento: ${stop.accommodation || stop.city}</span>
+            <div class="summary-lists">
+              <div class="summary-list">
+                <div class="summary-list-title">Da visitare</div>
+                ${stop.selectedPlaces.length
+                  ? `<div class="summary-items">${stop.selectedPlaces.map(name=>`<span class="summary-chip">${name}</span>`).join("")}</div>`
+                  : `<div class="summary-empty">Nessun luogo selezionato</div>`}
+              </div>
+              <div class="summary-list">
+                <div class="summary-list-title">Già visitati</div>
+                ${stop.visitedPlaces.length
+                  ? `<div class="summary-items">${stop.visitedPlaces.map(name=>`<span class="summary-chip visited">${name}</span>`).join("")}</div>`
+                  : `<div class="summary-empty">Nessun luogo visitato</div>`}
+              </div>
+            </div>
+          </div>`).join("")}
+      </div>
+    </article>`).join("");
+
+  document.getElementById("heroRoute").textContent =
+    `${trip.length} tappe principali · ${totalNights} ${totalNights===1?"notte":"notti"}`;
+
+  if(minArrival && maxDeparture){
+    const year = new Date(minArrival+"T00:00:00").getFullYear();
+    document.getElementById("heroDates").textContent =
+      `${formatDate(minArrival)} – ${formatDate(maxDeparture)} ${year}`;
+  }
+}
+
+function render(){
+  const q = "";
+  const filter = document.getElementById("filter").value;
+  const root = document.getElementById("destinations");
+  root.innerHTML = "";
+
+  let total=0, visited=0, planned=0, visible=0;
+
+  trip.forEach((dest, idx)=>{
+    total += dest.places.length;
+    const section = document.createElement("section");
+    section.className = "destination";
+
+    const matchingPlaces = dest.places.filter(p=>{
+      const id=slug(dest.city,p[0]);
+      const s=state[id]||{};
+      if(s.visited) visited++;
+      if(s.planned) planned++;
+
+      const text=(dest.city+" "+p.join(" ")).toLowerCase();
+      if(q && !text.includes(q)) return false;
+      if(plannedOnly && !s.planned) return false;
+      if(filter==="planned" && !s.planned) return false;
+      if(filter==="visited" && !s.visited) return false;
+      if(filter==="unvisited" && s.visited) return false;
+      return true;
+    });
+
+    if(!matchingPlaces.length) return;
+    visible += matchingPlaces.length;
+
+    const head = document.createElement("button");
+    head.type="button"; head.className="dest-head"; head.setAttribute("aria-expanded", String(activeDestination===dest.city));
+
+    const stayKey = "stay::"+dest.city;
+    const stay = {...getDefaultStay(dest), ...(state[stayKey]||{})};
+
+    const nights = nightsBetween(stay.arrival, stay.departure);
+
+    head.innerHTML=`
+      <span class="dest-title">
+        <span class="flag-bubble">${dest.country}</span>
+        <span>
+          <span class="dest-country">${dest.countryName}</span>
+          <span class="dest-name">${dest.city}</span>
+          <span class="dest-date">${formatDate(stay.arrival)} → ${formatDate(stay.departure)} · ${nights} ${nights===1?"notte":"notti"}</span>
+          <span class="dest-date">Pernottamento: ${dest.accommodation || dest.city}</span>
+        </span>
+      </span>
+      <span class="dest-right"><span class="dest-count">${matchingPlaces.length} posti</span><span class="chevron">⌄</span></span>`;
+
+    const editor = document.createElement("div");
+    editor.className = "stay-editor";
+    editor.innerHTML = `
+      <label>Arrivo
+        <span class="date-wrap"><input class="arrival-date" type="date" value="${stay.arrival||""}"></span>
+      </label>
+      <label>Partenza
+        <span class="date-wrap"><input class="departure-date" type="date" value="${stay.departure||""}"></span>
+      </label>
+      <div class="nights-box">
+        <span><strong class="nights-value">${nights}</strong> ${nights===1?"notte":"notti"} di permanenza</span>
+        <span class="autosave">Salvataggio automatico</span>
+      </div>`;
+
+    const body = document.createElement("div");
+    body.className="dest-body";
+
+    matchingPlaces.forEach((p,i)=>{
+      const id=slug(dest.city,p[0]);
+      const s=state[id]||{};
+      const item=document.createElement("div");
+      item.className="place"+(s.visited?" visited":"");
+      item.innerHTML=`
+        <input class="check" type="checkbox" aria-label="Segna come visitato" ${s.visited?"checked":""}>
+        <div>
+          <div class="place-name">${p[0]}</div>
+          <div class="place-desc">${p[1]}</div>
+          <div class="badges">
+            <span class="badge ${p[2]==="Imperdibile"?"top":""}">${p[2]}</span>
+            <span class="badge">${p[3]}</span>
+          </div>
+        </div>
+        <button class="planned ${s.planned?"active":""}" type="button" aria-label="Aggiungi ai posti da visitare">★</button>`;
+      const check=item.querySelector(".check");
+      const star=item.querySelector(".planned");
+      check.addEventListener("change",()=>{
+        state[id]={...(state[id]||{}),visited:check.checked}; save(); render();
+      });
+      star.addEventListener("click",()=>{
+        const current=state[id]||{};
+        state[id]={...current,planned:!current.planned}; save(); render();
+      });
+      body.appendChild(item);
+    });
+
+    const arrivalInput = editor.querySelector(".arrival-date");
+    const departureInput = editor.querySelector(".departure-date");
+
+    function saveStay(){
+      const arrival = arrivalInput.value;
+      const departure = departureInput.value;
+      state[stayKey] = {arrival, departure};
+      save();
+      render();
+    }
+
+    arrivalInput.addEventListener("change", ()=>{ if(!isLocked) saveStay(); });
+    departureInput.addEventListener("change", ()=>{ if(!isLocked) saveStay(); });
+
+    const isOpen = activeDestination === dest.city;
+
+    // Dates and number of nights are always visible, even when the places list is closed.
+    editor.classList.remove("hidden");
+
+    // Only the list of places is collapsible.
+    body.classList.toggle("hidden", !isOpen);
+    section.classList.toggle("expanded", isOpen);
+
+    head.addEventListener("click",()=>{
+      activeDestination = isOpen ? "" : dest.city;
+      render();
+    });
+
+    section.appendChild(head);
+    section.appendChild(editor);
+    section.appendChild(body);
+    root.appendChild(section);
+  });
+
+  document.getElementById("visitedCount").textContent=visited;
+  document.getElementById("plannedCount").textContent=planned;
+  document.getElementById("totalCount").textContent=total;
+  document.getElementById("progressBar").style.width=(total?visited/total*100:0)+"%";
+  renderTripSummary();
+  setTimeout(applyLockState, 0);
+
+  if(!visible){
+    const e=document.createElement("div");e.className="empty";e.textContent="Nessun posto corrisponde ai filtri.";
+    root.appendChild(e);
+  }
+}
+
+document.getElementById("filter").addEventListener("change",render);
+document.getElementById("showPlanned").addEventListener("click",()=>{
+  plannedOnly=!plannedOnly;
+  document.getElementById("showPlanned").textContent=plannedOnly?"Mostra tutti":"★ Solo selezionati";
+  render();
+});
+document.getElementById("reset").addEventListener("click",()=>{
+  if(isLocked) return;
+  if(confirm("Vuoi cancellare tutte le selezioni e le visite?")){
+    state={};
+    state["app::locked"] = false;
+    save();
+    render();
+  }
+});
+
+document.getElementById("lockToggle").addEventListener("click",()=>{
+  isLocked = !isLocked;
+  state["app::locked"] = isLocked;
+  save();
+  applyLockState();
+});
+
+loadTravelConfig();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  let refreshing = false;
+
+  window.addEventListener("load", async function () {
+    const registration = await navigator.serviceWorker.register("./service-worker.js");
+
+    function showUpdateBanner() {
+      const banner = document.getElementById("updateBanner");
+      if (banner) banner.classList.add("show");
+    }
+
+    if (registration.waiting) {
+      showUpdateBanner();
+    }
+
+    registration.addEventListener("updatefound", function () {
+      const newWorker = registration.installing;
+      if (!newWorker) return;
+
+      newWorker.addEventListener("statechange", function () {
+        if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+          showUpdateBanner();
+        }
+      });
+    });
+
+    document.getElementById("updateNow")?.addEventListener("click", function () {
+      if (registration.waiting) {
+        registration.waiting.postMessage({type:"SKIP_WAITING"});
+      } else {
+        window.location.reload();
+      }
+    });
+
+    navigator.serviceWorker.addEventListener("controllerchange", function () {
+      if (refreshing) return;
+      refreshing = true;
+      window.location.reload();
+    });
+
+    // Check for updates when the app comes back to foreground.
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") {
+        registration.update();
+      }
+    });
+  });
+}
+</script>
+</body>
+</html>
