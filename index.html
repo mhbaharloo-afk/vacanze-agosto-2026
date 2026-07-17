@@ -935,6 +935,160 @@
       }
     }
 
+  
+    /* Topper professionale e compatto */
+    .topbar{
+      margin:0 -14px 14px !important;
+      padding:16px 18px 14px !important;
+      border-bottom:1px solid rgba(35,74,61,.10);
+      background:linear-gradient(180deg,#ffffff 0%,#f7faf8 100%) !important;
+      box-shadow:0 6px 22px rgba(24,58,47,.06);
+      contain:none !important;
+    }
+
+    .topbar-main{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 58px;
+      align-items:center;
+      gap:14px;
+    }
+
+    .topbar-copy{
+      min-width:0;
+    }
+
+    .app-title{
+      margin:0;
+      font-size:clamp(1.18rem,5vw,1.55rem);
+      line-height:1.12;
+      font-weight:900;
+      letter-spacing:-.035em;
+      color:#10251f;
+      white-space:nowrap;
+    }
+
+    .app-subtitle{
+      margin-top:7px;
+      width:100%;
+      min-width:0;
+      overflow:hidden !important;
+    }
+
+    .trip-route{
+      display:block;
+      width:100%;
+      max-width:100%;
+      white-space:nowrap !important;
+      overflow:hidden !important;
+      text-overflow:ellipsis;
+      font-size:clamp(.72rem,3.1vw,.92rem) !important;
+      line-height:1.35;
+      letter-spacing:-.015em;
+      color:#62706b;
+    }
+
+    .top-icon{
+      width:58px !important;
+      height:58px !important;
+      border-radius:18px !important;
+      overflow:hidden;
+      box-shadow:0 7px 18px rgba(28,70,56,.13);
+      flex:0 0 auto;
+    }
+
+    .top-icon img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .topbar-controls{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .role-badge{
+      display:inline-flex;
+      align-items:center;
+      min-height:38px;
+      max-width:58%;
+      padding:0 13px;
+      border-radius:999px;
+      font-size:.76rem;
+      font-weight:850;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      box-shadow:none !important;
+    }
+
+    .top-actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex:0 0 auto;
+    }
+
+    .header-icon-button,
+    .logout-btn{
+      height:40px !important;
+      border-radius:13px !important;
+      border:1px solid rgba(27,69,55,.10) !important;
+      background:#fff !important;
+      color:#174838 !important;
+      box-shadow:0 4px 12px rgba(23,72,56,.07) !important;
+    }
+
+    .header-icon-button{
+      width:42px !important;
+      min-width:42px !important;
+      padding:0 !important;
+      font-size:1rem !important;
+    }
+
+    .logout-btn{
+      min-width:66px !important;
+      padding:0 14px !important;
+      font-size:.74rem !important;
+      font-weight:850 !important;
+    }
+
+    @media (max-width:380px){
+      .topbar{
+        padding-left:15px !important;
+        padding-right:15px !important;
+      }
+
+      .topbar-main{
+        grid-template-columns:minmax(0,1fr) 52px;
+        gap:10px;
+      }
+
+      .top-icon{
+        width:52px !important;
+        height:52px !important;
+        border-radius:16px !important;
+      }
+
+      .app-title{
+        font-size:1.12rem;
+      }
+
+      .trip-route{
+        font-size:.68rem !important;
+      }
+
+      .role-badge{
+        max-width:52%;
+        padding-left:11px;
+        padding-right:11px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -969,24 +1123,27 @@
 </div>
 
 <div id="homePage" class="app app-page active">
-  <div class="topbar">
-    <div class="topbar-title-row">
-      <div class="app-title">Vacanze Agosto 2026</div>
-    </div>
-    <div class="topbar-route-row">
-      <div class="app-subtitle">
-        <span class="trip-route">Slovenia → Croazia → Bosnia-Erzegovina</span>
+  <header class="topbar">
+    <div class="topbar-main">
+      <div class="topbar-copy">
+        <div class="app-title">Vacanze Agosto 2026</div>
+        <div class="app-subtitle">
+          <span class="trip-route">Slovenia → Croazia → Bosnia-Erzegovina</span>
+        </div>
+      </div>
+      <div class="top-icon" aria-hidden="true">
+        <img src="icon-192.png" alt="">
       </div>
     </div>
-    <div class="topbar-actions-row">
+
+    <div class="topbar-controls">
       <div id="roleBadge" class="role-badge" aria-live="polite"></div>
       <div class="top-actions">
+        <button id="lockToggle" class="header-icon-button lock-button" type="button" aria-label="Blocca modifiche" title="Blocca modifiche">🔓</button>
         <button id="logoutButton" class="logout-btn" type="button" aria-label="Uscire" title="Uscire">Uscire</button>
-        <button id="lockToggle" class="lock-button" type="button" aria-label="Blocca modifiche">🔓</button>
-        <div class="top-icon" aria-hidden="true"><img src="icon-192.png" alt="" /></div>
       </div>
     </div>
-  </div>
+  </header>
   <div id="lockedBanner" class="locked-banner">Modalità bloccata: i dati non possono essere modificati.</div>
   <div id="updateBanner" class="update-banner">
     <span>È disponibile una nuova versione dell’app.</span>
@@ -1134,6 +1291,32 @@
 
 
 
+<script>
+
+function hideUpdateBannerImmediately() {
+  const banner =
+    document.getElementById("updateBanner") ||
+    document.querySelector(".update-banner") ||
+    document.querySelector("[data-update-banner]");
+
+  if (banner) {
+    banner.hidden = true;
+    banner.style.display = "none";
+    banner.setAttribute("aria-hidden", "true");
+  }
+
+  const button =
+    document.getElementById("updateButton") ||
+    document.querySelector(".update-button") ||
+    document.querySelector("[data-action='update']");
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Aggiornamento…";
+  }
+}
+
+</script>
 <script>
 (function(){
   const standalone =
@@ -2450,6 +2633,30 @@ window.addEventListener("offline", () => {
   if (auth.currentUser) {
     setChecklistStatus("Offline: le modifiche saranno sincronizzate");
   }
+});
+</script>
+
+
+<script>
+document.addEventListener("click", function(event){
+  const button = event.target.closest(
+    "#updateButton, .update-button, [data-action='update']"
+  );
+  if (!button) return;
+
+  hideUpdateBannerImmediately();
+
+  window.setTimeout(function(){
+    if (document.visibilityState === "visible") {
+      window.location.reload();
+    }
+  }, 1800);
+}, true);
+
+navigator.serviceWorker?.addEventListener("controllerchange", function(){
+  if (window.__pwaReloading) return;
+  window.__pwaReloading = true;
+  window.location.reload();
 });
 </script>
 
