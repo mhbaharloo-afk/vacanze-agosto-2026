@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="app-version" content="47">
+  <meta name="app-version" content="48">
   <meta name="theme-color" content="#1f6f5f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -1670,6 +1670,30 @@
       color:white;
     }
 
+
+    .add-shared-place{
+      display:inline-flex !important;
+      align-items:center;
+      justify-content:center;
+      gap:5px;
+      min-width:132px;
+      white-space:nowrap;
+      cursor:pointer;
+    }
+
+    @media (max-width:520px){
+      .shared-place-toolbar{
+        align-items:stretch;
+        flex-direction:column;
+      }
+
+      .add-shared-place{
+        width:100%;
+        min-height:44px;
+        font-size:.82rem;
+      }
+    }
+
 </style>
 </head>
 <body>
@@ -3070,9 +3094,19 @@ function showApp() {
   overlay.classList.add("hidden");
   document.documentElement.style.overflow = "";
   document.body.style.overflow = "";
-  updateWelcomeMessage(localStorage.getItem(AUTH_STORAGE_KEY) || "");
+
+  const loggedUsername = localStorage.getItem(AUTH_STORAGE_KEY) || "";
+  updateWelcomeMessage(loggedUsername);
   setTopSyncStatus(navigator.onLine ? "syncing" : "offline");
+
+  // The first render can happen before Firebase restores the authenticated
+  // account. Render again now so admin-only controls are created correctly.
+  if (typeof render === "function" && trip.length) {
+    render();
+  }
+
   if (typeof applyLockState === "function") applyLockState();
+
   if (typeof window.loadUserCalculator === "function") {
     window.loadUserCalculator();
   }
