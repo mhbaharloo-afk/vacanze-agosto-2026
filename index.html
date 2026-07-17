@@ -357,6 +357,7 @@ save();
 
 let isLocked = Boolean(state["app::locked"]);
 let activeDestination = "";
+let pendingScrollTarget = null;
 
 function applyLockState(){
   const lockButton = document.getElementById("lockToggle");
@@ -590,31 +591,48 @@ function showCopyToast(message){
 
 function scrollToDestination(city){
   activeDestination = city;
+  pendingScrollTarget = {
+    type: "destination",
+    id: destinationDomId(city)
+  };
   render();
-
-  requestAnimationFrame(() => {
-    setTimeout(() => {
-      const target = document.getElementById(destinationDomId(city));
-      if(!target) return;
-      target.scrollIntoView({behavior:"smooth", block:"start"});
-      target.classList.add("flash-destination");
-      setTimeout(() => target.classList.remove("flash-destination"), 1500);
-    }, 120);
-  });
 }
 
 function scrollToPlace(city, placeName){
   activeDestination = city;
+  pendingScrollTarget = {
+    type: "place",
+    id: placeDomId(city, placeName)
+  };
   render();
+}
+
+function performPendingScroll(){
+  if(!pendingScrollTarget) return;
+
+  const pending = pendingScrollTarget;
+  pendingScrollTarget = null;
 
   requestAnimationFrame(() => {
-    setTimeout(() => {
-      const target = document.getElementById(placeDomId(city, placeName));
+    requestAnimationFrame(() => {
+      const target = document.getElementById(pending.id);
       if(!target) return;
-      target.scrollIntoView({behavior:"smooth", block:"center"});
-      target.classList.add("flash-target");
-      setTimeout(() => target.classList.remove("flash-target"), 1500);
-    }, 140);
+
+      const topOffset = 14;
+      const top = target.getBoundingClientRect().top + window.scrollY - topOffset;
+
+      window.scrollTo({
+        top,
+        behavior: "smooth"
+      });
+
+      const flashClass = pending.type === "place"
+        ? "flash-target"
+        : "flash-destination";
+
+      target.classList.add(flashClass);
+      setTimeout(() => target.classList.remove(flashClass), 1600);
+    });
   });
 }
 
@@ -630,6 +648,7 @@ function render(){
     total += dest.places.length;
     const section = document.createElement("section");
     section.className = "destination";
+    section.id = destinationDomId(dest.city);
 
     const matchingPlaces = dest.places.filter(p=>{
       const id=slug(dest.city,p[0]);
@@ -762,6 +781,7 @@ function render(){
   document.getElementById("progressBar").style.width=(total?visited/total*100:0)+"%";
   renderTripSummary();
   setTimeout(applyLockState, 0);
+  performPendingScroll();
 
   if(!visible){
     const e=document.createElement("div");e.className="empty";e.textContent="Nessun posto corrisponde ai filtri.";
