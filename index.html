@@ -739,6 +739,75 @@
       to{ transform:rotate(360deg); }
     }
 
+  
+    /* Impedisce qualsiasi scorrimento orizzontale */
+    html,
+    body{
+      width:100%;
+      max-width:100%;
+      overflow-x:hidden !important;
+    }
+
+    .app,
+    .topbar,
+    .bottom,
+    #homePage,
+    #checklistPage{
+      width:100%;
+      max-width:100%;
+      box-sizing:border-box;
+    }
+
+    .topbar{
+      min-width:0;
+    }
+
+    .topbar > div:first-child{
+      min-width:0;
+      flex:1 1 auto;
+      overflow:hidden;
+    }
+
+    .app-subtitle{
+      display:block;
+      width:100%;
+      max-width:100%;
+      min-width:0;
+      overflow:hidden;
+      white-space:nowrap;
+    }
+
+    .trip-route{
+      display:block;
+      width:100%;
+      max-width:100%;
+      min-width:0;
+      overflow:hidden !important;
+      white-space:nowrap !important;
+      text-overflow:clip;
+      font-size:clamp(.66rem, 2.9vw, 1rem) !important;
+      letter-spacing:-.035em;
+    }
+
+    .top-actions{
+      flex:0 0 auto;
+    }
+
+    .logout-btn{
+      width:auto !important;
+      min-width:64px;
+      padding:0 12px !important;
+      font-size:.72rem !important;
+      font-weight:850;
+      white-space:nowrap;
+    }
+
+    .bottom{
+      left:0;
+      right:0;
+      overflow:hidden;
+    }
+
   </style>
 </head>
 <body>
@@ -780,7 +849,7 @@
     </div>
     <div class="top-actions">
       <div id="roleBadge" class="role-badge" aria-live="polite"></div>
-      <button id="logoutButton" class="logout-btn" type="button" aria-label="Esci" title="Esci">⇥</button>
+      <button id="logoutButton" class="logout-btn" type="button" aria-label="Uscire" title="Uscire">Uscire</button>
       <button id="lockToggle" class="lock-button" type="button" aria-label="Blocca modifiche">🔓</button>
       <div class="top-icon" aria-hidden="true"><img src="icon-192.png" alt="" /></div>
     </div>
