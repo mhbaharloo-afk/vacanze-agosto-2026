@@ -602,6 +602,36 @@
       display:none !important;
     }
 
+  
+    .checklist-main{
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    .checklist-meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:4px 10px;
+      font-size:.62rem;
+      line-height:1.35;
+      color:var(--muted);
+    }
+
+    .checklist-meta span{
+      white-space:normal;
+    }
+
+    .checklist-meta strong{
+      color:#44534d;
+      font-weight:800;
+    }
+
+    .checklist-item.done .checklist-meta{
+      opacity:.82;
+    }
+
   </style>
 </head>
 <body>
@@ -1785,6 +1815,24 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
+
+function displayUser(value) {
+  const username = String(value || "").trim().toLowerCase();
+  if (username === "mohammad") return "Mohammad";
+  if (username === "mahnoush") return "Mahnoush";
+  return username ? username.charAt(0).toUpperCase() + username.slice(1) : "—";
+}
+
+function displayAction(value) {
+  const actions = {
+    created: "creazione",
+    text: "testo modificato",
+    checked: "segnata come fatta",
+    unchecked: "spunta rimossa"
+  };
+  return actions[value] || "";
+}
+
 function itemTime(item) {
   if (item.createdAt && typeof item.createdAt.toMillis === "function") {
     return item.createdAt.toMillis();
@@ -1802,20 +1850,36 @@ function renderChecklist() {
     return;
   }
 
-  checklistList.innerHTML = checklistItems.map(item => `
-    <div class="checklist-item ${item.done ? "done" : ""}"
-         data-id="${escapeHtml(item.id)}">
-      <button class="checklist-check" type="button"
-              aria-label="${item.done ? "Segna come da portare" : "Segna come preparata"}">
-        ${item.done ? "✓" : ""}
-      </button>
-      <input class="checklist-text" type="text" maxlength="180"
-             value="${escapeHtml(item.text || "")}"
-             aria-label="Cosa da portare">
-      <button class="checklist-delete" type="button"
-              aria-label="Cancella riga">🗑</button>
-    </div>
-  `).join("");
+  checklistList.innerHTML = checklistItems.map(item => {
+    const creator = displayUser(item.createdBy);
+    const lastEditor = displayUser(item.lastModifiedBy || item.editedBy || item.createdBy);
+    const lastAction = displayAction(item.lastModifiedAction);
+    const checkedBy = displayUser(item.checkedBy);
+    const uncheckedBy = displayUser(item.uncheckedBy);
+
+    return `
+      <div class="checklist-item ${item.done ? "done" : ""}"
+           data-id="${escapeHtml(item.id)}">
+        <button class="checklist-check" type="button"
+                aria-label="${item.done ? "Togli la spunta" : "Segna come fatta"}">
+          ${item.done ? "✓" : ""}
+        </button>
+        <div class="checklist-main">
+          <input class="checklist-text" type="text" maxlength="180"
+                 value="${escapeHtml(item.text || "")}"
+                 aria-label="Cosa da portare">
+          <div class="checklist-meta">
+            <span><strong>Creata da:</strong> ${escapeHtml(creator)}</span>
+            <span><strong>Ultima modifica:</strong> ${escapeHtml(lastEditor)}${lastAction ? ` · ${escapeHtml(lastAction)}` : ""}</span>
+            <span><strong>Fatta da:</strong> ${escapeHtml(checkedBy)}</span>
+            <span><strong>Spunta tolta da:</strong> ${escapeHtml(uncheckedBy)}</span>
+          </div>
+        </div>
+        <button class="checklist-delete" type="button"
+                aria-label="Cancella riga">🗑</button>
+      </div>
+    `;
+  }).join("");
 }
 
 function startChecklistSync() {
@@ -1937,7 +2001,12 @@ checklistForm.addEventListener("submit", async event => {
       done: false,
       createdBy: username,
       createdAt: serverTimestamp(),
-      createdAtClient: Date.now()
+      createdAtClient: Date.now(),
+      lastModifiedBy: username,
+      lastModifiedAction: "created",
+      lastModifiedAt: serverTimestamp(),
+      checkedBy: "",
+      uncheckedBy: ""
     });
     checklistInput.focus();
   } catch (error) {
@@ -1956,11 +2025,24 @@ checklistList.addEventListener("click", async event => {
 
   try {
     if (event.target.closest(".checklist-check")) {
-      await updateDoc(doc(checklistCollection, item.id), {
-        done: !item.done,
-        editedBy: localStorage.getItem(AUTH_STORAGE_KEY) || "",
-        editedAt: serverTimestamp()
-      });
+      const username = localStorage.getItem(AUTH_STORAGE_KEY) || "";
+      const willBeDone = !item.done;
+      const update = {
+        done: willBeDone,
+        editedBy: username,
+        editedAt: serverTimestamp(),
+        lastModifiedBy: username,
+        lastModifiedAction: willBeDone ? "checked" : "unchecked",
+        lastModifiedAt: serverTimestamp()
+      };
+
+      if (willBeDone) {
+        update.checkedBy = username;
+      } else {
+        update.uncheckedBy = username;
+      }
+
+      await updateDoc(doc(checklistCollection, item.id), update);
       return;
     }
 
@@ -1988,10 +2070,14 @@ checklistList.addEventListener("change", async event => {
     if (!text) {
       await deleteDoc(doc(checklistCollection, item.id));
     } else if (text !== item.text) {
+      const username = localStorage.getItem(AUTH_STORAGE_KEY) || "";
       await updateDoc(doc(checklistCollection, item.id), {
         text,
-        editedBy: localStorage.getItem(AUTH_STORAGE_KEY) || "",
-        editedAt: serverTimestamp()
+        editedBy: username,
+        editedAt: serverTimestamp(),
+        lastModifiedBy: username,
+        lastModifiedAction: "text",
+        lastModifiedAt: serverTimestamp()
       });
     }
   } catch (error) {
