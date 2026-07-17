@@ -1175,9 +1175,13 @@ document.addEventListener("selectstart", event => {
 </script>
 
 
+
 <script>
 (function(){
   const RATE_BAM = 1.95583;
+  const AUTH_STORAGE_KEY = "vacanze-agosto-2026-auth-user";
+  const CALCULATOR_STORAGE_PREFIX = "vacanze-agosto-2026-calculator::";
+
   const fields = {
     euro: document.getElementById("currencyEuro"),
     slovenia: document.getElementById("currencySlovenia"),
@@ -1188,18 +1192,53 @@ document.addEventListener("selectstart", event => {
   if(Object.values(fields).some(field => !field)) return;
   let updating = false;
 
+  function currentUser(){
+    return localStorage.getItem(AUTH_STORAGE_KEY) || "guest";
+  }
+
+  function storageKey(){
+    return CALCULATOR_STORAGE_PREFIX + currentUser();
+  }
+
   function parseAmount(value){
     const normalized = String(value || "")
-      .trim().replace(/\s/g, "").replace(",", ".");
+      .trim()
+      .replace(/\s/g, "")
+      .replace(",", ".");
     const number = Number(normalized);
     return Number.isFinite(number) ? number : 0;
   }
 
   function formatAmount(value){
     return new Intl.NumberFormat("it-IT", {
-      minimumFractionDigits:0,
-      maximumFractionDigits:2
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
     }).format(value);
+  }
+
+  function saveCalculator(){
+    const data = {};
+    Object.entries(fields).forEach(([key, field]) => {
+      data[key] = field.value;
+    });
+    localStorage.setItem(storageKey(), JSON.stringify(data));
+  }
+
+  function loadCalculator(){
+    const saved = JSON.parse(localStorage.getItem(storageKey()) || "null");
+
+    updating = true;
+    if(saved){
+      Object.entries(fields).forEach(([key, field]) => {
+        field.value = saved[key] ?? "";
+      });
+    }else{
+      fields.euro.value = "1";
+      fields.slovenia.value = "1";
+      fields.croatia.value = "1";
+      fields.bosnia.value = "1,96";
+    }
+    updating = false;
   }
 
   function updateFrom(source){
@@ -1217,12 +1256,16 @@ document.addEventListener("selectstart", event => {
     if(source !== "bosnia") fields.bosnia.value = formatAmount(euroValue * RATE_BAM);
 
     updating = false;
+    saveCalculator();
   }
 
   Object.entries(fields).forEach(([key, field]) => {
     field.addEventListener("input", () => updateFrom(key));
     field.addEventListener("focus", () => field.select());
   });
+
+  window.loadUserCalculator = loadCalculator;
+  loadCalculator();
 })();
 </script>
 
@@ -1247,6 +1290,7 @@ document.addEventListener("selectstart", event => {
     document.documentElement.style.overflow = "";
     document.body.style.overflow = "";
     if(typeof applyLockState === "function") applyLockState();
+    if(typeof window.loadUserCalculator === "function") window.loadUserCalculator();
   }
 
   function showLogin(){
@@ -1280,6 +1324,7 @@ document.addEventListener("selectstart", event => {
 
   logoutButton.addEventListener("click", function(){
     localStorage.removeItem(AUTH_STORAGE_KEY);
+    if(typeof window.loadUserCalculator === "function") window.loadUserCalculator();
     usernameInput.value = "";
     passwordInput.value = "";
     errorBox.textContent = "";
