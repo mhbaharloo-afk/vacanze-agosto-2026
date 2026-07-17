@@ -329,6 +329,156 @@
       cursor:not-allowed!important;
     }
 
+  
+    .shared-checklist{
+      margin:18px 0;
+      padding:18px;
+      border-radius:26px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      border:1px solid var(--outline);
+    }
+
+    .shared-checklist-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .shared-checklist-title{
+      margin:0;
+      font-size:1.05rem;
+      font-weight:900;
+      color:var(--text);
+    }
+
+    .shared-checklist-subtitle{
+      margin-top:4px;
+      font-size:.75rem;
+      color:var(--muted);
+    }
+
+    .shared-checklist-count{
+      min-width:42px;
+      padding:7px 10px;
+      border-radius:999px;
+      background:var(--primary-container);
+      color:var(--primary);
+      text-align:center;
+      font-size:.74rem;
+      font-weight:900;
+    }
+
+    .checklist-add{
+      display:flex;
+      gap:8px;
+      margin-bottom:14px;
+    }
+
+    .checklist-add input{
+      flex:1;
+      min-width:0;
+      border:1px solid var(--outline);
+      border-radius:16px;
+      padding:12px 13px;
+      background:#f8faf9;
+      color:var(--text);
+      outline:none;
+    }
+
+    .checklist-add input:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 3px rgba(25,118,92,.12);
+    }
+
+    .checklist-add button{
+      border:0;
+      border-radius:16px;
+      padding:0 16px;
+      background:var(--primary);
+      color:#fff;
+      font-weight:900;
+    }
+
+    .checklist-list{
+      display:flex;
+      flex-direction:column;
+      gap:9px;
+    }
+
+    .checklist-item{
+      display:grid;
+      grid-template-columns:38px 1fr 38px;
+      align-items:center;
+      gap:9px;
+      padding:9px;
+      border:1px solid #e2e9e6;
+      border-radius:17px;
+      background:#fbfcfc;
+    }
+
+    .checklist-item.done{
+      background:#f0f6f3;
+    }
+
+    .checklist-check,
+    .checklist-delete{
+      width:38px;
+      height:38px;
+      border:0;
+      border-radius:13px;
+      display:grid;
+      place-items:center;
+      font-weight:900;
+    }
+
+    .checklist-check{
+      background:#edf2f0;
+      color:#66736e;
+      font-size:1rem;
+    }
+
+    .checklist-item.done .checklist-check{
+      background:var(--primary);
+      color:#fff;
+    }
+
+    .checklist-delete{
+      background:#fff0f0;
+      color:#a73e3e;
+    }
+
+    .checklist-text{
+      width:100%;
+      box-sizing:border-box;
+      border:0;
+      background:transparent;
+      color:var(--text);
+      font-size:.9rem;
+      outline:none;
+    }
+
+    .checklist-item.done .checklist-text{
+      color:var(--muted);
+      text-decoration:line-through;
+    }
+
+    .checklist-empty{
+      padding:20px 10px;
+      text-align:center;
+      color:var(--muted);
+      font-size:.82rem;
+    }
+
+    .checklist-note{
+      margin-top:11px;
+      text-align:center;
+      font-size:.7rem;
+      color:var(--muted);
+    }
+
   </style>
 </head>
 <body>
@@ -445,6 +595,26 @@
   </div>
 
   <div class="currency-rate">1 EUR = 1,95583 BAM · disponibile anche offline</div>
+</section>
+
+
+<section class="shared-checklist" aria-labelledby="sharedChecklistTitle">
+  <div class="shared-checklist-head">
+    <div>
+      <h2 id="sharedChecklistTitle" class="shared-checklist-title">Cose da non dimenticare</h2>
+      <div class="shared-checklist-subtitle">Checklist condivisa delle cose da portare</div>
+    </div>
+    <div id="sharedChecklistCount" class="shared-checklist-count">0/0</div>
+  </div>
+
+  <form id="sharedChecklistForm" class="checklist-add">
+    <input id="sharedChecklistInput" type="text" maxlength="180"
+           placeholder="Aggiungi una nuova voce…" autocomplete="off">
+    <button type="submit">Aggiungi</button>
+  </form>
+
+  <div id="sharedChecklistList" class="checklist-list"></div>
+  <div class="checklist-note"><span id="sharedChecklistStatus">Connessione al database…</span></div>
 </section>
 
 <section id="tripSummary" class="trip-summary" aria-live="polite"></section>
@@ -1270,68 +1440,7 @@ document.addEventListener("selectstart", event => {
 </script>
 
 
-<script>
-(function(){
-  const AUTH_STORAGE_KEY = "vacanze-agosto-2026-auth-user";
-  const accounts = {
-    mahnoush: "123456",
-    mohammad: "mohmah2024"
-  };
 
-  const overlay = document.getElementById("authOverlay");
-  const form = document.getElementById("authForm");
-  const usernameInput = document.getElementById("authUsername");
-  const passwordInput = document.getElementById("authPassword");
-  const errorBox = document.getElementById("authError");
-  const logoutButton = document.getElementById("logoutButton");
-
-  function showApp(){
-    overlay.classList.add("hidden");
-    document.documentElement.style.overflow = "";
-    document.body.style.overflow = "";
-    if(typeof applyLockState === "function") applyLockState();
-    if(typeof window.loadUserCalculator === "function") window.loadUserCalculator();
-  }
-
-  function showLogin(){
-    overlay.classList.remove("hidden");
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-    setTimeout(() => usernameInput.focus(), 50);
-  }
-
-  if(localStorage.getItem(AUTH_STORAGE_KEY)){
-    showApp();
-  }else{
-    showLogin();
-  }
-
-  form.addEventListener("submit", function(event){
-    event.preventDefault();
-    const username = String(usernameInput.value || "").trim().toLowerCase();
-    const password = String(passwordInput.value || "");
-
-    if(accounts[username] && accounts[username] === password){
-      localStorage.setItem(AUTH_STORAGE_KEY, username);
-      errorBox.textContent = "";
-      passwordInput.value = "";
-      showApp();
-    }else{
-      errorBox.textContent = "Username o password non corretti.";
-      passwordInput.select();
-    }
-  });
-
-  logoutButton.addEventListener("click", function(){
-    localStorage.removeItem(AUTH_STORAGE_KEY);
-    if(typeof window.loadUserCalculator === "function") window.loadUserCalculator();
-    usernameInput.value = "";
-    passwordInput.value = "";
-    errorBox.textContent = "";
-    showLogin();
-  });
-})();
-</script>
 
 
 <script>
@@ -1343,6 +1452,7 @@ document.addEventListener("selectstart", event => {
   function isAllowedForViewer(target){
     return Boolean(
       target.closest(".currency-card") ||
+      target.closest(".shared-checklist") ||
       target.closest("#logoutButton") ||
       target.closest(".destination-head") ||
       target.closest(".summary-stop") ||
@@ -1375,6 +1485,351 @@ document.addEventListener("selectstart", event => {
     }
   }, true);
 })();
+</script>
+
+
+
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+import {
+  getAuth,
+  setPersistence,
+  browserLocalPersistence,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+import {
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC5W_aAJ58Dv6mIkgoSiMpV-5xACOim0gk",
+  authDomain: "vacanze-agosto-2026-4815f.firebaseapp.com",
+  projectId: "vacanze-agosto-2026-4815f",
+  storageBucket: "vacanze-agosto-2026-4815f.firebasestorage.app",
+  messagingSenderId: "358951220706",
+  appId: "1:358951220706:web:c3d58ea2b8f9f1ff93b5bb"
+};
+
+const AUTH_STORAGE_KEY = "vacanze-agosto-2026-auth-user";
+const USER_EMAILS = {
+  mohammad: "mohammad@vacanze.local",
+  mahnoush: "mahnoush@vacanze.local"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+await setPersistence(auth, browserLocalPersistence);
+
+let db;
+try {
+  db = initializeFirestore(app, {
+    localCache: persistentLocalCache({
+      tabManager: persistentMultipleTabManager()
+    })
+  });
+} catch (error) {
+  console.warn("Cache persistente non disponibile:", error);
+  db = initializeFirestore(app, {});
+}
+
+const checklistCollection = collection(
+  db,
+  "trips",
+  "agosto-2026",
+  "checklist"
+);
+
+const overlay = document.getElementById("authOverlay");
+const form = document.getElementById("authForm");
+const usernameInput = document.getElementById("authUsername");
+const passwordInput = document.getElementById("authPassword");
+const errorBox = document.getElementById("authError");
+const logoutButton = document.getElementById("logoutButton");
+
+const checklistForm = document.getElementById("sharedChecklistForm");
+const checklistInput = document.getElementById("sharedChecklistInput");
+const checklistList = document.getElementById("sharedChecklistList");
+const checklistCount = document.getElementById("sharedChecklistCount");
+const checklistStatus = document.getElementById("sharedChecklistStatus");
+
+let checklistItems = [];
+let unsubscribeChecklist = null;
+
+function usernameFromEmail(email) {
+  const normalized = String(email || "").toLowerCase();
+  return Object.keys(USER_EMAILS).find(
+    username => USER_EMAILS[username] === normalized
+  ) || "";
+}
+
+function setChecklistStatus(text, isError = false) {
+  if (!checklistStatus) return;
+  checklistStatus.textContent = text;
+  checklistStatus.style.color = isError ? "#a73e3e" : "";
+}
+
+function showApp() {
+  overlay.classList.add("hidden");
+  document.documentElement.style.overflow = "";
+  document.body.style.overflow = "";
+  if (typeof applyLockState === "function") applyLockState();
+  if (typeof window.loadUserCalculator === "function") {
+    window.loadUserCalculator();
+  }
+}
+
+function showLogin() {
+  overlay.classList.remove("hidden");
+  document.documentElement.style.overflow = "hidden";
+  document.body.style.overflow = "hidden";
+  setTimeout(() => usernameInput.focus(), 50);
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function itemTime(item) {
+  if (item.createdAt && typeof item.createdAt.toMillis === "function") {
+    return item.createdAt.toMillis();
+  }
+  return Number(item.createdAtClient || 0);
+}
+
+function renderChecklist() {
+  const completed = checklistItems.filter(item => item.done).length;
+  checklistCount.textContent = `${completed}/${checklistItems.length}`;
+
+  if (checklistItems.length === 0) {
+    checklistList.innerHTML =
+      '<div class="checklist-empty">Nessuna voce. Aggiungi la prima cosa da portare.</div>';
+    return;
+  }
+
+  checklistList.innerHTML = checklistItems.map(item => `
+    <div class="checklist-item ${item.done ? "done" : ""}"
+         data-id="${escapeHtml(item.id)}">
+      <button class="checklist-check" type="button"
+              aria-label="${item.done ? "Segna come da portare" : "Segna come preparata"}">
+        ${item.done ? "✓" : ""}
+      </button>
+      <input class="checklist-text" type="text" maxlength="180"
+             value="${escapeHtml(item.text || "")}"
+             aria-label="Cosa da portare">
+      <button class="checklist-delete" type="button"
+              aria-label="Cancella riga">🗑</button>
+    </div>
+  `).join("");
+}
+
+function startChecklistSync() {
+  if (unsubscribeChecklist) unsubscribeChecklist();
+
+  setChecklistStatus("Sincronizzazione…");
+
+  unsubscribeChecklist = onSnapshot(
+    checklistCollection,
+    { includeMetadataChanges: true },
+    snapshot => {
+      checklistItems = snapshot.docs.map(snapshotDoc => ({
+        id: snapshotDoc.id,
+        ...snapshotDoc.data()
+      })).sort((a, b) => itemTime(a) - itemTime(b));
+
+      renderChecklist();
+
+      const hasPendingWrites = snapshot.metadata.hasPendingWrites;
+      const fromCache = snapshot.metadata.fromCache;
+
+      if (hasPendingWrites) {
+        setChecklistStatus("Salvataggio…");
+      } else if (fromCache && !navigator.onLine) {
+        setChecklistStatus("Offline: le modifiche saranno sincronizzate");
+      } else {
+        setChecklistStatus("Sincronizzata tra i due telefoni");
+      }
+    },
+    error => {
+      console.error(error);
+      setChecklistStatus(
+        "Errore di sincronizzazione. Controlla Internet e le regole Firebase.",
+        true
+      );
+    }
+  );
+}
+
+form.addEventListener("submit", async event => {
+  event.preventDefault();
+  errorBox.textContent = "";
+
+  const username = String(usernameInput.value || "").trim().toLowerCase();
+  const password = String(passwordInput.value || "");
+  const email = USER_EMAILS[username];
+
+  if (!email) {
+    errorBox.textContent = "Username non valido.";
+    return;
+  }
+
+  try {
+    errorBox.textContent = "Accesso in corso…";
+    await signInWithEmailAndPassword(auth, email, password);
+    passwordInput.value = "";
+    errorBox.textContent = "";
+  } catch (error) {
+    console.error(error);
+    errorBox.textContent = "Username o password non corretti.";
+    passwordInput.select();
+  }
+});
+
+logoutButton.addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+onAuthStateChanged(auth, user => {
+  if (unsubscribeChecklist) {
+    unsubscribeChecklist();
+    unsubscribeChecklist = null;
+  }
+
+  if (user) {
+    const username = usernameFromEmail(user.email);
+    if (!username) {
+      signOut(auth);
+      return;
+    }
+
+    localStorage.setItem(AUTH_STORAGE_KEY, username);
+    errorBox.textContent = "";
+    showApp();
+    startChecklistSync();
+  } else {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    checklistItems = [];
+    renderChecklist();
+    setChecklistStatus("Accedi per vedere la checklist");
+    usernameInput.value = "";
+    passwordInput.value = "";
+    errorBox.textContent = "";
+    if (typeof window.loadUserCalculator === "function") {
+      window.loadUserCalculator();
+    }
+    showLogin();
+  }
+});
+
+checklistForm.addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const text = checklistInput.value.trim();
+  const username = localStorage.getItem(AUTH_STORAGE_KEY) || "";
+
+  if (!text || !auth.currentUser) return;
+
+  checklistInput.value = "";
+
+  try {
+    await addDoc(checklistCollection, {
+      text,
+      done: false,
+      createdBy: username,
+      createdAt: serverTimestamp(),
+      createdAtClient: Date.now()
+    });
+    checklistInput.focus();
+  } catch (error) {
+    console.error(error);
+    checklistInput.value = text;
+    setChecklistStatus("Non è stato possibile aggiungere la voce.", true);
+  }
+});
+
+checklistList.addEventListener("click", async event => {
+  const row = event.target.closest(".checklist-item");
+  if (!row || !auth.currentUser) return;
+
+  const item = checklistItems.find(entry => entry.id === row.dataset.id);
+  if (!item) return;
+
+  try {
+    if (event.target.closest(".checklist-check")) {
+      await updateDoc(doc(checklistCollection, item.id), {
+        done: !item.done,
+        editedBy: localStorage.getItem(AUTH_STORAGE_KEY) || "",
+        editedAt: serverTimestamp()
+      });
+      return;
+    }
+
+    if (event.target.closest(".checklist-delete")) {
+      await deleteDoc(doc(checklistCollection, item.id));
+    }
+  } catch (error) {
+    console.error(error);
+    setChecklistStatus("Modifica non salvata.", true);
+  }
+});
+
+checklistList.addEventListener("change", async event => {
+  if (!event.target.matches(".checklist-text") || !auth.currentUser) return;
+
+  const row = event.target.closest(".checklist-item");
+  if (!row) return;
+
+  const item = checklistItems.find(entry => entry.id === row.dataset.id);
+  if (!item) return;
+
+  const text = event.target.value.trim();
+
+  try {
+    if (!text) {
+      await deleteDoc(doc(checklistCollection, item.id));
+    } else if (text !== item.text) {
+      await updateDoc(doc(checklistCollection, item.id), {
+        text,
+        editedBy: localStorage.getItem(AUTH_STORAGE_KEY) || "",
+        editedAt: serverTimestamp()
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    setChecklistStatus("Testo non salvato.", true);
+  }
+});
+
+window.addEventListener("online", () => {
+  if (auth.currentUser) setChecklistStatus("Riconnessione…");
+});
+
+window.addEventListener("offline", () => {
+  if (auth.currentUser) {
+    setChecklistStatus("Offline: le modifiche saranno sincronizzate");
+  }
+});
 </script>
 
 </body>

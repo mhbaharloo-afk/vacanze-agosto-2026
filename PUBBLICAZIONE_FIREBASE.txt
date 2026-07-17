@@ -1,0 +1,14 @@
+PUBBLICAZIONE SU FIREBASE HOSTING
+
+Questa versione è già collegata a:
+vacanze-agosto-2026-4815f
+
+Per pubblicarla servirà Firebase Hosting.
+I passaggi verranno eseguiti successivamente.
+
+Account nell'app:
+mohammad / mohmah2024
+mahnoush / 123456
+
+Checklist cloud:
+trips/agosto-2026/checklist
