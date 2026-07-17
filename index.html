@@ -479,6 +479,113 @@
       color:var(--muted);
     }
 
+  
+    .app-page{
+      display:none;
+    }
+
+    .app-page.active{
+      display:block;
+    }
+
+    .page-nav-card{
+      width:calc(100% - 32px);
+      margin:16px auto 4px;
+      padding:15px 16px;
+      border:1px solid var(--outline);
+      border-radius:22px;
+      background:#fff;
+      box-shadow:var(--shadow);
+      display:grid;
+      grid-template-columns:46px 1fr 28px;
+      align-items:center;
+      gap:12px;
+      text-align:left;
+      color:var(--text);
+    }
+
+    .page-nav-icon{
+      width:46px;
+      height:46px;
+      border-radius:16px;
+      background:var(--primary-container);
+      display:grid;
+      place-items:center;
+      font-size:1.35rem;
+    }
+
+    .page-nav-copy{
+      display:flex;
+      flex-direction:column;
+      gap:3px;
+    }
+
+    .page-nav-copy strong{
+      font-size:.92rem;
+      font-weight:900;
+    }
+
+    .page-nav-copy small{
+      color:var(--muted);
+      font-size:.73rem;
+    }
+
+    .page-nav-arrow{
+      font-size:1.7rem;
+      color:var(--primary);
+      font-weight:500;
+      text-align:right;
+    }
+
+    .checklist-page{
+      min-height:100vh;
+      padding-bottom:28px;
+      background:var(--background);
+    }
+
+    .subpage-header{
+      position:sticky;
+      top:0;
+      z-index:50;
+      display:grid;
+      grid-template-columns:44px 1fr;
+      align-items:center;
+      gap:10px;
+      padding:14px 16px;
+      background:rgba(247,250,248,.94);
+      backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--outline);
+    }
+
+    .subpage-header h1{
+      margin:0;
+      font-size:1.08rem;
+      line-height:1.2;
+      color:var(--text);
+    }
+
+    .subpage-header p{
+      margin:3px 0 0;
+      font-size:.72rem;
+      color:var(--muted);
+    }
+
+    .subpage-back{
+      width:42px;
+      height:42px;
+      border:0;
+      border-radius:15px;
+      background:#fff;
+      color:var(--primary);
+      box-shadow:0 4px 15px rgba(26,53,43,.09);
+      font-size:1.3rem;
+      font-weight:900;
+    }
+
+    #checklistPage .shared-checklist{
+      margin:18px 16px 28px;
+    }
+
   </style>
 </head>
 <body>
@@ -504,7 +611,7 @@
   </form>
 </div>
 
-<div class="app">
+<div id="homePage" class="app app-page active">
   <div class="topbar">
     <div>
       <div class="app-title">Vacanze Agosto 2026</div>
@@ -522,6 +629,15 @@
     <span>È disponibile una nuova versione dell’app.</span>
     <button id="updateNow" type="button">Aggiorna</button>
   </div>
+
+  <button id="openChecklistPage" class="page-nav-card" type="button">
+    <span class="page-nav-icon">🧳</span>
+    <span class="page-nav-copy">
+      <strong>Cose da non dimenticare</strong>
+      <small>Apri la checklist condivisa</small>
+    </span>
+    <span class="page-nav-arrow">›</span>
+  </button>
 
   <section class="hero">
     <div class="hero-kicker">Il tuo viaggio</div>
@@ -598,24 +714,7 @@
 </section>
 
 
-<section class="shared-checklist" aria-labelledby="sharedChecklistTitle">
-  <div class="shared-checklist-head">
-    <div>
-      <h2 id="sharedChecklistTitle" class="shared-checklist-title">Cose da non dimenticare</h2>
-      <div class="shared-checklist-subtitle">Checklist condivisa delle cose da portare</div>
-    </div>
-    <div id="sharedChecklistCount" class="shared-checklist-count">0/0</div>
-  </div>
 
-  <form id="sharedChecklistForm" class="checklist-add">
-    <input id="sharedChecklistInput" type="text" maxlength="180"
-           placeholder="Aggiungi una nuova voce…" autocomplete="off">
-    <button type="submit">Aggiungi</button>
-  </form>
-
-  <div id="sharedChecklistList" class="checklist-list"></div>
-  <div class="checklist-note"><span id="sharedChecklistStatus">Connessione al database…</span></div>
-</section>
 
 <section id="tripSummary" class="trip-summary" aria-live="polite"></section>
 
@@ -641,6 +740,35 @@
   <button id="showPlanned" class="action primary" type="button">★ Solo selezionati</button>
   <button id="reset" class="action secondary" type="button">Azzera</button>
 </div>
+
+<div id="checklistPage" class="app-page checklist-page">
+  <div class="subpage-header">
+    <button id="backToHome" class="subpage-back" type="button" aria-label="Torna all’itinerario">←</button>
+    <div>
+      <h1>Cose da non dimenticare</h1>
+      <p>Checklist condivisa delle cose da portare</p>
+    </div>
+  </div>
+  <section class="shared-checklist" aria-labelledby="sharedChecklistTitle">
+  <div class="shared-checklist-head">
+    <div>
+      <h2 id="sharedChecklistTitle" class="shared-checklist-title">Lista condivisa</h2>
+      <div class="shared-checklist-subtitle">Mohammad e Mahnoush</div>
+    </div>
+    <div id="sharedChecklistCount" class="shared-checklist-count">0/0</div>
+  </div>
+
+  <form id="sharedChecklistForm" class="checklist-add">
+    <input id="sharedChecklistInput" type="text" maxlength="180"
+           placeholder="Aggiungi una nuova voce…" autocomplete="off">
+    <button type="submit">Aggiungi</button>
+  </form>
+
+  <div id="sharedChecklistList" class="checklist-list"></div>
+  <div class="checklist-note"><span id="sharedChecklistStatus">Connessione al database…</span></div>
+</section>
+</div>
+
 
 <script>
 let trip = [];
@@ -1491,6 +1619,39 @@ document.addEventListener("selectstart", event => {
 
 
 
+
+<script>
+(function(){
+  const homePage = document.getElementById("homePage");
+  const checklistPage = document.getElementById("checklistPage");
+  const openButton = document.getElementById("openChecklistPage");
+  const backButton = document.getElementById("backToHome");
+
+  if(!homePage || !checklistPage || !openButton || !backButton) return;
+
+  function showPage(page, updateHash = true){
+    const showChecklist = page === "checklist";
+    homePage.classList.toggle("active", !showChecklist);
+    checklistPage.classList.toggle("active", showChecklist);
+
+    if(updateHash){
+      history.replaceState(null, "", showChecklist ? "#checklist" : "#home");
+    }
+
+    window.scrollTo(0, 0);
+  }
+
+  openButton.addEventListener("click", () => showPage("checklist"));
+  backButton.addEventListener("click", () => showPage("home"));
+
+  window.addEventListener("hashchange", () => {
+    showPage(location.hash === "#checklist" ? "checklist" : "home", false);
+  });
+
+  showPage(location.hash === "#checklist" ? "checklist" : "home", false);
+})();
+</script>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
 import {
@@ -1738,6 +1899,7 @@ onAuthStateChanged(auth, user => {
     if (typeof window.loadUserCalculator === "function") {
       window.loadUserCalculator();
     }
+    if(location.hash === "#checklist") location.hash = "#home";
     showLogin();
   }
 });
