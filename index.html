@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="app-version" content="68">
+  <meta name="app-version" content="70">
   <meta name="theme-color" content="#1f6f5f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -2418,7 +2418,7 @@ body.admin-edit-mode .dynamic-delete-button.delete-dynamic-attraction{
       <option value="unvisited">Non visitati</option>
     </select>
   </div>
-  <div class="helper">Tocca una destinazione per aprire i suoi luoghi. Le destinazioni iniziali vengono lette da viaggio.json. I nuovi posti aggiunti nell’app sono condivisi in tempo reale.</div>
+  <div class="helper">Tocca una destinazione per aprire i suoi luoghi. L’intero itinerario è salvato e sincronizzato in tempo reale tramite Firebase.</div>
 
   
 <main id="destinations"></main>
@@ -2574,65 +2574,63 @@ function mergeSharedPlaces(baseDestinations, records){
   return merged;
 }
 
-function buildDynamicTripDestinations(){
-  const countriesById = new Map(
-    (window.dynamicCountries || []).map(country => [country.id, country])
-  );
+function buildFirebaseTripDestinations(){
+  const destinations = Array.isArray(window.firebaseDestinations)
+    ? window.firebaseDestinations
+    : [];
+  const attractions = Array.isArray(window.firebaseAttractions)
+    ? window.firebaseAttractions
+    : [];
 
-  return (window.dynamicStays || [])
+  return destinations
     .slice()
-    .sort((a,b) => Number(a.createdAtClient || 0) - Number(b.createdAtClient || 0))
-    .map(stay => {
-      const country = countriesById.get(stay.countryId);
-      if(!country) return null;
-
-      const places = (window.dynamicAttractions || [])
-        .filter(attraction => attraction.stayId === stay.id)
-        .sort((a,b) => Number(a.createdAtClient || 0) - Number(b.createdAtClient || 0))
+    .sort((a,b) => Number(a.order || a.createdAtClient || 0) - Number(b.order || b.createdAtClient || 0))
+    .map(destination => {
+      const places = attractions
+        .filter(attraction => attraction.destinationId === destination.id)
+        .sort((a,b) => Number(a.order || a.createdAtClient || 0) - Number(b.order || b.createdAtClient || 0))
         .map(attraction => [
           attraction.name || "",
           attraction.description || "",
-          "",
+          attraction.favorite ? "top" : "",
           attraction.maps || "",
-          "",
-          "",
+          attraction.dogFriendly ? "dog" : "",
+          attraction.notes || "",
           attraction.id || "",
           true
         ]);
 
       return {
-        countryName: country.name || "",
-        country: country.flag || "📍",
-        city: stay.city || "",
-        arrival: stay.arrival || "",
-        departure: stay.departure || "",
-        accommodation: stay.accommodation || "",
-        accommodationAddress: "",
-        accommodationMaps: "",
+        countryName: destination.countryName || "",
+        country: destination.flag || "📍",
+        city: destination.city || "",
+        arrival: destination.arrival || "",
+        departure: destination.departure || "",
+        accommodation: destination.accommodation || "",
+        accommodationAddress: destination.accommodationAddress || "",
+        accommodationMaps: destination.accommodationMaps || "",
         places,
         dynamicDestination: true,
-        dynamicCountryId: country.id,
-        dynamicStayId: stay.id
+        firebaseDestination: true,
+        firebaseDestinationId: destination.id,
+        dynamicStayId: destination.id,
+        order: destination.order || destination.createdAtClient || 0
       };
     })
-    .filter(Boolean);
+    .filter(destination => destination.city);
 }
 
 window.refreshTripWithSharedPlaces = function(){
-  if(!baseTrip.length) return;
+  const firebaseTrip = buildFirebaseTripDestinations();
 
-  const staticTrip = mergeSharedPlaces(baseTrip, sharedPlaces);
-  const dynamicTrip = buildDynamicTripDestinations();
-
-  trip = [...staticTrip, ...dynamicTrip];
+  // After migration Firestore is the only itinerary source.
+  trip = firebaseTrip;
 
   trip.forEach(dest => {
-    if(!state["stay::" + dest.city]){
-      state["stay::" + dest.city] = {
-        arrival: dest.arrival,
-        departure: dest.departure
-      };
-    }
+    state["stay::" + dest.city] = {
+      arrival: dest.arrival,
+      departure: dest.departure
+    };
   });
 
   if(typeof render === "function") render();
@@ -2663,33 +2661,21 @@ function applyTripHeader(config){
 async function loadTravelConfig(){
   try{
     const response = await fetch("./viaggio.json", {cache:"no-store"});
-    if(!response.ok) throw new Error("Configurazione non disponibile");
+    if(!response.ok) throw new Error("Configurazione iniziale non disponibile");
 
     tripConfig = await response.json();
     baseTrip = normalizeTravelConfig(tripConfig);
-    trip = mergeSharedPlaces(baseTrip, sharedPlaces);
-
-    if(!trip.length) throw new Error("Nessuna destinazione valida");
-
     applyTripHeader(tripConfig);
 
-    trip.forEach(dest => {
-      if(!state["stay::"+dest.city]){
-        state["stay::"+dest.city] = {
-          arrival: dest.arrival,
-          departure: dest.departure
-        };
-      }
-    });
-
-    save();
-    render();
-    applyLockState();
-    if (typeof renderDynamicItinerary === "function") renderDynamicItinerary();
+    // Firestore listener will render the itinerary.
+    if(typeof window.startFirebaseItineraryMigration === "function"){
+      window.startFirebaseItineraryMigration();
+    }
   }catch(error){
-    document.getElementById("destinations").innerHTML =
-      '<div class="empty">Impossibile leggere il file viaggio.json. Controlla il formato del file.</div>';
-    console.error(error);
+    console.error("Errore lettura configurazione iniziale:", error);
+    if(typeof window.refreshTripWithSharedPlaces === "function"){
+      window.refreshTripWithSharedPlaces();
+    }
   }
 }
 
@@ -3086,6 +3072,8 @@ function performPendingScroll(){
 }
 
 let adminEditMode = false;
+let deletedDestinationKeys = [];
+
 
 function isAdminEditMode(){
   return renderedUsername() === "mohammad" && adminEditMode;
@@ -3104,6 +3092,28 @@ function updateEditModeButton(){
   button.setAttribute("aria-pressed", adminEditMode ? "true" : "false");
   document.body.classList.toggle("admin-edit-mode", isAdmin && adminEditMode);
 }
+
+function destinationKey(dest){
+  return [
+    String(dest.countryName || ""),
+    String(dest.city || ""),
+    String(dest.arrival || ""),
+    String(dest.departure || "")
+  ].join("::");
+}
+
+function isDestinationDeleted(dest){
+  return deletedDestinationKeys.includes(destinationKey(dest));
+}
+
+window.setDeletedDestinationKeys = function(keys){
+  deletedDestinationKeys = Array.isArray(keys) ? keys : [];
+  if(typeof window.refreshTripWithSharedPlaces === "function"){
+    window.refreshTripWithSharedPlaces();
+  }else if(typeof render === "function"){
+    render();
+  }
+};
 
 function renderedUsername(){
   return String(
@@ -3151,7 +3161,7 @@ function render(){
     });
 
     const showEmptyDynamicDestination =
-      dest.dynamicDestination === true &&
+      dest.firebaseDestination === true &&
       !q &&
       !plannedOnly &&
       (filter === "all" || !filter);
@@ -3183,8 +3193,8 @@ function render(){
       </span>
       <span class="dest-right">
         <span class="dest-count">${matchingPlaces.length} ${matchingPlaces.length===1?"posto":"posti"}</span>
-        ${dest.dynamicDestination && isAdminEditMode()
-          ? `<button class="native-header-delete" type="button" aria-label="Elimina paese e pernottamento" title="Elimina destinazione">🗑</button>`
+        ${isAdminEditMode()
+          ? `<button class="native-header-delete" type="button" aria-label="Elimina destinazione e tutti i posti collegati" title="Elimina destinazione">🗑</button>`
           : ""}
         <span class="chevron">⌄</span>
       </span>`;
@@ -3206,7 +3216,7 @@ function render(){
     const body = document.createElement("div");
     body.className="dest-body";
 
-    if(dest.dynamicDestination && renderedUsername() === "mohammad"){
+    if(dest.firebaseDestination && renderedUsername() === "mohammad"){
       const dynamicToolbar = document.createElement("div");
       dynamicToolbar.className = "native-dynamic-toolbar";
       dynamicToolbar.innerHTML = `
@@ -3224,7 +3234,7 @@ function render(){
       body.appendChild(dynamicToolbar);
     }
 
-    if(dest.dynamicDestination && matchingPlaces.length === 0){
+    if(dest.firebaseDestination && matchingPlaces.length === 0){
       const emptyPlaces = document.createElement("div");
       emptyPlaces.className = "native-empty-places";
       emptyPlaces.textContent = renderedUsername() === "mohammad"
@@ -3285,12 +3295,21 @@ function render(){
     const arrivalInput = editor.querySelector(".arrival-date");
     const departureInput = editor.querySelector(".departure-date");
 
-    function saveStay(){
+    async function saveStay(){
       const arrival = arrivalInput.value;
       const departure = departureInput.value;
       state[stayKey] = {arrival, departure};
       save();
-      render();
+
+      if(dest.firebaseDestinationId && typeof window.updateFirebaseDestinationDates === "function"){
+        await window.updateFirebaseDestinationDates(
+          dest.firebaseDestinationId,
+          arrival,
+          departure
+        );
+      }else{
+        render();
+      }
     }
 
     arrivalInput.addEventListener("change", ()=>{ if(!isLocked) saveStay(); });
@@ -3316,10 +3335,9 @@ function render(){
         event.preventDefault();
         event.stopPropagation();
 
-        if(typeof window.deleteDynamicDestination === "function"){
-          await window.deleteDynamicDestination(
-            dest.dynamicCountryId,
-            dest.dynamicStayId,
+        if(dest.firebaseDestinationId && typeof window.deleteFirebaseDestination === "function"){
+          await window.deleteFirebaseDestination(
+            dest.firebaseDestinationId,
             dest.city
           );
         }
@@ -3772,6 +3790,11 @@ let unsubscribeSharedPlaces = null;
 let unsubscribeDynamicCountries = null;
 let unsubscribeDynamicStays = null;
 let unsubscribeDynamicAttractions = null;
+let firebaseDestinations = [];
+let firebaseAttractions = [];
+window.firebaseDestinations = firebaseDestinations;
+window.firebaseAttractions = firebaseAttractions;
+
 let dynamicCountries = [];
 let dynamicStays = [];
 let dynamicAttractions = [];
@@ -4088,7 +4111,8 @@ async function startItinerarySync() {
               updatedBy: username,
               updatedAt: serverTimestamp(),
               updatedAtClient: Date.now(),
-              schemaVersion: 1
+              schemaVersion: 1,
+              deletedDestinationKeys: []
             });
           } catch (error) {
             console.error("Errore inizializzazione itinerario:", error);
@@ -4098,6 +4122,15 @@ async function startItinerarySync() {
       }
 
       const data = snapshot.data() || {};
+
+      const deletedKeys = Array.isArray(data.deletedDestinationKeys)
+        ? data.deletedDestinationKeys
+        : [];
+      window.currentDeletedDestinationKeys = deletedKeys;
+      if(typeof window.setDeletedDestinationKeys === "function"){
+        window.setDeletedDestinationKeys(deletedKeys);
+      }
+
       applyingRemoteItinerary = true;
       try {
         if (typeof window.applySharedTripState === "function") {
@@ -4346,92 +4379,47 @@ dynamicRecordForm?.addEventListener("submit", async event => {
       const departure = String(data.get("departure")||"");
       const accommodation = String(data.get("accommodation")||"").trim();
 
-      const countryRef = await addDoc(dynamicCountriesCollection,{
-        recordType:"destination-country",
-        name:countryName,
+      const destinationRef = await addDoc(sharedPlacesCollection,{
+        recordType:"destination",
+        countryName,
         flag,
-        createdBy:currentUsername(),
-        createdAt:serverTimestamp(),
-        createdAtClient
-      });
-
-      const stayRef = await addDoc(dynamicStaysCollection,{
-        recordType:"destination-stay",
-        countryId:countryRef.id,
         city,
         arrival,
         departure,
         accommodation,
-        createdBy:currentUsername(),
-        createdAt:serverTimestamp(),
-        createdAtClient:createdAtClient + 1
-      });
-
-      if(!dynamicCountries.some(item => item.id === countryRef.id)){
-        dynamicCountries.push({
-          id:countryRef.id,
-          name:countryName,
-          flag,
-          createdBy:currentUsername(),
-          createdAtClient
-        });
-        window.dynamicCountries = dynamicCountries;
-      }
-
-      if(!dynamicStays.some(item => item.id === stayRef.id)){
-        dynamicStays.push({
-          id:stayRef.id,
-          countryId:countryRef.id,
-          city,
-          arrival,
-          departure,
-          accommodation,
-          createdBy:currentUsername(),
-          createdAtClient:createdAtClient + 1
-        });
-        window.dynamicStays = dynamicStays;
-      }
-
-      activeDestination = city;
-      if(typeof window.refreshTripWithSharedPlaces === "function"){
-        window.refreshTripWithSharedPlaces();
-      }
-
-    }else if(dynamicDialogMode === "stay"){
-      const createdAtClient = Date.now();
-      const ref = await addDoc(dynamicStaysCollection,{
-        recordType:"destination-stay",
-        countryId:dynamicDialogParentId,
-        city:String(data.get("city")||"").trim(),
-        arrival:String(data.get("arrival")||""),
-        departure:String(data.get("departure")||""),
-        accommodation:String(data.get("accommodation")||"").trim(),
+        order:createdAtClient,
         createdBy:currentUsername(),
         createdAt:serverTimestamp(),
         createdAtClient
       });
 
-      if(!dynamicStays.some(item => item.id === ref.id)){
-        dynamicStays.push({
-          id:ref.id,
-          countryId:dynamicDialogParentId,
-          city:String(data.get("city")||"").trim(),
-          arrival:String(data.get("arrival")||""),
-          departure:String(data.get("departure")||""),
-          accommodation:String(data.get("accommodation")||"").trim(),
-          createdBy:currentUsername(),
+      activeDestination = city;
+
+      if(!firebaseDestinations.some(item => item.id === destinationRef.id)){
+        firebaseDestinations.push({
+          id:destinationRef.id,
+          recordType:"destination",
+          countryName,
+          flag,
+          city,
+          arrival,
+          departure,
+          accommodation,
+          order:createdAtClient,
           createdAtClient
         });
+        window.firebaseDestinations = firebaseDestinations;
       }
-      openDynamicCountryId = dynamicDialogParentId;
-      openDynamicStayId = ref.id;
-      renderDynamicItinerary();
+
+      if(typeof window.refreshTripWithSharedPlaces === "function"){
+        window.refreshTripWithSharedPlaces();
+      }
 
     }else{
       const createdAtClient = Date.now();
-      const ref = await addDoc(dynamicAttractionsCollection,{
+      const ref = await addDoc(sharedPlacesCollection,{
         recordType:"destination-attraction",
-        stayId:dynamicDialogParentId,
+        destinationId:dynamicDialogParentId,
         name:String(data.get("name")||"").trim(),
         description:String(data.get("description")||"").trim(),
         maps:String(data.get("maps")||"").trim(),
@@ -4443,7 +4431,7 @@ dynamicRecordForm?.addEventListener("submit", async event => {
       if(!dynamicAttractions.some(item => item.id === ref.id)){
         dynamicAttractions.push({
           id:ref.id,
-          stayId:dynamicDialogParentId,
+          destinationId:dynamicDialogParentId,
           name:String(data.get("name")||"").trim(),
           description:String(data.get("description")||"").trim(),
           maps:String(data.get("maps")||"").trim(),
@@ -4452,8 +4440,20 @@ dynamicRecordForm?.addEventListener("submit", async event => {
         });
         window.dynamicAttractions = dynamicAttractions;
       }
-      const parentStay = dynamicStays.find(item => item.id === dynamicDialogParentId);
-      if(parentStay) activeDestination = parentStay.city;
+
+      firebaseAttractions.push({
+        id:ref.id,
+        recordType:"destination-attraction",
+        destinationId:dynamicDialogParentId,
+        name:String(data.get("name")||"").trim(),
+        description:String(data.get("description")||"").trim(),
+        maps:String(data.get("maps")||"").trim(),
+        createdAtClient
+      });
+      window.firebaseAttractions = firebaseAttractions;
+
+      const parentDestination = firebaseDestinations.find(item => item.id === dynamicDialogParentId);
+      if(parentDestination) activeDestination = parentDestination.city;
       if(typeof window.refreshTripWithSharedPlaces === "function"){
         window.refreshTripWithSharedPlaces();
       }
@@ -4473,42 +4473,186 @@ ${errorMessage}`);
 });
 
 
-window.deleteDynamicDestination = async function(countryId, stayId, cityName){
-  if(currentUsername() !== "mohammad" || !countryId || !stayId) return;
+
+
+window.updateFirebaseDestinationDates = async function(destinationId, arrival, departure){
+  if(currentUsername() !== "mohammad" || !destinationId) return;
+
+  try{
+    await updateDoc(
+      doc(db, "trips", "agosto-2026", "places", destinationId),
+      {
+        arrival,
+        departure,
+        updatedAt:serverTimestamp(),
+        updatedAtClient:Date.now(),
+        updatedBy:currentUsername()
+      }
+    );
+  }catch(error){
+    console.error("Errore aggiornamento date:", error);
+    alert("Non è stato possibile aggiornare le date.");
+  }
+};
+
+window.deleteFirebaseDestination = async function(destinationId, cityName){
+  if(currentUsername() !== "mohammad" || !destinationId) return;
 
   const confirmed = confirm(
-    `Eliminare il paese/pernottamento "${cityName}" e tutti i posti da visitare collegati?`
+    `Eliminare "${cityName}" e tutti i posti da visitare collegati?`
   );
   if(!confirmed) return;
 
   try{
-    const relatedAttractions = dynamicAttractions.filter(item => item.stayId === stayId);
+    const children = firebaseAttractions.filter(
+      attraction => attraction.destinationId === destinationId
+    );
 
-    for(const attraction of relatedAttractions){
+    for(const attraction of children){
       await deleteDoc(
         doc(db, "trips", "agosto-2026", "places", attraction.id)
       );
     }
 
     await deleteDoc(
-      doc(db, "trips", "agosto-2026", "places", stayId)
+      doc(db, "trips", "agosto-2026", "places", destinationId)
     );
-
-    const remainingStays = dynamicStays.filter(
-      item => item.countryId === countryId && item.id !== stayId
-    );
-
-    if(!remainingStays.length){
-      await deleteDoc(
-        doc(db, "trips", "agosto-2026", "places", countryId)
-      );
-    }
   }catch(error){
     console.error("Errore eliminazione destinazione:", error);
     alert("Non è stato possibile eliminare la destinazione.");
   }
 };
 
+let firebaseMigrationRunning = false;
+
+window.startFirebaseItineraryMigration = async function(){
+  if(firebaseMigrationRunning || currentUsername() !== "mohammad") return;
+  if(!Array.isArray(baseTrip) || !baseTrip.length) return;
+
+  firebaseMigrationRunning = true;
+
+  try{
+    const migrationSnapshot = await getDoc(sharedItineraryDoc);
+    const migrationData = migrationSnapshot.exists() ? migrationSnapshot.data() : {};
+
+    if(migrationData.firestoreItineraryMigrated === true){
+      return;
+    }
+
+    // Do not duplicate data if destination records already exist.
+    if(firebaseDestinations.length){
+      await setDoc(sharedItineraryDoc, {
+        firestoreItineraryMigrated:true,
+        firestoreItineraryMigratedAt:serverTimestamp()
+      }, {merge:true});
+      return;
+    }
+
+    for(let destinationIndex = 0; destinationIndex < baseTrip.length; destinationIndex++){
+      const source = baseTrip[destinationIndex];
+      const destinationRef = await addDoc(sharedPlacesCollection,{
+        recordType:"destination",
+        countryName:source.countryName || "",
+        flag:source.country || "📍",
+        city:source.city || "",
+        arrival:source.arrival || "",
+        departure:source.departure || "",
+        accommodation:source.accommodation || "",
+        accommodationAddress:source.accommodationAddress || "",
+        accommodationMaps:source.accommodationMaps || "",
+        order:destinationIndex + 1,
+        migratedFromJson:true,
+        createdBy:currentUsername(),
+        createdAt:serverTimestamp(),
+        createdAtClient:Date.now() + destinationIndex
+      });
+
+      const sourcePlaces = Array.isArray(source.places) ? source.places : [];
+      for(let placeIndex = 0; placeIndex < sourcePlaces.length; placeIndex++){
+        const place = sourcePlaces[placeIndex];
+        await addDoc(sharedPlacesCollection,{
+          recordType:"destination-attraction",
+          destinationId:destinationRef.id,
+          name:place[0] || "",
+          description:place[1] || "",
+          favorite:place[2] === "top",
+          maps:place[3] || "",
+          dogFriendly:place[4] === "dog",
+          notes:place[5] || "",
+          order:placeIndex + 1,
+          migratedFromJson:true,
+          createdBy:currentUsername(),
+          createdAt:serverTimestamp(),
+          createdAtClient:Date.now() + placeIndex
+        });
+      }
+    }
+
+    await setDoc(sharedItineraryDoc, {
+      firestoreItineraryMigrated:true,
+      firestoreItineraryMigratedAt:serverTimestamp(),
+      firestoreItineraryMigratedBy:currentUsername()
+    }, {merge:true});
+
+  }catch(error){
+    console.error("Errore migrazione itinerario Firebase:", error);
+    alert(`Migrazione iniziale non riuscita.\n${error?.code || ""}\n${error?.message || ""}`);
+  }finally{
+    firebaseMigrationRunning = false;
+  }
+};
+
+function startDynamicItinerarySync(){
+  if(unsubscribeDynamicCountries) unsubscribeDynamicCountries();
+  if(unsubscribeDynamicStays) unsubscribeDynamicStays();
+  if(unsubscribeDynamicAttractions) unsubscribeDynamicAttractions();
+
+  // A single listener is sufficient because destinations and attractions
+  // are stored in the authorized places collection.
+  unsubscribeDynamicCountries = onSnapshot(sharedPlacesCollection, snapshot => {
+    const records = snapshot.docs.map(item => ({id:item.id,...item.data()}));
+
+    firebaseDestinations = records
+      .filter(item => item.recordType === "destination")
+      .sort((a,b)=>Number(a.order || a.createdAtClient || 0)-Number(b.order || b.createdAtClient || 0));
+
+    firebaseAttractions = records
+      .filter(item => item.recordType === "destination-attraction")
+      .sort((a,b)=>Number(a.order || a.createdAtClient || 0)-Number(b.order || b.createdAtClient || 0));
+
+    window.firebaseDestinations = firebaseDestinations;
+    window.firebaseAttractions = firebaseAttractions;
+
+    // Compatibility arrays for existing dialog code.
+    dynamicCountries = [];
+    dynamicStays = firebaseDestinations.map(item => ({
+      id:item.id,
+      city:item.city,
+      countryId:item.id
+    }));
+    dynamicAttractions = firebaseAttractions.map(item => ({
+      ...item,
+      stayId:item.destinationId
+    }));
+    window.dynamicCountries = dynamicCountries;
+    window.dynamicStays = dynamicStays;
+    window.dynamicAttractions = dynamicAttractions;
+
+    if(typeof window.refreshTripWithSharedPlaces === "function"){
+      window.refreshTripWithSharedPlaces();
+    }
+
+    if(currentUsername() === "mohammad" &&
+       typeof window.startFirebaseItineraryMigration === "function"){
+      window.startFirebaseItineraryMigration();
+    }
+  }, error => {
+    console.error("Errore itinerario Firebase:", error);
+  });
+
+  unsubscribeDynamicStays = null;
+  unsubscribeDynamicAttractions = null;
+}
 function startDynamicItinerarySync(){
   if(unsubscribeDynamicCountries) unsubscribeDynamicCountries();
   if(unsubscribeDynamicStays) unsubscribeDynamicStays();
