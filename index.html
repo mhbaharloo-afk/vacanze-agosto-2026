@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="app-version" content="62">
+  <meta name="app-version" content="63">
   <meta name="theme-color" content="#1f6f5f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -3045,8 +3045,8 @@ function render(){
 
       dynamicToolbar.querySelector(".native-add-attraction").addEventListener("click", event => {
         event.stopPropagation();
-        if(typeof openDynamicDialog === "function"){
-          openDynamicDialog("attraction", dest.dynamicStayId);
+        if(typeof window.openDynamicDialog === "function"){
+          window.openDynamicDialog("attraction", dest.dynamicStayId);
         }
       });
 
@@ -3171,8 +3171,10 @@ function render(){
       <small>Aggiungi paese, luogo di pernottamento e date.</small>`;
 
     addDestinationFooter.querySelector(".native-add-destination").addEventListener("click", () => {
-      if(typeof openDynamicDialog === "function"){
-        openDynamicDialog("destination");
+      if(typeof window.openDynamicDialog === "function"){
+        window.openDynamicDialog("destination");
+      }else{
+        alert("Il modulo non è ancora pronto. Attendi un secondo e riprova.");
       }
     });
 
@@ -4135,6 +4137,9 @@ function openDynamicDialog(mode, parentId=""){
   dynamicRecordDialog.showModal();
   window.setTimeout(() => dynamicRecordFields.querySelector("input")?.focus(), 50);
 }
+
+// Make the Firebase module dialog available to the normal itinerary renderer.
+window.openDynamicDialog = openDynamicDialog;
 
 
 dynamicRecordCancel?.addEventListener("click", () => dynamicRecordDialog.close());
