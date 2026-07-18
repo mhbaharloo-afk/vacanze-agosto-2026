@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="app-version" content="63">
+  <meta name="app-version" content="64">
   <meta name="theme-color" content="#1f6f5f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -3575,15 +3575,9 @@ const sharedPlacesCollection = collection(
   "places"
 );
 
-const dynamicCountriesCollection = collection(
-  db, "trips", "agosto-2026", "countries"
-);
-const dynamicStaysCollection = collection(
-  db, "trips", "agosto-2026", "stays"
-);
-const dynamicAttractionsCollection = collection(
-  db, "trips", "agosto-2026", "attractions"
-);
+const dynamicCountriesCollection = sharedPlacesCollection;
+const dynamicStaysCollection = sharedPlacesCollection;
+const dynamicAttractionsCollection = sharedPlacesCollection;
 
 let unsubscribeItinerary = null;
 let itinerarySaveTimer = null;
@@ -4164,6 +4158,7 @@ dynamicRecordForm?.addEventListener("submit", async event => {
       const accommodation = String(data.get("accommodation")||"").trim();
 
       const countryRef = await addDoc(dynamicCountriesCollection,{
+        recordType:"destination-country",
         name:countryName,
         flag,
         createdBy:currentUsername(),
@@ -4172,6 +4167,7 @@ dynamicRecordForm?.addEventListener("submit", async event => {
       });
 
       const stayRef = await addDoc(dynamicStaysCollection,{
+        recordType:"destination-stay",
         countryId:countryRef.id,
         city,
         arrival,
@@ -4213,6 +4209,7 @@ dynamicRecordForm?.addEventListener("submit", async event => {
     }else if(dynamicDialogMode === "stay"){
       const createdAtClient = Date.now();
       const ref = await addDoc(dynamicStaysCollection,{
+        recordType:"destination-stay",
         countryId:dynamicDialogParentId,
         city:String(data.get("city")||"").trim(),
         arrival:String(data.get("arrival")||""),
@@ -4242,6 +4239,7 @@ dynamicRecordForm?.addEventListener("submit", async event => {
     }else{
       const createdAtClient = Date.now();
       const ref = await addDoc(dynamicAttractionsCollection,{
+        recordType:"destination-attraction",
         stayId:dynamicDialogParentId,
         name:String(data.get("name")||"").trim(),
         description:String(data.get("description")||"").trim(),
@@ -4271,7 +4269,11 @@ dynamicRecordForm?.addEventListener("submit", async event => {
     dynamicRecordDialog.close();
   }catch(error){
     console.error("Errore creazione record dinamico:", error);
-    alert("Salvataggio non riuscito. Controlla le regole Firebase.");
+    const errorCode = error?.code || "errore-sconosciuto";
+    const errorMessage = error?.message || "";
+    alert(`Salvataggio non riuscito.
+${errorCode}
+${errorMessage}`);
   }finally{
     saveButton.disabled = false;
     saveButton.textContent = "Salva e condividi";
@@ -4292,12 +4294,12 @@ window.deleteDynamicDestination = async function(countryId, stayId, cityName){
 
     for(const attraction of relatedAttractions){
       await deleteDoc(
-        doc(db, "trips", "agosto-2026", "attractions", attraction.id)
+        doc(db, "trips", "agosto-2026", "places", attraction.id)
       );
     }
 
     await deleteDoc(
-      doc(db, "trips", "agosto-2026", "stays", stayId)
+      doc(db, "trips", "agosto-2026", "places", stayId)
     );
 
     const remainingStays = dynamicStays.filter(
@@ -4306,7 +4308,7 @@ window.deleteDynamicDestination = async function(countryId, stayId, cityName){
 
     if(!remainingStays.length){
       await deleteDoc(
-        doc(db, "trips", "agosto-2026", "countries", countryId)
+        doc(db, "trips", "agosto-2026", "places", countryId)
       );
     }
   }catch(error){
@@ -4321,7 +4323,9 @@ function startDynamicItinerarySync(){
   if(unsubscribeDynamicAttractions) unsubscribeDynamicAttractions();
 
   unsubscribeDynamicCountries = onSnapshot(dynamicCountriesCollection, snapshot => {
-    dynamicCountries = snapshot.docs.map(item => ({id:item.id,...item.data()}))
+    dynamicCountries = snapshot.docs
+      .map(item => ({id:item.id,...item.data()}))
+      .filter(item => item.recordType === "destination-country")
       .sort((a,b)=>Number(a.createdAtClient||0)-Number(b.createdAtClient||0));
     if(typeof window.refreshTripWithSharedPlaces === "function"){
       window.refreshTripWithSharedPlaces();
@@ -4331,14 +4335,18 @@ function startDynamicItinerarySync(){
   });
 
   unsubscribeDynamicStays = onSnapshot(dynamicStaysCollection, snapshot => {
-    dynamicStays = snapshot.docs.map(item => ({id:item.id,...item.data()}));
+    dynamicStays = snapshot.docs
+      .map(item => ({id:item.id,...item.data()}))
+      .filter(item => item.recordType === "destination-stay");
     if(typeof window.refreshTripWithSharedPlaces === "function"){
       window.refreshTripWithSharedPlaces();
     }
   }, error => console.error("Errore stays:", error));
 
   unsubscribeDynamicAttractions = onSnapshot(dynamicAttractionsCollection, snapshot => {
-    dynamicAttractions = snapshot.docs.map(item => ({id:item.id,...item.data()}));
+    dynamicAttractions = snapshot.docs
+      .map(item => ({id:item.id,...item.data()}))
+      .filter(item => item.recordType === "destination-attraction");
     if(typeof window.refreshTripWithSharedPlaces === "function"){
       window.refreshTripWithSharedPlaces();
     }
