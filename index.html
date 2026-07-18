@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="app-version" content="71">
+  <meta name="app-version" content="73">
   <meta name="theme-color" content="#1f6f5f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -2246,13 +2246,98 @@ body.admin-edit-mode .dynamic-delete-button.delete-dynamic-attraction{
   }
 }
 
+
+/* v73: header più compatto e immagine più grande */
+.topbar,
+.hero,
+.app-header,
+.header-card,
+header {
+  position: relative;
+}
+
+.hero-image,
+.header-image,
+.trip-cover,
+.app-logo,
+.topbar img,
+header img {
+  width: clamp(112px, 24vw, 150px) !important;
+  height: clamp(112px, 24vw, 150px) !important;
+  object-fit: cover !important;
+  border-radius: 24px !important;
+  flex: 0 0 auto !important;
+}
+
+.hero,
+.app-header,
+.header-card,
+.topbar-main,
+.header-content {
+  column-gap: 14px !important;
+  row-gap: 10px !important;
+}
+
+.topbar,
+.app-header,
+.header-card {
+  padding-top: 18px !important;
+  padding-bottom: 16px !important;
+}
+
+.header-actions,
+.topbar-actions,
+.actions-row {
+  margin-top: 12px !important;
+  gap: 10px !important;
+}
+
+.trip-help,
+.trip-hint,
+.itinerary-help,
+.instruction-box {
+  display: none !important;
+}
+
+.place-shared-text,
+.shared-realtime,
+.realtime-label,
+.place-sync-label {
+  display: none !important;
+}
+
+@media (max-width: 600px) {
+  .hero-image,
+  .header-image,
+  .trip-cover,
+  .app-logo,
+  .topbar img,
+  header img {
+    width: 128px !important;
+    height: 128px !important;
+  }
+
+  .topbar,
+  .app-header,
+  .header-card {
+    padding-top: 14px !important;
+    padding-bottom: 12px !important;
+  }
+
+  .header-actions,
+  .topbar-actions,
+  .actions-row {
+    margin-top: 8px !important;
+  }
+}
+
 </style>
 </head>
 <body>
 
   <div id="authBootstrapLoader" aria-live="polite" aria-label="Caricamento applicazione">
     <div class="auth-bootstrap-card">
-      <div class="auth-bootstrap-spinner" aria-hidden="true"></div>
+      
       <span>Caricamento…</span>
     </div>
   </div>
@@ -2262,179 +2347,7 @@ body.admin-edit-mode .dynamic-delete-button.delete-dynamic-attraction{
   <form id="authForm" class="auth-card">
     <div class="auth-logo" aria-hidden="true">🔐</div>
     <h1 id="authTitle" class="auth-title">Accesso al viaggio</h1>
-    <p class="auth-subtitle">Inserisci username e password per entrare nell’app.</p>
-
-    <div class="auth-field">
-      <label for="authUsername">Username</label>
-      <input id="authUsername" autocomplete="username" autocapitalize="none" required>
-    </div>
-
-    <div class="auth-field">
-      <label for="authPassword">Password</label>
-      <input id="authPassword" type="password" autocomplete="current-password" required>
-    </div>
-
-    <button class="auth-button" type="submit">Entra</button>
-    <div id="authError" class="auth-error" aria-live="polite"></div>
-  </form>
-</div>
-
-<div id="homePage" class="app app-page active">
-  <header class="topbar">
-    <div class="topbar-main">
-      <div class="topbar-copy">
-        <div class="app-title">Vacanze Agosto 2026</div>
-        <div class="app-subtitle">
-          <span class="trip-route">Slovenia → Croazia → Bosnia-Erzegovina</span>
-        </div>
-        <div id="welcomeMessage" class="welcome-message" aria-live="polite"></div>
-        <div class="sync-status-row" aria-live="polite">
-          <span id="topSyncDot" class="sync-status-dot"></span>
-          <span id="topSyncStatus">Connessione…</span>
-          <span id="topSyncTime"></span>
-        </div>
-      </div>
-      <div class="top-icon" aria-hidden="true">
-        <img src="icon-192.png" alt="">
-      </div>
-    </div>
-
-    <div class="topbar-controls">
-      <div id="roleBadge" class="role-badge" aria-live="polite"></div>
-      <div class="top-actions">
-        <span id="lockModeLabel" class="lock-mode-label">Modalità modifica</span>
-        <button id="lockToggle" class="header-icon-button lock-button" type="button" aria-label="Blocca modifiche" title="Blocca modifiche">
-      <span class="lock-icon lock-icon-open" aria-hidden="true">🔓</span>
-      <span class="lock-icon lock-icon-closed" aria-hidden="true">🔒</span>
-    </button>
-        <button id="editModeButton" class="edit-mode-button" type="button" hidden>Modifica</button><button id="logoutButton" class="logout-btn" type="button" aria-label="Uscire" title="Uscire">Uscire</button>
-      </div>
-    </div>
-  </header>
-  <div id="lockedBanner" class="locked-banner">Modalità bloccata: i dati non possono essere modificati.</div>
-  <div id="updateBanner" class="update-banner">
-    <span>È disponibile una nuova versione dell’app.</span>
-    <button id="updateNow" type="button">Aggiorna</button>
-  </div>
-
-  <button id="openChecklistPage" class="page-nav-card" type="button">
-    <span class="page-nav-icon">🧳</span>
-    <span class="page-nav-copy">
-      <strong>Cose da non dimenticare</strong>
-      <small>Apri la checklist condivisa</small>
-    </span>
-    <span class="page-nav-arrow">›</span>
-  </button>
-
-  <section class="hero">
-    <div class="hero-kicker">Il tuo viaggio</div>
-    <div class="travelers" aria-label="Partecipanti al viaggio">
-      <div class="traveler">
-        <img src="traveler-user.jpg" alt="Foto del viaggiatore" />
-      </div>
-      <div class="traveler">
-        <img src="traveler-wife.jpg" alt="Foto della viaggiatrice" />
-      </div>
-      <div class="traveler">
-        <img src="traveler-milo.jpg" alt="Foto di Milo" />
-      </div>
-    </div>
-    <div class="hero-title" id="heroDates">14–24 agosto 2026</div>
-    <div class="hero-meta" id="heroRoute">5 tappe principali · 10 notti</div>
-    <div class="hero-stats">
-      <div class="hero-stat"><strong id="visitedCount">0</strong><span>visitati</span></div>
-      <div class="hero-stat"><strong id="plannedCount">0</strong><span>selezionati</span></div>
-      <div class="hero-stat"><strong id="totalCount">0</strong><span>posti totali</span></div>
-    </div>
-    <div class="bar"><div id="progressBar"></div></div>
-  </section>
-
-  <div class="section-label">
-    <h2>Riepilogo pernottamenti</h2>
-    <span>Aggiornamento automatico</span>
-  </div>
-  
-<section class="currency-card" aria-labelledby="currencyTitle">
-  <div class="currency-header">
-    <div>
-      <h2 id="currencyTitle" class="currency-title">Calcolatrice cambi</h2>
-      <p class="currency-subtitle">Scrivi un importo in qualsiasi campo</p>
-    </div>
-    <div class="currency-icon" aria-hidden="true">💱</div>
-  </div>
-
-  <div class="currency-grid">
-    <div class="currency-field">
-      <label for="currencyEuro">🇪🇺 Euro</label>
-      <div class="currency-input-wrap">
-        <input id="currencyEuro" inputmode="decimal" autocomplete="off" value="1">
-        <span class="currency-code">EUR</span>
-      </div>
-    </div>
-
-    <div class="currency-field">
-      <label for="currencySlovenia">🇸🇮 Slovenia</label>
-      <div class="currency-input-wrap">
-        <input id="currencySlovenia" inputmode="decimal" autocomplete="off" value="1">
-        <span class="currency-code">EUR</span>
-      </div>
-    </div>
-
-    <div class="currency-field">
-      <label for="currencyCroatia">🇭🇷 Croazia</label>
-      <div class="currency-input-wrap">
-        <input id="currencyCroatia" inputmode="decimal" autocomplete="off" value="1">
-        <span class="currency-code">EUR</span>
-      </div>
-    </div>
-
-    <div class="currency-field">
-      <label for="currencyBosnia">🇧🇦 Bosnia</label>
-      <div class="currency-input-wrap">
-        <input id="currencyBosnia" inputmode="decimal" autocomplete="off" value="1,96">
-        <span class="currency-code">BAM</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="currency-rate">1 EUR = 1,95583 BAM · disponibile anche offline</div>
-</section>
-
-
-
-
-<section id="tripSummary" class="trip-summary" aria-live="polite"></section>
-
-  <div class="section-label">
-    <h2>Luoghi del viaggio</h2>
-    <span>Seleziona e spunta</span>
-  </div>
-
-  <div class="toolbar">
-    <select id="filter" class="field" aria-label="Filtro">
-      <option value="all">Tutti</option>
-      <option value="planned">Da visitare</option>
-      <option value="visited">Visitati</option>
-      <option value="unvisited">Non visitati</option>
-    </select>
-  </div>
-  <div class="helper">Tocca una destinazione per aprire i suoi luoghi. L’intero itinerario è salvato e sincronizzato in tempo reale tramite Firebase.</div>
-
-  
-<main id="destinations"></main>
-</div>
-
-<div class="bottom">
-  <button id="showPlanned" class="action primary" type="button">★ Solo selezionati</button>
-  <button id="reset" class="action secondary" type="button">Azzera</button>
-</div>
-
-<div id="checklistPage" class="app-page checklist-page">
-  <div class="subpage-header">
-    <button id="backToHome" class="subpage-back" type="button" aria-label="Torna all’itinerario">←</button>
-    <div>
-      <h1>Cose da non dimenticare</h1>
-      <p>Checklist condivisa delle cose da portare</p>
+    
     </div>
   </div>
   <section class="shared-checklist" aria-labelledby="sharedChecklistTitle">
@@ -2452,7 +2365,7 @@ body.admin-edit-mode .dynamic-delete-button.delete-dynamic-attraction{
     <button type="submit">Aggiungi</button>
   </form>
 
-  <div id="sharedChecklistList" class="checklist-list"></div>
+  
   <span id="sharedChecklistStatus" class="visually-hidden">Connessione al database…</span>
 </section>
 
@@ -2659,23 +2572,18 @@ function applyTripHeader(config){
 }
 
 async function loadTravelConfig(){
-  try{
-    const response = await fetch("./viaggio.json", {cache:"no-store"});
-    if(!response.ok) throw new Error("Configurazione iniziale non disponibile");
+  // Firebase is the only runtime source.
+  // viaggio.json is loaded only by importJsonWhenFirebaseIsEmpty().
+  tripConfig = null;
+  baseTrip = [];
+  applyTripHeader({
+    title:"Vacanze Agosto 2026",
+    subtitle:"Itinerario condiviso",
+    travelers:[]
+  });
 
-    tripConfig = await response.json();
-    baseTrip = normalizeTravelConfig(tripConfig);
-    applyTripHeader(tripConfig);
-
-    // Firestore listener will render the itinerary.
-    if(typeof window.startFirebaseItineraryMigration === "function"){
-      window.startFirebaseItineraryMigration();
-    }
-  }catch(error){
-    console.error("Errore lettura configurazione iniziale:", error);
-    if(typeof window.refreshTripWithSharedPlaces === "function"){
-      window.refreshTripWithSharedPlaces();
-    }
+  if(typeof window.refreshTripWithSharedPlaces === "function"){
+    window.refreshTripWithSharedPlaces();
   }
 }
 
@@ -3258,7 +3166,7 @@ function render(){
           </div>
           <div class="place-desc">${escapeHtml(p[1])}</div>
           ${buildPlaceTags(p)}
-          ${p[7] === true ? `<span class="shared-place-badge">Condiviso in tempo reale</span>` : ""}
+          ${p[7] === true ? `` : ""}
         </div>
         <div class="place-actions">
           <button class="planned ${s.planned?"active":""}" type="button" aria-label="Aggiungi ai posti da visitare">★</button>
@@ -4024,7 +3932,7 @@ function renderChecklist() {
            item.createdBy === localStorage.getItem(AUTH_STORAGE_KEY))
             ? `<button class="checklist-delete" type="button"
                        aria-label="Cancella riga">🗑</button>`
-            : `<span class="checklist-delete-placeholder" aria-hidden="true"></span>`
+            : ``
         }
       </div>
     `;
@@ -4538,31 +4446,36 @@ window.deleteFirebaseDestination = async function(destinationId, cityName){
 
 let firebaseMigrationRunning = false;
 
-window.startFirebaseItineraryMigration = async function(){
-  if(firebaseMigrationRunning || currentUsername() !== "mohammad") return;
-  if(!Array.isArray(baseTrip) || !baseTrip.length) return;
+let firebaseInitialSnapshotResolved = false;
+let jsonImportAttempted = false;
 
+async function importJsonWhenFirebaseIsEmpty(totalRecords){
+  if(currentUsername() !== "mohammad") return;
+  if(jsonImportAttempted || firebaseMigrationRunning) return;
+
+  // Absolute rule: import only when the entire itinerary collection is empty.
+  if(Number(totalRecords) !== 0) return;
+
+  jsonImportAttempted = true;
   firebaseMigrationRunning = true;
 
   try{
-    const migrationSnapshot = await getDoc(sharedItineraryDoc);
-    const migrationData = migrationSnapshot.exists() ? migrationSnapshot.data() : {};
+    const response = await fetch("./viaggio.json", {cache:"no-store"});
+    if(!response.ok){
+      throw new Error("viaggio.json non disponibile");
+    }
 
-    if(migrationData.firestoreItineraryMigrated === true){
+    const jsonConfig = await response.json();
+    const jsonTrip = normalizeTravelConfig(jsonConfig);
+
+    if(!Array.isArray(jsonTrip) || !jsonTrip.length){
+      console.warn("Import JSON ignorato: nessuna destinazione trovata.");
       return;
     }
 
-    // Do not duplicate data if destination records already exist.
-    if(firebaseDestinations.length){
-      await setDoc(sharedItineraryDoc, {
-        firestoreItineraryMigrated:true,
-        firestoreItineraryMigratedAt:serverTimestamp()
-      }, {merge:true});
-      return;
-    }
+    for(let destinationIndex = 0; destinationIndex < jsonTrip.length; destinationIndex++){
+      const source = jsonTrip[destinationIndex];
 
-    for(let destinationIndex = 0; destinationIndex < baseTrip.length; destinationIndex++){
-      const source = baseTrip[destinationIndex];
       const destinationRef = await addDoc(sharedPlacesCollection,{
         recordType:"destination",
         countryName:source.countryName || "",
@@ -4574,15 +4487,17 @@ window.startFirebaseItineraryMigration = async function(){
         accommodationAddress:source.accommodationAddress || "",
         accommodationMaps:source.accommodationMaps || "",
         order:destinationIndex + 1,
-        migratedFromJson:true,
+        importedFromJson:true,
         createdBy:currentUsername(),
         createdAt:serverTimestamp(),
         createdAtClient:Date.now() + destinationIndex
       });
 
       const sourcePlaces = Array.isArray(source.places) ? source.places : [];
+
       for(let placeIndex = 0; placeIndex < sourcePlaces.length; placeIndex++){
         const place = sourcePlaces[placeIndex];
+
         await addDoc(sharedPlacesCollection,{
           recordType:"destination-attraction",
           destinationId:destinationRef.id,
@@ -4593,7 +4508,7 @@ window.startFirebaseItineraryMigration = async function(){
           dogFriendly:place[4] === "dog",
           notes:place[5] || "",
           order:placeIndex + 1,
-          migratedFromJson:true,
+          importedFromJson:true,
           createdBy:currentUsername(),
           createdAt:serverTimestamp(),
           createdAtClient:Date.now() + placeIndex
@@ -4601,19 +4516,28 @@ window.startFirebaseItineraryMigration = async function(){
       }
     }
 
-    await setDoc(sharedItineraryDoc, {
-      firestoreItineraryMigrated:true,
-      firestoreItineraryMigratedAt:serverTimestamp(),
-      firestoreItineraryMigratedBy:currentUsername()
-    }, {merge:true});
+    await setDoc(sharedItineraryDoc,{
+      lastJsonImportAt:serverTimestamp(),
+      lastJsonImportBy:currentUsername(),
+      jsonImportedOnlyBecausePlacesWasEmpty:true
+    },{merge:true});
 
   }catch(error){
-    console.error("Errore migrazione itinerario Firebase:", error);
-    alert(`Migrazione iniziale non riuscita.\n${error?.code || ""}\n${error?.message || ""}`);
+    console.error("Errore importazione iniziale da JSON:", error);
   }finally{
     firebaseMigrationRunning = false;
   }
+}
+
+// Compatibility entry point. It performs no import unless Firebase is empty.
+window.startFirebaseItineraryMigration = function(){
+  if(firebaseInitialSnapshotResolved){
+    importJsonWhenFirebaseIsEmpty(
+      firebaseDestinations.length + firebaseAttractions.length
+    );
+  }
 };
+
 
 function startDynamicItinerarySync(){
   if(unsubscribeDynamicCountries) unsubscribeDynamicCountries();
@@ -4624,6 +4548,7 @@ function startDynamicItinerarySync(){
   // are stored in the authorized places collection.
   unsubscribeDynamicCountries = onSnapshot(sharedPlacesCollection, snapshot => {
     const records = snapshot.docs.map(item => ({id:item.id,...item.data()}));
+    firebaseInitialSnapshotResolved = true;
 
     firebaseDestinations = records
       .filter(item => item.recordType === "destination")
@@ -4655,6 +4580,8 @@ function startDynamicItinerarySync(){
       window.refreshTripWithSharedPlaces();
     }
 
+    // JSON is consulted only if this collection has zero documents.
+    importJsonWhenFirebaseIsEmpty(records.length);
 
   }, error => {
     console.error("Errore itinerario Firebase:", error);
@@ -4805,16 +4732,6 @@ onAuthStateChanged(auth, user => {
       console.error("Errore avvio itinerario Firebase:", error);
     }
 
-    // Run migration only after login and listeners have settled.
-    if (username === "mohammad") {
-      window.setTimeout(() => {
-        try {
-          window.startFirebaseItineraryMigration?.();
-        } catch (error) {
-          console.error("Errore avvio migrazione:", error);
-        }
-      }, 800);
-    }
 
   } else {
     adminEditMode = false;
@@ -5207,7 +5124,7 @@ window.addEventListener("offline", () => {
 <dialog id="dynamicRecordDialog" class="dynamic-record-dialog">
   <form id="dynamicRecordForm" class="dynamic-record-form">
     <h2 id="dynamicRecordTitle">Nuovo elemento</h2>
-    <div id="dynamicRecordFields"></div>
+    
     <div class="dynamic-record-actions">
       <button id="dynamicRecordCancel" type="button" class="dynamic-cancel-button">Annulla</button>
       <button type="submit" class="dynamic-save-button">Salva e condividi</button>
