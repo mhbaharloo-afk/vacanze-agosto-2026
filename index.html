@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="app-version" content="70">
+  <meta name="app-version" content="71">
   <meta name="theme-color" content="#1f6f5f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -3742,7 +3742,11 @@ const USER_EMAILS = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-await setPersistence(auth, browserLocalPersistence);
+try {
+  await setPersistence(auth, browserLocalPersistence);
+} catch (error) {
+  console.warn("Persistenza login non disponibile:", error);
+}
 
 let db;
 try {
@@ -3825,10 +3829,19 @@ let checklistItems = [];
 let unsubscribeChecklist = null;
 
 function usernameFromEmail(email) {
-  const normalized = String(email || "").toLowerCase();
-  return Object.keys(USER_EMAILS).find(
-    username => USER_EMAILS[username] === normalized
-  ) || "";
+  const normalized = String(email || "").trim().toLowerCase();
+
+  const configured = Object.keys(USER_EMAILS).find(
+    username => String(USER_EMAILS[username]).toLowerCase() === normalized
+  );
+  if (configured) return configured;
+
+  const localPart = normalized.split("@")[0];
+  if (localPart === "mohammad" || localPart === "mahnoush") {
+    return localPart;
+  }
+
+  return "";
 }
 
 function setChecklistStatus(text, isError = false) {
@@ -4642,10 +4655,7 @@ function startDynamicItinerarySync(){
       window.refreshTripWithSharedPlaces();
     }
 
-    if(currentUsername() === "mohammad" &&
-       typeof window.startFirebaseItineraryMigration === "function"){
-      window.startFirebaseItineraryMigration();
-    }
+
   }, error => {
     console.error("Errore itinerario Firebase:", error);
   });
@@ -4653,45 +4663,6 @@ function startDynamicItinerarySync(){
   unsubscribeDynamicStays = null;
   unsubscribeDynamicAttractions = null;
 }
-function startDynamicItinerarySync(){
-  if(unsubscribeDynamicCountries) unsubscribeDynamicCountries();
-  if(unsubscribeDynamicStays) unsubscribeDynamicStays();
-  if(unsubscribeDynamicAttractions) unsubscribeDynamicAttractions();
-
-  unsubscribeDynamicCountries = onSnapshot(dynamicCountriesCollection, snapshot => {
-    dynamicCountries = snapshot.docs
-      .map(item => ({id:item.id,...item.data()}))
-      .filter(item => item.recordType === "destination-country")
-      .sort((a,b)=>Number(a.createdAtClient||0)-Number(b.createdAtClient||0));
-    window.dynamicCountries = dynamicCountries;
-    if(typeof window.refreshTripWithSharedPlaces === "function"){
-      window.refreshTripWithSharedPlaces();
-    }
-  }, error => {
-    console.error("Errore countries:", error);
-  });
-
-  unsubscribeDynamicStays = onSnapshot(dynamicStaysCollection, snapshot => {
-    dynamicStays = snapshot.docs
-      .map(item => ({id:item.id,...item.data()}))
-      .filter(item => item.recordType === "destination-stay");
-    window.dynamicStays = dynamicStays;
-    if(typeof window.refreshTripWithSharedPlaces === "function"){
-      window.refreshTripWithSharedPlaces();
-    }
-  }, error => console.error("Errore stays:", error));
-
-  unsubscribeDynamicAttractions = onSnapshot(dynamicAttractionsCollection, snapshot => {
-    dynamicAttractions = snapshot.docs
-      .map(item => ({id:item.id,...item.data()}))
-      .filter(item => item.recordType === "destination-attraction");
-    window.dynamicAttractions = dynamicAttractions;
-    if(typeof window.refreshTripWithSharedPlaces === "function"){
-      window.refreshTripWithSharedPlaces();
-    }
-  }, error => console.error("Errore attractions:", error));
-}
-
 function startChecklistSync() {
   if (unsubscribeChecklist) unsubscribeChecklist();
 
@@ -4772,67 +4743,97 @@ logoutButton.addEventListener("click", async () => {
 onAuthStateChanged(auth, user => {
   document.documentElement.classList.remove("auth-pending");
 
-  if (unsubscribeChecklist) {
-    unsubscribeChecklist();
+  const stopExistingListeners = () => {
+    try { unsubscribeChecklist?.(); } catch {}
+    try { unsubscribeItinerary?.(); } catch {}
+    try { unsubscribeSharedPlaces?.(); } catch {}
+    try { unsubscribeDynamicCountries?.(); } catch {}
+    try { unsubscribeDynamicStays?.(); } catch {}
+    try { unsubscribeDynamicAttractions?.(); } catch {}
+
     unsubscribeChecklist = null;
-  }
-
-  if (unsubscribeItinerary) {
-    unsubscribeItinerary();
     unsubscribeItinerary = null;
-  }
-
-  if (unsubscribeSharedPlaces) {
-    unsubscribeSharedPlaces();
     unsubscribeSharedPlaces = null;
-  }
-
-  if (unsubscribeDynamicCountries) {
-    unsubscribeDynamicCountries();
     unsubscribeDynamicCountries = null;
-  }
-  if (unsubscribeDynamicStays) {
-    unsubscribeDynamicStays();
     unsubscribeDynamicStays = null;
-  }
-  if (unsubscribeDynamicAttractions) {
-    unsubscribeDynamicAttractions();
     unsubscribeDynamicAttractions = null;
-  }
-  itinerarySnapshotReady = false;
-  clearTimeout(itinerarySaveTimer);
+
+    itinerarySnapshotReady = false;
+    clearTimeout(itinerarySaveTimer);
+  };
+
+  stopExistingListeners();
 
   if (user) {
     const username = usernameFromEmail(user.email);
+
     if (!username) {
-      signOut(auth);
+      console.error("Utente Firebase non riconosciuto:", user.email);
+      errorBox.textContent = `Account non riconosciuto: ${user.email || ""}`;
+      showLogin();
       return;
     }
 
     localStorage.setItem(AUTH_STORAGE_KEY, username);
     errorBox.textContent = "";
+
+    // Open the app first. Sync and migration errors must not close it.
     showApp();
-    startChecklistSync();
-    startItinerarySync();
-    startSharedPlacesSync();
-    startDynamicItinerarySync();
+
+    try {
+      startChecklistSync();
+    } catch (error) {
+      console.error("Errore avvio checklist:", error);
+      setChecklistStatus("Errore avvio checklist", true);
+    }
+
+    try {
+      startItinerarySync();
+    } catch (error) {
+      console.error("Errore avvio stato itinerario:", error);
+    }
+
+    try {
+      startSharedPlacesSync();
+    } catch (error) {
+      console.error("Errore avvio posti condivisi:", error);
+    }
+
+    try {
+      startDynamicItinerarySync();
+    } catch (error) {
+      console.error("Errore avvio itinerario Firebase:", error);
+    }
+
+    // Run migration only after login and listeners have settled.
+    if (username === "mohammad") {
+      window.setTimeout(() => {
+        try {
+          window.startFirebaseItineraryMigration?.();
+        } catch (error) {
+          console.error("Errore avvio migrazione:", error);
+        }
+      }, 800);
+    }
+
   } else {
     adminEditMode = false;
-  localStorage.removeItem(AUTH_STORAGE_KEY);
+    localStorage.removeItem(AUTH_STORAGE_KEY);
     checklistItems = [];
     renderChecklist();
     setChecklistStatus("Accedi per vedere la checklist");
     usernameInput.value = "";
     passwordInput.value = "";
     errorBox.textContent = "";
+
     if (typeof window.loadUserCalculator === "function") {
       window.loadUserCalculator();
     }
+
     history.replaceState({ page: "home" }, "", "#home");
     showLogin();
   }
 });
-
 
 window.addEventListener("online", () => {
   if (auth.currentUser) {
