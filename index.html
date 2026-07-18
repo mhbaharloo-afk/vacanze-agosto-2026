@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="app-version" content="65">
+  <meta name="app-version" content="66">
   <meta name="theme-color" content="#1f6f5f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -2116,6 +2116,18 @@
   display:none !important;
 }
 
+
+.native-empty-places{
+  padding:15px;
+  border:1px dashed var(--outline);
+  border-radius:14px;
+  background:#f8faf9;
+  color:var(--muted);
+  font-size:.76rem;
+  line-height:1.45;
+  text-align:center;
+}
+
 </style>
 </head>
 <body>
@@ -2990,8 +3002,16 @@ function render(){
       return true;
     });
 
-    if(!matchingPlaces.length) return;
-    visible += matchingPlaces.length;
+    const showEmptyDynamicDestination =
+      dest.dynamicDestination === true &&
+      !q &&
+      !plannedOnly &&
+      (filter === "all" || !filter);
+
+    if(!matchingPlaces.length && !showEmptyDynamicDestination) return;
+
+    // Count the destination itself as visible when it has no attractions yet.
+    visible += matchingPlaces.length || 1;
 
     const head = document.createElement("button");
     head.type="button"; head.className="dest-head"; head.setAttribute("aria-expanded", String(activeDestination===dest.city));
@@ -3013,7 +3033,7 @@ function render(){
             : ""}
         </span>
       </span>
-      <span class="dest-right"><span class="dest-count">${matchingPlaces.length} posti</span><span class="chevron">⌄</span></span>`;
+      <span class="dest-right"><span class="dest-count">${matchingPlaces.length} ${matchingPlaces.length===1?"posto":"posti"}</span><span class="chevron">⌄</span></span>`;
 
     const editor = document.createElement("div");
     editor.className = "stay-editor";
@@ -3062,6 +3082,15 @@ function render(){
       });
 
       body.appendChild(dynamicToolbar);
+    }
+
+    if(dest.dynamicDestination && matchingPlaces.length === 0){
+      const emptyPlaces = document.createElement("div");
+      emptyPlaces.className = "native-empty-places";
+      emptyPlaces.textContent = renderedUsername() === "mohammad"
+        ? "Nessun posto da visitare. Usa il pulsante qui sopra per aggiungerne uno."
+        : "Nessun posto da visitare ancora.";
+      body.appendChild(emptyPlaces);
     }
 
     matchingPlaces.forEach((p,i)=>{
