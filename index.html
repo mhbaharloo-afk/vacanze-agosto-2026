@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="app-version" content="66">
+  <meta name="app-version" content="67">
   <meta name="theme-color" content="#1f6f5f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -2128,6 +2128,57 @@
   text-align:center;
 }
 
+
+.native-dynamic-toolbar{
+  display:block;
+  padding:0 0 12px;
+}
+
+.native-add-attraction{
+  width:100%;
+  min-height:58px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:12px 18px;
+  box-sizing:border-box;
+  line-height:1.2;
+}
+
+.native-delete-destination{
+  display:none !important;
+}
+
+.native-header-delete{
+  width:38px;
+  height:38px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border:0;
+  border-radius:12px;
+  background:#fff0ed;
+  color:#a13e32;
+  cursor:pointer;
+  flex:0 0 auto;
+  font-size:1rem;
+  padding:0;
+}
+
+.dest-right{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+@media(max-width:520px){
+  .native-header-delete{
+    width:36px;
+    height:36px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -3033,7 +3084,13 @@ function render(){
             : ""}
         </span>
       </span>
-      <span class="dest-right"><span class="dest-count">${matchingPlaces.length} ${matchingPlaces.length===1?"posto":"posti"}</span><span class="chevron">⌄</span></span>`;
+      <span class="dest-right">
+        <span class="dest-count">${matchingPlaces.length} ${matchingPlaces.length===1?"posto":"posti"}</span>
+        ${dest.dynamicDestination && renderedUsername()==="mohammad"
+          ? `<button class="native-header-delete" type="button" aria-label="Elimina paese e pernottamento" title="Elimina destinazione">🗑</button>`
+          : ""}
+        <span class="chevron">⌄</span>
+      </span>`;
 
     const editor = document.createElement("div");
     editor.className = "stay-editor";
@@ -3058,26 +3115,12 @@ function render(){
       dynamicToolbar.innerHTML = `
         <button class="native-add-attraction" type="button">
           ＋ Aggiungi posto da visitare
-        </button>
-        <button class="native-delete-destination" type="button" aria-label="Elimina destinazione" title="Elimina destinazione">
-          🗑
         </button>`;
 
       dynamicToolbar.querySelector(".native-add-attraction").addEventListener("click", event => {
         event.stopPropagation();
         if(typeof window.openDynamicDialog === "function"){
           window.openDynamicDialog("attraction", dest.dynamicStayId);
-        }
-      });
-
-      dynamicToolbar.querySelector(".native-delete-destination").addEventListener("click", async event => {
-        event.stopPropagation();
-        if(typeof window.deleteDynamicDestination === "function"){
-          await window.deleteDynamicDestination(
-            dest.dynamicCountryId,
-            dest.dynamicStayId,
-            dest.city
-          );
         }
       });
 
@@ -3169,6 +3212,22 @@ function render(){
       activeDestination = isOpen ? "" : dest.city;
       render();
     });
+
+    const headerDeleteButton = head.querySelector(".native-header-delete");
+    if(headerDeleteButton){
+      headerDeleteButton.addEventListener("click", async event => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if(typeof window.deleteDynamicDestination === "function"){
+          await window.deleteDynamicDestination(
+            dest.dynamicCountryId,
+            dest.dynamicStayId,
+            dest.city
+          );
+        }
+      });
+    }
 
     section.appendChild(head);
     section.appendChild(editor);
@@ -4320,7 +4379,7 @@ window.deleteDynamicDestination = async function(countryId, stayId, cityName){
   if(currentUsername() !== "mohammad" || !countryId || !stayId) return;
 
   const confirmed = confirm(
-    `Eliminare "${cityName}" e tutti i suoi posti da visitare?`
+    `Eliminare il paese/pernottamento "${cityName}" e tutti i posti da visitare collegati?`
   );
   if(!confirmed) return;
 
