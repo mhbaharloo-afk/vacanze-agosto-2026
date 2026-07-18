@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="app-version" content="61">
+  <meta name="app-version" content="62">
   <meta name="theme-color" content="#1f6f5f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -2955,6 +2955,12 @@ function performPendingScroll(){
   });
 }
 
+function renderedUsername(){
+  return String(
+    localStorage.getItem("vacanze-agosto-2026-auth-user") || ""
+  ).trim().toLowerCase();
+}
+
 function render(){
   const q = "";
   const filter = document.getElementById("filter").value;
@@ -3026,7 +3032,7 @@ function render(){
     const body = document.createElement("div");
     body.className="dest-body";
 
-    if(dest.dynamicDestination && currentUsername() === "mohammad"){
+    if(dest.dynamicDestination && renderedUsername() === "mohammad"){
       const dynamicToolbar = document.createElement("div");
       dynamicToolbar.className = "native-dynamic-toolbar";
       dynamicToolbar.innerHTML = `
@@ -3154,7 +3160,7 @@ function render(){
     root.appendChild(e);
   }
 
-  if(currentUsername() === "mohammad"){
+  if(renderedUsername() === "mohammad"){
     const addDestinationFooter = document.createElement("div");
     addDestinationFooter.className = "native-add-destination-footer";
     addDestinationFooter.innerHTML = `
@@ -3640,9 +3646,20 @@ function showApp() {
   // The first render can happen before Firebase restores the authenticated
   // account. Render again now so admin-only controls are created correctly.
   if (typeof render === "function" && trip.length) {
-    render();
+    try {
+      render();
+    } catch (error) {
+      console.error("Errore rendering itinerario:", error);
+    }
   }
-  if (typeof renderDynamicItinerary === "function") renderDynamicItinerary();
+
+  if (typeof renderDynamicItinerary === "function") {
+    try {
+      renderDynamicItinerary();
+    } catch (error) {
+      console.error("Errore rendering destinazioni condivise:", error);
+    }
+  }
 
   if (typeof applyLockState === "function") applyLockState();
 
@@ -4327,6 +4344,9 @@ function startChecklistSync() {
   if (unsubscribeChecklist) unsubscribeChecklist();
 
   setChecklistStatus("Sincronizzazione…");
+  if (checklistInput) checklistInput.disabled = false;
+  const checklistSubmitButton = checklistForm?.querySelector("button[type='submit']");
+  if (checklistSubmitButton) checklistSubmitButton.disabled = false;
 
   unsubscribeChecklist = onSnapshot(
     checklistCollection,
