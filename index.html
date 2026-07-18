@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="app-version" content="67">
+  <meta name="app-version" content="68">
   <meta name="theme-color" content="#1f6f5f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -2179,6 +2179,73 @@
   }
 }
 
+
+.edit-mode-button{
+  min-height:38px;
+  border:1px solid rgba(255,255,255,.34);
+  border-radius:12px;
+  padding:0 12px;
+  background:rgba(255,255,255,.14);
+  color:inherit;
+  font-weight:850;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.edit-mode-button[hidden]{
+  display:none !important;
+}
+
+.edit-mode-button.active{
+  background:#fff3d6;
+  color:#7a4d00;
+  border-color:#f0c96a;
+}
+
+.native-dynamic-toolbar{
+  min-height:86px;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:14px 0 !important;
+  box-sizing:border-box;
+}
+
+.native-add-attraction{
+  min-height:58px;
+  height:auto;
+  margin:0;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  align-self:center;
+  line-height:1.2;
+}
+
+.native-header-delete,
+.delete-shared-place,
+.dynamic-delete-button.delete-dynamic-attraction{
+  display:none !important;
+}
+
+body.admin-edit-mode .native-header-delete,
+body.admin-edit-mode .delete-shared-place,
+body.admin-edit-mode .dynamic-delete-button.delete-dynamic-attraction{
+  display:inline-flex !important;
+  align-items:center;
+  justify-content:center;
+}
+
+@media(max-width:520px){
+  .edit-mode-button{
+    min-height:36px;
+    padding:0 9px;
+    font-size:.72rem;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -2240,7 +2307,7 @@
       <span class="lock-icon lock-icon-open" aria-hidden="true">🔓</span>
       <span class="lock-icon lock-icon-closed" aria-hidden="true">🔒</span>
     </button>
-        <button id="logoutButton" class="logout-btn" type="button" aria-label="Uscire" title="Uscire">Uscire</button>
+        <button id="editModeButton" class="edit-mode-button" type="button" hidden>Modifica</button><button id="logoutButton" class="logout-btn" type="button" aria-label="Uscire" title="Uscire">Uscire</button>
       </div>
     </div>
   </header>
@@ -3018,10 +3085,40 @@ function performPendingScroll(){
   });
 }
 
+let adminEditMode = false;
+
+function isAdminEditMode(){
+  return renderedUsername() === "mohammad" && adminEditMode;
+}
+
+window.isAdminEditMode = isAdminEditMode;
+
+function updateEditModeButton(){
+  const button = document.getElementById("editModeButton");
+  if(!button) return;
+
+  const isAdmin = renderedUsername() === "mohammad";
+  button.hidden = !isAdmin;
+  button.classList.toggle("active", isAdmin && adminEditMode);
+  button.textContent = adminEditMode ? "Fine modifica" : "Modifica";
+  button.setAttribute("aria-pressed", adminEditMode ? "true" : "false");
+  document.body.classList.toggle("admin-edit-mode", isAdmin && adminEditMode);
+}
+
 function renderedUsername(){
   return String(
     localStorage.getItem("vacanze-agosto-2026-auth-user") || ""
   ).trim().toLowerCase();
+}
+
+const editModeButton = document.getElementById("editModeButton");
+if(editModeButton){
+  editModeButton.addEventListener("click", () => {
+    if(renderedUsername() !== "mohammad") return;
+    adminEditMode = !adminEditMode;
+    updateEditModeButton();
+    if(typeof render === "function") render();
+  });
 }
 
 function render(){
@@ -3086,7 +3183,7 @@ function render(){
       </span>
       <span class="dest-right">
         <span class="dest-count">${matchingPlaces.length} ${matchingPlaces.length===1?"posto":"posti"}</span>
-        ${dest.dynamicDestination && renderedUsername()==="mohammad"
+        ${dest.dynamicDestination && isAdminEditMode()
           ? `<button class="native-header-delete" type="button" aria-label="Elimina paese e pernottamento" title="Elimina destinazione">🗑</button>`
           : ""}
         <span class="chevron">⌄</span>
@@ -3728,6 +3825,7 @@ function showApp() {
 
   const loggedUsername = localStorage.getItem(AUTH_STORAGE_KEY) || "";
   updateWelcomeMessage(loggedUsername);
+  if (typeof updateEditModeButton === "function") updateEditModeButton();
   setTopSyncStatus(navigator.onLine ? "syncing" : "offline");
 
   // The first render can happen before Firebase restores the authenticated
@@ -4575,7 +4673,8 @@ onAuthStateChanged(auth, user => {
     startSharedPlacesSync();
     startDynamicItinerarySync();
   } else {
-    localStorage.removeItem(AUTH_STORAGE_KEY);
+    adminEditMode = false;
+  localStorage.removeItem(AUTH_STORAGE_KEY);
     checklistItems = [];
     renderChecklist();
     setChecklistStatus("Accedi per vedere la checklist");
